@@ -1,14 +1,13 @@
-#include <Vector.h>
-
 int PINLED1 = 12;
 int PINLED2 = 13;
 int ENTRADA1 = 4;
 int ENTRADA2 = 5;
 
-int ledPines[] = {12, 13};
-int botonPines[] = {4, 5};
+const int numberOfElements = 10;
+int ledPines[numberOfElements] = {12, 13};
+int botonPines[numberOfElements] = {4, 5};
 
-Vector<int> ordenPulsado;
+int ordenPulsado[numberOfElements];
 
 int indiceActual = 0;  // Índice del LED actualmente encendido
 int contadorPulsaciones = 0; 
@@ -23,13 +22,6 @@ void setup() {
 
   Serial.begin(9600);
 }
-
-// template <size_t n> void push(int (&arr)[n], int const value) {
-//   static size_t index = 0;
-
-//   arr[index] = value;
-//   index = (index + 1) % n;
-// }
 
 void loop() {
 
@@ -50,7 +42,8 @@ void loop() {
   if (digitalRead(botonPines[0]) == true){
     if (pushedBtn1 == false){
       Serial.println("Push 4");
-      ordenPulsado.push_back(4);
+      // ordenPulsado.push_back(4);
+      pushAtEnd(ordenPulsado, 4);
       pushedBtn1 = true;
     }
   }
@@ -61,7 +54,8 @@ void loop() {
   if (digitalRead(botonPines[1]) == true){
     if (pushedBtn2 == false){
       Serial.println("Push 5");
-      ordenPulsado.push_back(5);
+      // ordenPulsado.push_back(5);
+      pushAtEnd(ordenPulsado, 5);
       pushedBtn2 = true;
     } 
   }
@@ -78,4 +72,15 @@ void loop() {
     }
     indiceActual = -2;
   }
+}
+
+
+void pushAtEnd(int historicValues[], int newValue)
+{
+  for(int i = 0; i < numberOfElements - 1; i++)         // Shift current values to the left starting at the first element
+  {
+    historicValues[i] = historicValues[i + 1];          // Element 1 (at index 0) gets the value of element 2, 2 gets the value of 3, 3 the val of 4, etc.
+  }
+
+  historicValues[numberOfElements - 1] = newValue;      // Place the new value at the last index
 }
