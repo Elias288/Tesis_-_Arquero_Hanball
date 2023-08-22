@@ -33,101 +33,64 @@ void setup() {
   Serial.begin(9600);
 }
 
-void blink() {
-  for (int i = 0; i < CANT_COMPS; i++) {
-    digitalWrite(LEDPinArray[i], HIGH);
-  }
-  delay(1000);
-
-  for (int i = 0; i < CANT_COMPS; i++) {
-    digitalWrite(LEDPinArray[i], LOW);
-  }
-  delay(1000);
-}
-
-int estadoBoton1;
-int estadoBoton2;
-int estadoBoton3;
-int estadoBoton4;
-int ultimoEstadoBoton1 = LOW;
-int ultimoEstadoBoton2 = LOW;
-int ultimoEstadoBoton3 = LOW;
-int ultimoEstadoBoton4 = LOW;
-int estadoled1 = LOW;
-int estadoled2 = LOW;
-int estadoled3 = LOW;
-int estadoled4 = LOW;
-
-void inout() {
-  estadoBoton1 = digitalRead(BUTTON_1);
-  estadoBoton2 = digitalRead(BUTTON_2);
-  estadoBoton3 = digitalRead(BUTTON_3);
-  estadoBoton4 = digitalRead(BUTTON_4);
-
-  if (estadoBoton1 == LOW && ultimoEstadoBoton1 == HIGH) {
-    estadoled1 = !estadoled1;
-    Serial.println("led1");
-    digitalWrite(LED_1, estadoled1);
-  }
-  if (estadoBoton2 == LOW && ultimoEstadoBoton2 == HIGH) {
-    estadoled2 = !estadoled2;
-    Serial.println("led2");
-    digitalWrite(LED_2, estadoled2);
-  }
-  if (estadoBoton3 == LOW && ultimoEstadoBoton3 == HIGH) {
-    estadoled3 = !estadoled3;
-    Serial.println("led3");
-    digitalWrite(LED_3, estadoled3);
-  }
-  if (estadoBoton4 == LOW && ultimoEstadoBoton4 == HIGH) {
-    estadoled4 = !estadoled4;
-    Serial.println("led4");
-    digitalWrite(LED_4, estadoled4);
-  }
-  delay(100);
-  ultimoEstadoBoton1 = estadoBoton1;
-  ultimoEstadoBoton2 = estadoBoton2;
-  ultimoEstadoBoton3 = estadoBoton3;
-  ultimoEstadoBoton4 = estadoBoton4;
-}
-
 // orden en el que se encienden las luces
-const byte listaSecuencia[] = { 1, 3, 0, 2, 0, 2 };
+const byte listaSecuencia[] = { 0, 1, 2, 3, 0 };
+// tiempo de demora entre secuencias
+const int tiempoEncendido[] = { 1000, 2000, 500, 7000, 2000, 1500 };
+
+// matriz con orden y tiempos de cada uno
+const int secuenceMatrix[][2] = {
+  { 0, 2000 },
+  { 1, 2000 },
+  { 0, 2000 },
+  { 1, 2000 },
+  { 0, 2000 },
+  { 1, 2000 },
+};
+
 // posicion de la lista de secuencia
-int indiceActual = 0;
-int buttonpressed;
+int indiceActual = -1;
 bool gameRun = true;
+int buttonpressed = 0;
+unsigned long startTime = 0;
+unsigned long startTime2 = 0;
+unsigned long buttonPressTime = 0;
+bool ledOn = true;
+
 void game() {
-  // si el boton en la posicion que corresponda en la lista de secuencia es el correcto
-  buttonpressed = digitalRead(BUTTONPinArray[listaSecuencia[indiceActual]]);
+  if (gameRun == true) {
+    unsigned long currentTime = millis();
 
-  if (buttonpressed == HIGH && gameRun == true) {
-    // apaga el led actual
-    digitalWrite(LEDPinArray[listaSecuencia[indiceActual]], LOW);
+    if (startTime == 0 || currentTime - startTime >= 5000) {
+      buttonpressed = 0;
+      digitalWrite(LEDPinArray[listaSecuencia[indiceActual]], LOW); // Apagar el LED actual
 
-    // pasa al siguiente led de la secuencia
-    Serial.println((String) "Indice actual: " + listaSecuencia[indiceActual]);
-    indiceActual++;
+      indiceActual = (indiceActual + 1); // Cambiar al siguiente LED
+      digitalWrite(LEDPinArray[listaSecuencia[indiceActual]], HIGH); // Encender el siguiente LED
+      startTime = currentTime;
+    }
 
-    // Verificar si se alcanzó el final del array
+    // imprime los segundos
+    if (currentTime - startTime2 >= 1000) {
+      Serial.println((float) currentTime / 1000);
+      startTime2 = currentTime;
+    }
+
+    // imprime el tiempo de reaccion
+    if (digitalRead(BUTTONPinArray[listaSecuencia[indiceActual]]) == HIGH && buttonpressed == 0) {
+      buttonPressTime = currentTime - startTime;
+      Serial.print("Tiempo de reacción: ");
+      Serial.print(((float) buttonPressTime / 1000));
+      Serial.println("s");
+      buttonpressed = 1;
+    }
+
     if (indiceActual >= sizeof(listaSecuencia)) {
-      Serial.println("Fin del programa");
-      // finaliza el programa
       gameRun = false;
-      // resetea el indice
-      indiceActual = 0;
     }
   }
-
-  if (gameRun == true) {
-  // enciende el led actual
-    digitalWrite(LEDPinArray[listaSecuencia[indiceActual]], HIGH);
-  }
-  delay(100);
 }
 
 void loop() {
-  // blink();
-  // inout();
   game();
 }
