@@ -7,11 +7,11 @@ import {
     View
 } from 'react-native';
 
-// import DeviceModal from "./components/DeviceConnectionModal";
-// import useBLE from './components/useBle';
+import DeviceModal from "./components/DeviceConnectionModal";
+import useBLE from './components/useBLE';
 
 const Main = () => {
-    /* const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
     const {
         requestPermissions,
@@ -33,13 +33,13 @@ const Main = () => {
     const openModal = async () => {
         scanForDevices();
         setIsModalVisible(true);
-    }; */
+    };
 
     return (
         <SafeAreaView style={styles.container}>
             <Text>Mobile App - React Native - BLE</Text>
             
-            {/* <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
+            <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
                 <Text style={styles.ctaButtonText}>Connect</Text>
             </TouchableOpacity>
 
@@ -48,7 +48,7 @@ const Main = () => {
                 visible={isModalVisible}
                 connectToPeripheral={() => { }}
                 devices={allDevices}
-            /> */}
+            />
         </SafeAreaView>
     );
 }
