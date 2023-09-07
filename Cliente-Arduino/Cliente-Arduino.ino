@@ -25,8 +25,8 @@ String rxString = "";
 std::string rxValue;  // rxValue gathers input data
 
 // ***************************************** UART service UUID data *****************************************
-#define SERVICE_UUID "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
+#define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHARACTERISTIC_UUID_RX "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
 const byte LEDPinArray[CANT_COMPS] = {
@@ -86,9 +86,11 @@ class MyCallbacks : public BLECharacteristicCallbacks {
 };
 
 void initBLE() {
-  BLEDevice::init("DEAH ESP32 UART");  // give the BLE device a name
+  // Create the BLE Device
+  BLEDevice::init("ESP32");
 
-  BLEServer *pServer = BLEDevice::createServer();  // create BLE server
+  // Create the BLE Server
+  BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
   // Create the BLE Service
@@ -96,17 +98,26 @@ void initBLE() {
 
   // Create a BLE Characteristic
   pCharacteristic = pService->createCharacteristic(
-    CHARACTERISTIC_UUID_TX,
-    BLECharacteristic::PROPERTY_NOTIFY);
+                      CHARACTERISTIC_UUID_RX,
+                      BLECharacteristic::PROPERTY_READ   |
+                      BLECharacteristic::PROPERTY_WRITE  |
+                      BLECharacteristic::PROPERTY_NOTIFY |
+                      BLECharacteristic::PROPERTY_INDICATE
+                    );
+
+  // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
+  // Create a BLE Descriptor
   pCharacteristic->addDescriptor(new BLE2902());
-  BLECharacteristic *pCharacteristic = pService->createCharacteristic(
-    CHARACTERISTIC_UUID_RX,
-    BLECharacteristic::PROPERTY_WRITE);
-  pCharacteristic->setCallbacks(new MyCallbacks());
 
-  pService->start();  // start the service
+  // Start the service
+  pService->start();
 
-  pServer->getAdvertising()->start();  // start advertising
+  // Start advertising
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->setScanResponse(false);
+  pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
+  BLEDevice::startAdvertising();
   Serial.println("Waiting a client connection to notify...");
   Serial.println(" ");
 }
