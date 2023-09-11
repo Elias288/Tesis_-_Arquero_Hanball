@@ -98,12 +98,8 @@ void initBLE() {
 
   // Create a BLE Characteristic
   pCharacteristic = pService->createCharacteristic(
-                      CHARACTERISTIC_UUID_RX,
-                      BLECharacteristic::PROPERTY_READ   |
-                      BLECharacteristic::PROPERTY_WRITE  |
-                      BLECharacteristic::PROPERTY_NOTIFY |
-                      BLECharacteristic::PROPERTY_INDICATE
-                    );
+    CHARACTERISTIC_UUID_RX,
+    BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE);
 
   // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
   // Create a BLE Descriptor
@@ -203,7 +199,7 @@ void sendData(int txValue) {
   //--- Conversion de txValue ----------------------
   char txString[10];
   sprintf(txString, "%4.4f", txValue);
-  //dtostrf(txValue,1,2, txString);
+  // dtostrf(txValue,1,2, txString);
 
   //--- Set Valor ----------------------------------
   pCharacteristic->setValue(txString);
@@ -254,7 +250,6 @@ void game() {
 
       digitalWrite(LEDPinArray[secuenceMatrix[indiceActual][0]], HIGH);  // Encender el siguiente LED
       startTime = currentTime;
-
     } else if (startTime == 0) {
       digitalWrite(LEDPinArray[secuenceMatrix[indiceActual][0]], HIGH);  // Encender el primer LED
       startTime = currentTime;

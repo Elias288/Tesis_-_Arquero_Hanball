@@ -68,6 +68,9 @@ const DeviceModal: FC<DeviceModalProps> = (props) => {
         <Text style={modalStyle.modalTitleText}>
           Tap on a device to connect
         </Text>
+        <TouchableOpacity onPress={props.closeModal} style={modalStyle.ctaButtonClose}>
+          <Text>Close</Text>
+        </TouchableOpacity>
         <FlatList
           contentContainerStyle={modalStyle.modalFlatlistContiner}
           data={devices}
@@ -119,6 +122,15 @@ const modalStyle = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "white",
+  },
+  ctaButtonClose: {
+    backgroundColor: "#FF6060",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+    marginHorizontal: 20,
+    marginBottom: 5,
+    borderRadius: 8,
   },
 });
 

@@ -1,79 +1,101 @@
-import React, { useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from "react";
 import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native';
+  FlatList,
+  ListRenderItemInfo,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import Constants from "expo-constants";
 
-import DeviceModal from "./components/DeviceConnectionModal";
-import useBLE from './components/useBLE';
+import useBLE from "./components/useBLE";
+import { Device } from "react-native-ble-plx";
+import { Button } from "react-native-paper";
 
+/************************************************* Main *************************************************/
 const Main = () => {
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-    const {
-        requestPermissions,
-        scanForPeripherals,
-        allDevices
-    } = useBLE();
+  const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
 
-    const scanForDevices = async () => {
-        const isPermissionsEnabled = await requestPermissions();
-        if (isPermissionsEnabled) {
-            scanForPeripherals();
-        }
-    };
+  useEffect(() => {
+    scanForDevices();
+  }, []);
 
-    const hideModal = () => {
-        setIsModalVisible(false);
-    };
+  const scanForDevices = async () => {
+    const isPermissionsEnabled = await requestPermissions();
+    if (isPermissionsEnabled) {
+      scanForPeripherals();
+    }
+  };
 
-    const openModal = async () => {
-        scanForDevices();
-        setIsModalVisible(true);
-    };
+  return (
+    <View style={styles.container}>
+      <Text>Mobile App - React Native - BLE</Text>
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Text>Mobile App - React Native - BLE</Text>
-            
-            <TouchableOpacity onPress={openModal} style={styles.ctaButton}>
+      {/* <TouchableOpacity onPress={scanForDevices} style={styles.ctaButton}>
                 <Text style={styles.ctaButtonText}>Connect</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <DeviceModal
-                closeModal={hideModal}
-                visible={isModalVisible}
-                connectToPeripheral={() => { }}
-                devices={allDevices}
-            />
-        </SafeAreaView>
-    );
-}
+      <ShowDevices devices={allDevices} connectToPeripheral={() => {}} />
+    </View>
+  );
+};
 
+/******************************************** SHOW DEVICES *********************************************/
+type DeviceModalProps = {
+  devices: Device[];
+  connectToPeripheral: (device: Device) => void;
+};
+const ShowDevices: FC<DeviceModalProps> = (props) => {
+  const { devices, connectToPeripheral } = props;
+
+  const renderDeviceModalListItem = useCallback(
+    (item: ListRenderItemInfo<Device>) => {
+      return <Text>{item.item.name}</Text>;
+    },
+    [connectToPeripheral]
+  );
+
+  return (
+    <View>
+      <Button>Reload</Button>
+      <FlatList
+        contentContainerStyle={styles.flatlistContiner}
+        data={devices}
+        renderItem={renderDeviceModalListItem}
+      />
+    </View>
+  );
+};
+
+/*********************************************** Styles ************************************************/
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    ctaButton: {
-        backgroundColor: "#FF6060",
-        justifyContent: "center",
-        alignItems: "center",
-        height: 50,
-        marginHorizontal: 20,
-        marginBottom: 5,
-        borderRadius: 8,
-    },
-    ctaButtonText: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: "white",
-    },
+  container: {
+    flex: 1,
+    marginTop: Constants.statusBarHeight + 20,
+    backgroundColor: "#fff",
+  },
+  ctaButton: {
+    backgroundColor: "#1aa70a",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+    marginHorizontal: 20,
+    marginBottom: 5,
+    borderRadius: 8,
+  },
+  ctaButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "white",
+  },
+  flatlistContiner: {
+    flex: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+  },
 });
 
 export default Main;
