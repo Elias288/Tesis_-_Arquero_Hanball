@@ -1,16 +1,10 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
-import {
-  FlatList,
-  ListRenderItemInfo,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import Constants from "expo-constants";
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
+import Constants from 'expo-constants';
 
-import useBLE from "./components/useBLE";
-import { Device } from "react-native-ble-plx";
-import { Button } from "react-native-paper";
+import useBLE from './components/useBLE';
+import { Device } from 'react-native-ble-plx';
+import { Button } from 'react-native-paper';
 
 /************************************************* Main *************************************************/
 const Main = () => {
@@ -74,12 +68,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: Constants.statusBarHeight + 20,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   ctaButton: {
-    backgroundColor: "#1aa70a",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#1aa70a',
+    justifyContent: 'center',
+    alignItems: 'center',
     height: 50,
     marginHorizontal: 20,
     marginBottom: 5,
@@ -87,13 +81,13 @@ const styles = StyleSheet.create({
   },
   ctaButtonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
   },
   flatlistContiner: {
     flex: 2,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     height: 50,
   },
 });
