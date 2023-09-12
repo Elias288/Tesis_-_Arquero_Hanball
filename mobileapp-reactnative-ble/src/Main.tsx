@@ -35,11 +35,7 @@ const Main = () => {
 
         {connectedDevice ? <Button onPress={() => disconnectFromDevice()}>Disconnect</Button> : ''}
 
-        {BLEmsg === 'Esp32 not found' || BLEmsg === '' ? (
-          <Button onPress={() => scanForDevices()}>Scan</Button>
-        ) : (
-          ''
-        )}
+        <Button onPress={() => scanForDevices()}>Scan</Button>
 
         <Text>{connectedDevice !== null ? 'Conectado' : 'No conectado'}</Text>
         <Text>{`${BLEmsg}`}</Text>
