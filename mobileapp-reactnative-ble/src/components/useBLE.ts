@@ -11,19 +11,19 @@ const ESP32_CHARACTERISTIC = '00002a37-0000-1000-8000-00805f9b34fb';
 
 interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
-  scanForPeripherals(): void;
-  //   connectToDevice: (deviceId: Device) => Promise<void>;
+  scanAndConnectPeripherals(): void;
+  connectToDevice: (deviceId: Device) => Promise<void>;
   disconnectFromDevice: () => void;
   connectedDevice: Device | null;
-  allDevices: Device[];
-  heartRate: number;
+  espDevice: Device | undefined;
+  BLEmsg: string | BleError;
 }
 
 function useBLE(): BluetoothLowEnergyApi {
   const bleManager = useMemo(() => new BleManager(), []);
-  const [allDevices, setAllDevices] = useState<Device[]>([]);
+  const [espDevice, setEspDevice] = useState<Device>();
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  const [heartRate, setHeartRate] = useState<number>(0);
+  const [BLEmsg, setMsg] = useState<string | BleError>('');
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -80,54 +80,91 @@ function useBLE(): BluetoothLowEnergyApi {
     }
   };
 
-  const isDuplicteDevice = (devices: Device[], nextDevice: Device) =>
-    devices.findIndex((device) => nextDevice.id === device.id) > -1;
+  let scannTimeOut = new Date();
+  const scanAndConnectPeripherals = () => {
+    const suscription = bleManager.onStateChange((state) => {
+      if (state === 'PoweredOn') {
+        setMsg('Scanning...');
+        setEspDevice(undefined);
 
-  const scanForPeripherals = () => {
-    return bleManager.startDeviceScan(null, null, (error, device) => {
-      if (error) {
-        console.log(error);
-      }
-      if (device && device.serviceUUIDs?.includes(ESP32_UUID)) {
-        setAllDevices((prevState: Device[]) => {
-          if (!isDuplicteDevice(prevState, device)) {
-            console.log(JSON.stringify(device));
-            return [...prevState, device];
+        bleManager.startDeviceScan(null, null, (error, device) => {
+          if (error) {
+            setMsg(error);
+            return;
           }
-          return prevState;
+
+          // ************* calcula el tiempo de escaneo y lo detiene despues de 50 segundos *************
+          let endTime = new Date();
+          const seconds = calculateTime(scannTimeOut, endTime);
+
+          if (seconds > 50) {
+            console.log('scan stoped');
+            bleManager.stopDeviceScan();
+
+            if (!espDevice) {
+              setMsg('Esp32 not found');
+              disconnectFromDevice();
+            }
+          }
+
+          // *********************************** busca el dispositivo ***********************************
+          console.log(JSON.stringify({ uuid: device?.serviceUUIDs, name: device?.name }));
+
+          var espdevice: Device | undefined = undefined;
+          if (device && device.serviceUUIDs?.includes(ESP32_UUID)) {
+            bleManager.stopDeviceScan();
+            setEspDevice(device);
+            setMsg('Esp32 found');
+            espdevice = device;
+
+            // conecta el dispositivo
+            /*
+             * al conectar y actualizar la app, el esp deja de aparecer, puede ser error de
+             * react-native o de arduino
+             */
+            // connectToDevice(device);
+          }
         });
+        suscription.remove();
       }
-    });
+    }, true);
   };
 
-  /* const connectToDevice = async (device: Device) => {
+  const calculateTime = (startTime: Date, endTime: Date): number =>
+    Math.round((endTime.getTime() - startTime.getTime()) / 100);
+
+  const connectToDevice = async (device: Device) => {
+    console.log('conect to: ', device.serviceUUIDs);
     try {
       const deviceConnection = await bleManager.connectToDevice(device.id);
       setConnectedDevice(deviceConnection);
       await deviceConnection.discoverAllServicesAndCharacteristics();
-      bleManager.stopDeviceScan();
-      startStreamingData(deviceConnection);
+      console.log(`${device.name} CONNECTED!`);
+      setMsg(`${device.name} CONNECTED!`);
     } catch (e) {
-      console.log("FAILED TO CONNECT", e);
+      console.log('FAILED TO CONNECT', e);
+      setMsg(`FAILED TO CONNECT ${e}`);
+      setEspDevice(undefined);
     }
-  }; */
+  };
 
   const disconnectFromDevice = () => {
     if (connectedDevice) {
       bleManager.cancelDeviceConnection(connectedDevice.id);
       setConnectedDevice(null);
-      setHeartRate(0);
+      setMsg('');
+      setEspDevice(undefined);
     }
   };
 
   return {
-    scanForPeripherals,
+    scanAndConnectPeripherals,
     requestPermissions,
-    // connectToDevice,
-    allDevices,
-    connectedDevice,
+    connectToDevice,
     disconnectFromDevice,
-    heartRate,
+    connectedDevice,
+    espDevice,
+    BLEmsg,
   };
 }
 

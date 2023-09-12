@@ -1,65 +1,54 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItemInfo, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 
 import useBLE from './components/useBLE';
-import { Device } from 'react-native-ble-plx';
-import { Button } from 'react-native-paper';
+import { Button, PaperProvider } from 'react-native-paper';
 
 /************************************************* Main *************************************************/
 const Main = () => {
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-
-  const { requestPermissions, scanForPeripherals, allDevices } = useBLE();
+  const {
+    requestPermissions,
+    scanAndConnectPeripherals,
+    disconnectFromDevice,
+    BLEmsg,
+    espDevice,
+    connectedDevice,
+  } = useBLE();
 
   useEffect(() => {
+    disconnectFromDevice();
     scanForDevices();
   }, []);
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
     if (isPermissionsEnabled) {
-      scanForPeripherals();
+      scanAndConnectPeripherals();
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Mobile App - React Native - BLE</Text>
+    <PaperProvider>
+      <View style={styles.container}>
+        <Text>Mobile App - React Native - BLE</Text>
 
-      {/* <TouchableOpacity onPress={scanForDevices} style={styles.ctaButton}>
-                <Text style={styles.ctaButtonText}>Connect</Text>
-            </TouchableOpacity> */}
+        {connectedDevice ? <Button onPress={() => disconnectFromDevice()}>Disconnect</Button> : ''}
 
-      <ShowDevices devices={allDevices} connectToPeripheral={() => {}} />
-    </View>
-  );
-};
+        {BLEmsg === 'Esp32 not found' || BLEmsg === '' ? (
+          <Button onPress={() => scanForDevices()}>Scan</Button>
+        ) : (
+          ''
+        )}
 
-/******************************************** SHOW DEVICES *********************************************/
-type DeviceModalProps = {
-  devices: Device[];
-  connectToPeripheral: (device: Device) => void;
-};
-const ShowDevices: FC<DeviceModalProps> = (props) => {
-  const { devices, connectToPeripheral } = props;
+        <Text>{connectedDevice !== null ? 'Conectado' : 'No conectado'}</Text>
+        <Text>{`${BLEmsg}`}</Text>
 
-  const renderDeviceModalListItem = useCallback(
-    (item: ListRenderItemInfo<Device>) => {
-      return <Text>{item.item.name}</Text>;
-    },
-    [connectToPeripheral]
-  );
-
-  return (
-    <View>
-      <Button>Reload</Button>
-      <FlatList
-        contentContainerStyle={styles.flatlistContiner}
-        data={devices}
-        renderItem={renderDeviceModalListItem}
-      />
-    </View>
+        <ScrollView>
+          <Text>{JSON.stringify(espDevice, null, 4)}</Text>
+        </ScrollView>
+      </View>
+    </PaperProvider>
   );
 };
 
@@ -68,7 +57,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: Constants.statusBarHeight + 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#dbdbdb',
   },
   ctaButton: {
     backgroundColor: '#1aa70a',
