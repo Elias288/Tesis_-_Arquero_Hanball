@@ -176,25 +176,39 @@ function useBLE(): BluetoothLowEnergyApi {
   };
 
   const sendData = async (device: Device, msg: string) => {
-    const msgBase64 = base64.encode(msg);
-    console.log(`sending ${msg} (${msgBase64}) to: ${device.name}`);
+    const messageChunks: Array<string> = formatMSG(device.mtu, msg);
 
     try {
-      if (device) {
-        device
-          .writeCharacteristicWithoutResponseForService(
-            ESP32_SERVICE_UUID,
-            ESP32_CHARACTERISTIC_UUID,
-            msgBase64
-          )
-          .catch((error) => {
-            console.log('error in writing data');
-            console.log(error);
-          });
-      }
+      messageChunks.map((msgChunk) => {
+        const msgBase64 = base64.encode(msgChunk);
+        console.log(`sending ${msgChunk} (${msgBase64}) to: ${device.name} ${device.mtu}`);
+        if (device) {
+          device
+            .writeCharacteristicWithoutResponseForService(
+              ESP32_SERVICE_UUID,
+              ESP32_CHARACTERISTIC_UUID,
+              msgBase64
+            )
+            .catch((error) => {
+              console.log('error in writing data');
+              console.log(error);
+            });
+        }
+      });
     } catch (error) {
       console.log('error sending data');
     }
+  };
+
+  const formatMSG = (deviceMtuSize: number, message: string): Array<string> => {
+    const chunkSize = deviceMtuSize - 3;
+    const chunks = [];
+
+    for (let i = 0; i < message.length; i += chunkSize) {
+      chunks.push(message.slice(i, i + chunkSize));
+    }
+
+    return chunks;
   };
 
   return {
