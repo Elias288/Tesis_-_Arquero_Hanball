@@ -2,7 +2,6 @@
 * Necesitamos configurar la placa ESP32 como servidor BLE que reciba una secuencia, ejecute el
 * el juego y envie una respuesta hacia el celular.
 */
-
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
@@ -18,29 +17,26 @@
 #define BUTTON_3 32
 #define BUTTON_4 25
 
-#define bleServerName "ESP32-Server"
+#define bleServerName "ESP32-server"
 
 // **************************************** Cantidad de componentes ****************************************
 #define CANT_COMPS 4
 
 // ******************************************** Init BLE Server ********************************************
-BLEServer *pServer;
-BLEService *pService;
-BLECharacteristic *pCharacteristic;
-
-// BLECharacteristic *pCharacteristic;
+BLEServer *pServer = NULL;
+BLECharacteristic *pCharacteristic = NULL;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
-// float txValue = 0;
 
-// bool convert = false;
-// String rxString = "";
-// std::string rxValue;  // rxValue gathers input data
+// ***************************************** Variable de mensajes *****************************************
+const int MAX_MESSAGE_SIZE = 512;
+char receivedMessage[MAX_MESSAGE_SIZE];
+int messageIndex = 0;
 
 // ***************************************** UART service UUID data *****************************************
 #define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
-#define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define CHARACTERISTIC_UUID "00002a37-0000-1000-8000-00805f9b34fb"
 
 const byte LEDPinArray[CANT_COMPS] = {
   LED_1,
@@ -74,6 +70,7 @@ void initComponents() {
   }
 }
 
+// ****************************************** BLE Server Callbacks ******************************************
 class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer *pServer) {
     deviceConnected = true;
@@ -81,15 +78,41 @@ class MyServerCallbacks : public BLEServerCallbacks {
 
   void onDisconnect(BLEServer *pServer) {
     deviceConnected = false;
+    memset(receivedMessage, 0, sizeof(receivedMessage));
+    Serial.println("Client desconected");
+  }
+};
+
+class MyCaracteristicCallbacks : public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *characteristics) {
+    std::string valueBase64 = characteristics->getValue();
+    String value = valueBase64.c_str();
+
+    for (size_t i = 0; i < value.length(); i++) {
+      char receivedChar = value[i];
+
+      if (receivedChar == '\n') {
+        // Procesar el mensaje completo
+        receivedMessage[messageIndex] = '\0';  // Agregar terminador nulo
+        Serial.println(receivedMessage);
+
+        // Reiniciar el índice del mensaje
+        messageIndex = 0;
+      } else {
+        // Almacenar el carácter en el buffer del mensaje
+        if (messageIndex < MAX_MESSAGE_SIZE - 1) {
+          receivedMessage[messageIndex++] = receivedChar;
+        }
+      }
+    }
   }
 };
 
 void initBLE() {
-
   // Create the BLE Device
-  BLEDevice::init(bleServerName);
+  BLEDevice::init("ESP32-server");
 
-  // // Create the BLE Server
+  // Create the BLE Server
   pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
@@ -101,11 +124,10 @@ void initBLE() {
     CHARACTERISTIC_UUID,
     BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE);
 
-  // // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
-  // // Create a BLE Descriptor
+  // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
+  // Create a BLE Descriptor
   pCharacteristic->addDescriptor(new BLE2902());
-
-  // pCharacteristic->setValue("Hello, World!");
+  pCharacteristic->setCallbacks(new MyCaracteristicCallbacks());
 
   // Start the service
   pService->start();
@@ -113,9 +135,11 @@ void initBLE() {
   // Start advertising
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(SERVICE_UUID);
-  pAdvertising->setScanResponse(true);
+  pAdvertising->setScanResponse(false);
   pAdvertising->setMinPreferred(0x0);  // set value to 0x00 to not advertise this parameter
   BLEDevice::startAdvertising();
+
+  Serial.println("Waiting a client connection to notify...");
 }
 
 void setup() {
@@ -276,6 +300,7 @@ void game() {
 // *********************************************************************************************************
 
 void connectBLE() {
+  // notify changed value
   if (deviceConnected) {
     pCharacteristic->setValue((uint8_t *)&value, 4);
     pCharacteristic->notify();
@@ -286,13 +311,14 @@ void connectBLE() {
   if (!deviceConnected && oldDeviceConnected) {
     delay(500);                   // give the bluetooth stack the chance to get things ready
     pServer->startAdvertising();  // restart advertising
-    Serial.println("start advertising");
+    // Serial.println("start advertising");
     oldDeviceConnected = deviceConnected;
   }
   // connecting
   if (deviceConnected && !oldDeviceConnected) {
     // do stuff here on connecting
     oldDeviceConnected = deviceConnected;
+    Serial.println("client connected");
   }
 }
 

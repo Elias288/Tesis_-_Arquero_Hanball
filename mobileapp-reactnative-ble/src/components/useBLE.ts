@@ -20,12 +20,14 @@ interface BluetoothLowEnergyApi {
   connectedDevice: Device | null;
   espDevice: Device | undefined;
   BLEmsg: string | BleError;
+  espStatus: Boolean;
 }
 
 function useBLE(): BluetoothLowEnergyApi {
   const bleManager = useMemo(() => new BleManager(), []);
   const [espDevice, setEspDevice] = useState<Device>();
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [bleStatus, setbleStatus] = useState<Boolean>(false);
   const [BLEmsg, setMsg] = useState<string | BleError>('');
 
   const requestAndroid31Permissions = async () => {
@@ -86,6 +88,7 @@ function useBLE(): BluetoothLowEnergyApi {
   const scanAndConnectPeripherals = () => {
     const suscription = bleManager.onStateChange((state) => {
       if (state === 'PoweredOn') {
+        setbleStatus(true);
         // ****************************** Si el bluetooth está a encendido ******************************
         bleManager.stopDeviceScan();
         setMsg('Scanning...');
@@ -141,6 +144,7 @@ function useBLE(): BluetoothLowEnergyApi {
         }, 10000);
       } else if (state === 'PoweredOff') {
         // ******************************* si el bluetooth está a pagado *******************************
+        setbleStatus(false);
         setMsg('Bluetooth off');
       }
     }, true);
@@ -181,7 +185,7 @@ function useBLE(): BluetoothLowEnergyApi {
     try {
       messageChunks.map((msgChunk) => {
         const msgBase64 = base64.encode(msgChunk);
-        console.log(`sending ${msgChunk} (${msgBase64}) to: ${device.name} ${device.mtu}`);
+        console.log(`sending \"${msgChunk} (${msgBase64})\" to: ${device.name} ${device.mtu}`);
         if (device) {
           device
             .writeCharacteristicWithoutResponseForService(
@@ -201,11 +205,12 @@ function useBLE(): BluetoothLowEnergyApi {
   };
 
   const formatMSG = (deviceMtuSize: number, message: string): Array<string> => {
+    const formatedMSG = `${message}\n`;
     const chunkSize = deviceMtuSize - 3;
     const chunks = [];
 
-    for (let i = 0; i < message.length; i += chunkSize) {
-      chunks.push(message.slice(i, i + chunkSize));
+    for (let i = 0; i < formatedMSG.length; i += chunkSize) {
+      chunks.push(formatedMSG.slice(i, i + chunkSize));
     }
 
     return chunks;
@@ -220,6 +225,7 @@ function useBLE(): BluetoothLowEnergyApi {
     connectedDevice,
     espDevice,
     BLEmsg,
+    espStatus: bleStatus,
   };
 }
 

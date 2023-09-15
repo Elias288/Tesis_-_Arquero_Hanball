@@ -16,13 +16,16 @@ const Main = () => {
     BLEmsg,
     espDevice,
     connectedDevice,
+    espStatus,
   } = useBLE();
 
   const [message, setmessage] = useState<string>('');
 
   useEffect(() => {
-    scanForDevices();
-  }, []);
+    if (espStatus) {
+      scanForDevices();
+    }
+  }, [espStatus]);
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
