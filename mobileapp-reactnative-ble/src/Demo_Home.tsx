@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button, PaperProvider, TextInput } from 'react-native-paper';
+import { Button, TextInput } from 'react-native-paper';
+import { BleError, Device } from 'react-native-ble-plx';
 
-import useBLE from './components/useBLE';
+type homeProps = {
+  requestPermissions(): Promise<boolean>;
+  scanAndConnectPeripherals(): void;
+  disconnectFromDevice: () => void;
+  sendData(device: Device, msg: string): Promise<void>;
+  connectedDevice: Device | undefined;
+  BLEmsg: string | BleError;
+  espStatus: Boolean;
+};
 
-const DemoHome = () => {
+const DemoHome = (props: homeProps) => {
   const {
     requestPermissions,
     scanAndConnectPeripherals,
     disconnectFromDevice,
-    connectToDevice,
     sendData,
-    BLEmsg,
-    espDevice,
     connectedDevice,
+    BLEmsg,
     espStatus,
-  } = useBLE();
+  } = props;
 
   const [message, setmessage] = useState<string>('');
 
+  // ********************************** al iniciar escanea y conecta **********************************
   useEffect(() => {
     if (!espStatus) {
       scanForDevices();
@@ -32,67 +40,55 @@ const DemoHome = () => {
     }
   };
 
-  const connect = () => {
-    if (espDevice !== undefined) {
-      connectToDevice(espDevice);
-    }
-  };
-
   const sendDataToEsp = () => {
-    if (espDevice) {
-      sendData(espDevice, message);
+    if (connectedDevice) {
+      sendData(connectedDevice, message);
     }
   };
 
   return (
-    <PaperProvider>
-      <View style={styles.container}>
-        <Button onPress={() => scanForDevices()}>Scan</Button>
+    <View style={styles.container}>
+      <Button onPress={() => scanForDevices()}>Scan</Button>
 
-        {connectedDevice ? <Button onPress={() => disconnectFromDevice()}>Disconnect</Button> : ''}
-        {/* {!connectedDevice ?? <Button onPress={connect}>Conect</Button>} */}
+      {connectedDevice ? <Button onPress={() => disconnectFromDevice()}>Disconnect</Button> : ''}
 
-        <View style={{ alignItems: 'center' }}>
-          <Text>{connectedDevice !== null ? 'Conectado' : 'No conectado'}</Text>
-          <Text>{`${BLEmsg}`}</Text>
-        </View>
+      <View style={{ alignItems: 'center' }}>
+        <Text>{connectedDevice !== undefined ? 'Conectado' : 'No conectado'}</Text>
+        <Text>{`${BLEmsg}`}</Text>
+      </View>
 
+      <View style={styles.msgContainer}>
         <TextInput
-          style={{ marginHorizontal: 20 }}
+          style={{ marginHorizontal: 20, flex: 1 }}
           value={message}
+          placeholder="Mensaje"
           onChangeText={(newMessage) => setmessage(newMessage)}
         />
-        <Button onPress={() => sendDataToEsp()}>Send</Button>
+
+        <Button mode="contained" onPress={() => sendDataToEsp()}>
+          Send
+        </Button>
       </View>
-    </PaperProvider>
+    </View>
   );
 };
 
 /*********************************************** Styles ************************************************/
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#dbdbdb',
   },
-  ctaButton: {
-    backgroundColor: '#1aa70a',
-    justifyContent: 'center',
+  msgContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    backgroundColor: '#bebebe',
     alignItems: 'center',
-    height: 50,
-    marginHorizontal: 20,
     marginBottom: 5,
-    borderRadius: 8,
   },
   ctaButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-  },
-  flatlistContiner: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
   },
 });
 
