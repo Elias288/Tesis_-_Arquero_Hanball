@@ -5,8 +5,6 @@ import base64 from 'react-native-base64';
 
 import * as ExpoDevice from 'expo-device';
 
-// import base64 from "react-native-base64";
-
 const ESP32_NAME = 'ESP32-server';
 const ESP32_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const ESP32_CHARACTERISTIC_UUID = '00002a37-0000-1000-8000-00805f9b34fb';
@@ -14,10 +12,10 @@ const ESP32_CHARACTERISTIC_UUID = '00002a37-0000-1000-8000-00805f9b34fb';
 interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
   scanAndConnectPeripherals(): void;
-  connectToDevice: (deviceId: Device) => Promise<void>;
-  disconnectFromDevice: () => void;
+  connectToDevice(deviceId: Device): Promise<void>;
+  disconnectFromDevice(): void;
   sendData(device: Device, msg: string): Promise<void>;
-  connectedDevice: Device | null;
+  connectedDevice: Device | undefined;
   espDevice: Device | undefined;
   BLEmsg: string | BleError;
   espStatus: Boolean;
@@ -26,7 +24,7 @@ interface BluetoothLowEnergyApi {
 function useBLE(): BluetoothLowEnergyApi {
   const bleManager = useMemo(() => new BleManager(), []);
   const [espDevice, setEspDevice] = useState<Device>();
-  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [connectedDevice, setConnectedDevice] = useState<Device>();
   const [bleStatus, setbleStatus] = useState<Boolean>(false);
   const [BLEmsg, setMsg] = useState<string | BleError>('');
 
@@ -156,13 +154,11 @@ function useBLE(): BluetoothLowEnergyApi {
       .then((device) => {
         return device.discoverAllServicesAndCharacteristics();
       })
-      .then(async (device) => {
-        const services = device.services();
-        const serviceUUIs = (await services).map((service) => service.uuid);
-        setConnectedDevice(device);
-        console.log(`Conectado a: ${device.id}`);
+      .then(async (connectedDevice) => {
+        console.log(`Conectado a: ${connectedDevice.id}`);
+        setConnectedDevice(connectedDevice);
 
-        sendData(device, 'react native conectado');
+        sendData(connectedDevice, 'react native conectado');
       })
       .catch((e) => {
         console.log('FAILED TO CONNECT', e);
@@ -174,7 +170,7 @@ function useBLE(): BluetoothLowEnergyApi {
   const disconnectFromDevice = () => {
     if (connectedDevice) {
       bleManager.cancelDeviceConnection(connectedDevice.id);
-      setConnectedDevice(null);
+      setConnectedDevice(undefined);
       setMsg('ESP32-server disconnected');
     }
   };
