@@ -83,4 +83,3 @@ npx expo prebuild
 ```bash
 npx expo run:android
 ```
-
