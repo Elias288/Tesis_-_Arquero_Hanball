@@ -1,6 +1,6 @@
-/* 
-* Este contexto comparte entre todos sus componentes hijos la logica de los estados de useBLE.tsx y sus datos
-*/
+/*
+ * Este contexto comparte entre todos sus componentes hijos la logica de los estados de useBLE.tsx y sus datos
+ */
 
 import { createContext, FC, ReactNode, useContext } from 'react';
 import useBLE from '../components/useBLE';
@@ -19,7 +19,7 @@ type CustomData = {
 
 const BLEContext = createContext<CustomData | undefined>(undefined);
 
-export function useCustomBLE() {
+export function useCustomBLEProvider() {
   const context = useContext(BLEContext);
   if (!context) {
     throw new Error('useCustomDataCtx debe ser utilizado dentro de un CustomDataProvider');
@@ -27,7 +27,7 @@ export function useCustomBLE() {
   return context;
 }
 
-const BleContext: React.FC<{children: ReactNode;}> = ({ children }) => {
+const BleContext: React.FC<{ children: ReactNode }> = ({ children }) => {
   const {
     requestPermissions,
     scanAndConnectPeripherals,
