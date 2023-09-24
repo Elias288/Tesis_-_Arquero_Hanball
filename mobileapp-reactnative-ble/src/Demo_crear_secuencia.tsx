@@ -2,17 +2,15 @@ import { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { Text, Button, TextInput } from 'react-native-paper';
 import { Device } from 'react-native-ble-plx';
+import { useCustomBLEProvider } from './utils/BLEProvider';
 
 type secuencia = { id: string; ledId: string; time: string };
 
-type crearSecuenciaProps = {
-  connectedDevice: Device | undefined;
-  sendData(device: Device, msg: string): Promise<void>;
-};
-
-const DemoCrearSecuenca = ({ connectedDevice, sendData }: crearSecuenciaProps) => {
+const DemoCrearSecuenca = () => {
   const [secuencia, setSecuencia] = useState<secuencia[]>();
   const [secuenciaFormateada, setsecuenciaFormateada] = useState<string>('');
+
+  const { sendData, connectedDevice } = useCustomBLEProvider();
 
   const pushSecuencia = (ledId: string, time: string) => {
     if (secuencia?.length) {
