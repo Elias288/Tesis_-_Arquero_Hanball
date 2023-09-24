@@ -89,10 +89,8 @@ void initBLE() {
 void connectBLE() {
   // notify changed value
   if (deviceConnected) {
-    pCharacteristic->setValue((uint8_t *)&value, 4);
-    pCharacteristic->notify();
-    value++;
-    delay(3);  // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
+    sendData("saludo desde ESP32");
+    delay(5000);  // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
   }
   // disconnecting
   if (!deviceConnected && oldDeviceConnected) {
@@ -109,19 +107,7 @@ void connectBLE() {
   }
 }
 
-void sendData(int txValue) {
-  //--- Envio de Datos -----------------------------
-  //--- Conversion de txValue ----------------------
-  char txString[10];
-  sprintf(txString, "%4.4f", txValue);
-  // dtostrf(txValue,1,2, txString);
-
-  //--- Set Valor ----------------------------------
-  pCharacteristic->setValue(txString);
-
-  //--- Notifying the client -----------------------
+void sendData(std::string txValue) {
+  pCharacteristic->setValue(txValue);
   pCharacteristic->notify();
-
-  //--- Valor enviado ------------------------------
-  Serial.println("Sent value: " + String(txString));
 }

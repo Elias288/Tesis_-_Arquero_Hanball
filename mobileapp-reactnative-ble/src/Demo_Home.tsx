@@ -11,6 +11,7 @@ type homeProps = {
   connectedDevice: Device | undefined;
   BLEmsg: string | BleError;
   espStatus: Boolean;
+  receivedMSG: string;
 };
 
 const DemoHome = (props: homeProps) => {
@@ -22,6 +23,7 @@ const DemoHome = (props: homeProps) => {
     connectedDevice,
     BLEmsg,
     espStatus,
+    receivedMSG,
   } = props;
 
   const [message, setmessage] = useState<string>('');
@@ -55,6 +57,7 @@ const DemoHome = (props: homeProps) => {
       <View style={{ alignItems: 'center' }}>
         <Text>{connectedDevice !== undefined ? 'Conectado' : 'No conectado'}</Text>
         <Text>{`${BLEmsg}`}</Text>
+        <Text>received msg: {receivedMSG}</Text>
       </View>
 
       <View style={styles.msgContainer}>

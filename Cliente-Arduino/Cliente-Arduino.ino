@@ -149,7 +149,7 @@ void game() {
       gameRun = false;
       Serial.println("Game over");
       if (deviceConnected) {
-        sendData(1);
+        sendData("1");
       }
     }
 

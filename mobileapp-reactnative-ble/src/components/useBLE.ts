@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
-import { BleError, BleManager, Device } from 'react-native-ble-plx';
+import { BleError, BleManager, Characteristic, Device } from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
 
 import * as ExpoDevice from 'expo-device';
@@ -19,6 +19,7 @@ interface BluetoothLowEnergyApi {
   espDevice: Device | undefined;
   BLEmsg: string | BleError;
   espStatus: Boolean;
+  receivedMSG: string;
 }
 
 function useBLE(): BluetoothLowEnergyApi {
@@ -27,6 +28,7 @@ function useBLE(): BluetoothLowEnergyApi {
   const [connectedDevice, setConnectedDevice] = useState<Device>();
   const [bleStatus, setbleStatus] = useState<Boolean>(false);
   const [BLEmsg, setMsg] = useState<string | BleError>('');
+  const [receivedMSG, setReceivedMSG] = useState<string>('');
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -157,7 +159,7 @@ function useBLE(): BluetoothLowEnergyApi {
       .then(async (connectedDevice) => {
         console.log(`Conectado a: ${connectedDevice.id}`);
         setConnectedDevice(connectedDevice);
-
+        readData(connectedDevice);
         sendData(connectedDevice, 'react native conectado');
       })
       .catch((e) => {
@@ -172,6 +174,7 @@ function useBLE(): BluetoothLowEnergyApi {
       bleManager.cancelDeviceConnection(connectedDevice.id);
       setConnectedDevice(undefined);
       setMsg('ESP32-server disconnected');
+      setReceivedMSG('');
     }
   };
 
@@ -200,6 +203,30 @@ function useBLE(): BluetoothLowEnergyApi {
     }
   };
 
+  const readData = async (device: Device) => {
+    if (device) {
+      device.monitorCharacteristicForService(
+        ESP32_SERVICE_UUID,
+        ESP32_CHARACTERISTIC_UUID,
+        (error, characteristic) => {
+          if (characteristic !== null) {
+            setReceivedMSG(base64.decode(characteristic.value ?? ''));
+            // console.log('Receivde msg: ' + base64.decode(characteristic.value ?? ''));
+          }
+        }
+      );
+
+      device
+        .readCharacteristicForService(ESP32_SERVICE_UUID, ESP32_CHARACTERISTIC_UUID)
+        .then((valec) => {
+          setReceivedMSG(base64.decode(valec.value ?? ''));
+          console.log(base64.decode(valec.value ?? ''));
+        });
+    } else {
+      setMsg('not connected device');
+    }
+  };
+
   const formatMSG = (deviceMtuSize: number, message: string): Array<string> => {
     const formatedMSG = `${message}\n`;
     const chunkSize = deviceMtuSize - 3;
@@ -222,6 +249,7 @@ function useBLE(): BluetoothLowEnergyApi {
     espDevice,
     BLEmsg,
     espStatus: bleStatus,
+    receivedMSG,
   };
 }
 

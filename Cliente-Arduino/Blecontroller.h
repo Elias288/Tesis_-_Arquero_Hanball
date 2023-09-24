@@ -9,7 +9,7 @@
 
 void initBLE();
 void connectBLE();
-void sendData(String);
-void sendData(int)
+void sendData(std::string);
+void sendData(int);
 
 #endif

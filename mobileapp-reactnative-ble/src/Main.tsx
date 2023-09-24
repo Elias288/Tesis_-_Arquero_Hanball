@@ -16,6 +16,7 @@ const Main = () => {
     BLEmsg,
     connectedDevice,
     espStatus,
+    receivedMSG
   } = useBLE();
 
   return (
@@ -31,6 +32,7 @@ const Main = () => {
           connectedDevice={connectedDevice}
           espStatus={espStatus}
           BLEmsg={BLEmsg}
+          receivedMSG={receivedMSG}
         />
 
         <DemoCrearSecuenca connectedDevice={connectedDevice} sendData={sendData} />
