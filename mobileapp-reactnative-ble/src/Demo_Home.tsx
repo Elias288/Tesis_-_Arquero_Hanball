@@ -23,11 +23,11 @@ const DemoHome = (props: propsType) => {
   const [message, setmessage] = useState<string>('');
 
   // ********************************** al iniciar escanea y conecta **********************************
-  useEffect(() => {
-    if (!espStatus) {
-      scanForDevices();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!espStatus) {
+  //     scanForDevices();
+  //   }
+  // }, []);
 
   const scanForDevices = async () => {
     const isPermissionsEnabled = await requestPermissions();
@@ -38,7 +38,7 @@ const DemoHome = (props: propsType) => {
 
   const sendDataToEsp = () => {
     if (connectedDevice) {
-      sendData(connectedDevice, message);
+      sendData(connectedDevice, `inMsg:${message}`);
     }
   };
 

@@ -27,7 +27,7 @@ const DemoCrearSecuenca = () => {
   }, [secuencia]);
 
   const sendFormatedSecuencia = () => {
-    if (connectedDevice) sendData(connectedDevice, secuenciaFormateada);
+    if (connectedDevice) sendData(connectedDevice, `secuence:${secuenciaFormateada}`);
   };
 
   return (
