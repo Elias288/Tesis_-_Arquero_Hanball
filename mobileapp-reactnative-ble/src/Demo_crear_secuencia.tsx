@@ -4,19 +4,20 @@ import { Text, Button, TextInput } from 'react-native-paper';
 import { Device } from 'react-native-ble-plx';
 import { useCustomBLEProvider } from './utils/BLEProvider';
 
-type secuencia = { id: string; ledId: string; time: string };
+type secuencia = { id: string; ledId: string; time: number };
 
 const DemoCrearSecuenca = () => {
-  const [secuencia, setSecuencia] = useState<secuencia[]>();
+  const [secuencia, setSecuencia] = useState<secuencia[]>([]);
+  const [cont, setCont] = useState<number>(0);
   const [secuenciaFormateada, setsecuenciaFormateada] = useState<string>('');
 
   const { sendData, connectedDevice } = useCustomBLEProvider();
 
   const pushSecuencia = (ledId: string, time: string) => {
     if (secuencia?.length) {
-      setSecuencia([...secuencia, { id: `${secuencia.length + 1}`, ledId, time }]);
+      setSecuencia([...secuencia, { id: `${secuencia.length + 1}`, ledId, time: +time }]);
     } else {
-      setSecuencia([{ id: '1', ledId, time }]);
+      setSecuencia([{ id: '1', ledId, time: +time }]);
     }
   };
 
@@ -26,8 +27,23 @@ const DemoCrearSecuenca = () => {
       setsecuenciaFormateada(secuencia.map((item) => `${item.ledId},${item.time}`).join(';'));
   }, [secuencia]);
 
-  const sendFormatedSecuencia = () => {
-    if (connectedDevice) sendData(connectedDevice, `secuence:${secuenciaFormateada}`);
+  const sendFormatedSecuencia = async () => {
+    if (connectedDevice) {
+      sendData(connectedDevice, `secuence:${secuenciaFormateada};`);
+
+      /* for(const par of secuencia) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, par.time); // Espera el tiempo indicado
+        });
+
+        console.log(`send: par:${par.ledId},${par.time};`);
+        sendData(connectedDevice, `par:${par.ledId},${par.time};`);
+      }
+
+      // if (cont == secuencia.length) {
+        sendData(connectedDevice, `par:end`);
+      // } */
+    }
   };
 
   return (
@@ -37,7 +53,7 @@ const DemoCrearSecuenca = () => {
 
       <SecuenciaInput addSecuencia={pushSecuencia} />
 
-      <Text>{secuenciaFormateada}</Text>
+      <Text>{JSON.stringify(secuencia, null, 4)}</Text>
       <Button mode="contained" onPress={sendFormatedSecuencia}>
         Enviar
       </Button>

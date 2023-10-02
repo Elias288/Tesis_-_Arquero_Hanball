@@ -36,57 +36,59 @@ void initComponents() {
 }
 
 int indiceActual = 0;  // posicion de la lista de secuencia
+int indiceToSecuenciaDeReaccion = 0;
 bool gameRun = false;  // indicador de juego ejecutandose
 bool startGame = false;
 int blinkCount = 2;
 int buttonpressed = 0;        // indicador de boton pulsao
 unsigned long startTime = 0;  // tiempo de inicio
-int** secuenciaDeReaccion = new int*[2];
 
 void blink() {
   for (int i = 0; i < getCantComps(); i++) {
     digitalWrite(LEDPinArray[i], HIGH);
   }
-  delay(1000);
+  delay(500);
 
   for (int i = 0; i < getCantComps(); i++) {
     digitalWrite(LEDPinArray[i], LOW);
   }
-  delay(1000);
+  Serial.println("Blink");
+  delay(500);
 }
 
 // ******************************************** Imprimir tiempo ********************************************
 unsigned long startTime2 = 0;
 void printTime(long currentTime, int indiceActual) {
-  int** secuenceMatrix = getSecuenceMatrix();
-
+  Serial.print(indiceActual);
+  Serial.print(" - ");
   Serial.print("Led: [");
-  Serial.print(secuenceMatrix[indiceActual][0] + 1);
+  Serial.print(getSecuenceMatrix(indiceActual, 0).toInt() + 1);
   Serial.print("][");
-  Serial.print(secuenceMatrix[indiceActual][1]);
+  Serial.print(getSecuenceMatrix(indiceActual, 1).toInt());
   Serial.print("] - ");
   Serial.println((float)currentTime / 1000);
   startTime2 = currentTime;
 }
 
 // ************************************** Crea la lista de resultados **************************************
-int indiceSecuencia = 0;
-void pushToSecuenciaDeReaccion(int led, long time) {
-  secuenciaDeReaccion[indiceSecuencia][0] = led;
-  secuenciaDeReaccion[indiceSecuencia][1] = time;
+// int indiceSecuencia = 0;
+// void pushToSecuenciaDeReaccion(String led, long time) {
+//   secuenciaDeReaccion[indiceSecuencia][0] = led;
+//   secuenciaDeReaccion[indiceSecuencia][1] = time;
 
-  Serial.print(indiceSecuencia);
-  Serial.print("- led: ");
-  Serial.print(led);
-  Serial.print("- time: ");
-  Serial.println(time);
+//   Serial.print(indiceSecuencia);
+//   Serial.print("- led: ");
+//   Serial.print(led);
+//   Serial.print("- time: ");
+//   Serial.println(time);
 
-  indiceSecuencia++;
-}
+//   indiceSecuencia++;
+// }
 
 // ******************************************* Función Principal *******************************************
 void game() {
   if (getInitGame()) {
+    indiceActual = 0;
     blink();
     blinkCount = blinkCount - 1;
 
@@ -96,46 +98,56 @@ void game() {
     }
   }
   if (gameRun) {
-    int** secuenceMatrix = getSecuenceMatrix();
     unsigned long currentTime = millis();
 
-    // si el indice actual llega al final de la secuencia
-    if (indiceActual >= (sizeof(secuenceMatrix) / sizeof(secuenceMatrix[0]))) {
+    // ************************ Si el indice actual llega al final de la secuencia ************************
+    if (indiceActual >= 10 || getSecuenceMatrix(indiceActual, 0) == "") {
+      blink();
+      setInitGame(false);
       gameRun = false;
       Serial.println("Game over");
-      if (isDeviceConnected()) {
-        sendData("1");
-      }
+      blinkCount = 2;
+      return;
+      // if (isDeviceConnected()) {
+      //   sendData("1");
+      // }
     }
 
-    // si el tiempo actual menos el tiempo de inicio es mayor o igual al tiempo en segundos
-    if (startTime != 0 && currentTime - startTime >= secuenceMatrix[indiceActual][1]) {
-      digitalWrite(LEDPinArray[secuenceMatrix[indiceActual][0]], LOW);  // Apagar el LED actual
+    // ******* Si el tiempo actual menos el tiempo de inicio es mayor o igual al tiempo en segundos *******
+    if (startTime != 0 && currentTime - startTime >= getSecuenceMatrix(indiceActual, 1).toInt()) {
+      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], LOW);  // Apagar el LED actual
       buttonpressed = 0;
 
-      indiceActual = (indiceActual + 1);  // Cambiar al siguiente LED
+      indiceActual++;  // Cambiar al siguiente LED
 
-      digitalWrite(LEDPinArray[secuenceMatrix[indiceActual][0]], HIGH);  // Encender el siguiente LED
-      startTime = currentTime;
+      if (getSecuenceMatrix(indiceActual, 0) != "") {
+        digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], HIGH);  // Encender el siguiente LED
+
+        startTime = currentTime;
+      } else {
+        return;
+      }
     } else if (startTime == 0) {
-      digitalWrite(LEDPinArray[secuenceMatrix[indiceActual][0]], HIGH);  // Encender el primer LED
+      Serial.println("first on");
+      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], HIGH);  // Encender el primer LED
       startTime = currentTime;
     }
 
-    if (currentTime - startTime2 >= secuenceMatrix[indiceActual][1]) {
+    if (currentTime - startTime2 >= 1000) {
       printTime(currentTime, indiceActual);
       startTime2 = currentTime;
     }
 
-    // imprime el tiempo de reaccion
-    if (digitalRead(BUTTONPinArray[secuenceMatrix[indiceActual][0]]) == HIGH && buttonpressed == 0) {
+    // ********************************** imprime el tiempo de reaccion **********************************
+    if (digitalRead(BUTTONPinArray[getSecuenceMatrix(indiceActual, 0).toInt()]) == HIGH && buttonpressed == 0) {
       unsigned long buttonPressTime = currentTime - startTime;
       Serial.print("Tiempo de reacción: ");
       Serial.print(((float)buttonPressTime / 1000));
       Serial.println("s");
       buttonpressed = 1;
 
-      pushToSecuenciaDeReaccion(secuenceMatrix[indiceActual][0], buttonPressTime);
+      pushToSecuenciaDeReaccion(indiceToSecuenciaDeReaccion, getSecuenceMatrix(indiceActual, 0), String(buttonPressTime));
+      indiceToSecuenciaDeReaccion++;
     }
   }
 }

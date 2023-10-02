@@ -15,7 +15,10 @@ bool oldDeviceConnected = false;
 uint32_t value = 0;
 
 bool initGame = false;
-int **secuenceMatrix = new int *[2];
+// int **secuenceMatrix = new int *[2];
+const int maxPairs = 10;
+String matrix[maxPairs][2];
+String secuenciaDeReaccion[maxPairs][2];
 
 class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer *pServer) {
@@ -57,27 +60,49 @@ void setInitGame(bool val) {
   initGame = val;
 }
 
-int **getSecuenceMatrix() {
-  return secuenceMatrix;
+String getSecuenceMatrix(int fila, int columna) {
+  if (fila >= 0 && fila < 10 && columna >= 0 && columna < 2) {
+    return matrix[fila][columna];
+  } else {
+    return "";  // Devolver una cadena vacía si las coordenadas están fuera de rango
+  }
 }
 
-void setSecuenceMatrix(char *inputString, int **matrix) {
-  int row = 0;
-  int col = 0;
-  char *token = strtok(inputString, ";");  // Dividir la cadena en filas usando ;
+void pushToSecuenciaDeReaccion(int indiceSecuencia, String led, String time) {
+  secuenciaDeReaccion[indiceSecuencia][0] = led;
+  secuenciaDeReaccion[indiceSecuencia][1] = time;
+}
 
-  while (token != NULL && row < 2) {
-    int col = 0;
-    char *valueToken = strtok(token, ",");
-    while (valueToken != NULL && col < 2) {
-      Serial.println(strtol(valueToken, NULL, 10));
+void setSecuenceMatrix(String input) {
+  int pairIndex = 0;
+  String pair = "";
 
-      matrix[row][col] = strtol(valueToken, NULL, 10);  // Convertir la subcadena en un número entero
-      valueToken = strtok(NULL, ",");
-      col++;
+  // Recorrer la cadena
+  for (int i = 0; i < input.length(); i++) {
+    char c = input.charAt(i);
+
+    if (c == ';') {
+      // Se encontró un separador ';', dividir la subcadena en "led" y "time"
+      int commaIndex = pair.indexOf(',');
+      if (commaIndex != -1) {
+        String ledStr = pair.substring(0, commaIndex);
+        String timeStr = pair.substring(commaIndex + 1);
+
+        // Convertir las cadenas a enteros y almacenar en la matriz
+        matrix[pairIndex][0] = ledStr;
+        matrix[pairIndex][1] = timeStr;
+
+        /* Serial.print(pairIndex);
+        Serial.print("= ");
+        Serial.print(ledStr);
+        Serial.print(": ");
+        Serial.println(timeStr); */
+        pairIndex++;
+      }
+      pair = "";  // Restablecer la subcadena
+    } else {
+      pair += c;  // Agregar caracteres a la subcadena
     }
-    row++;
-    token = strtok(NULL, ";");
   }
 }
 
@@ -86,7 +111,7 @@ int getCantComps() {
 }
 
 // ************************************* Redirige el mensaje segun su tipo *************************************
-void redirectMSG(std::string inMsg) {
+void redirectMSG(String inMsg) {
   /*
    * FORMATO DE MENSAJE RECIBIDO
    * funcion1:content1\tfuncion2:content2\t...\n
@@ -107,12 +132,20 @@ void redirectMSG(std::string inMsg) {
         Serial.print("starting game: ");
         Serial.println(content);
 
-        setSecuenceMatrix(content, secuenceMatrix);
-        
-        Serial.print(secuenceMatrix[0][0]);
-        Serial.print(": ");
-        Serial.println(secuenceMatrix[0][1]);
-        // setInitGame(true);
+        // Inicializar la matriz
+        for (int i = 0; i < maxPairs; i++) {
+          matrix[i][0] = "";
+          matrix[i][1] = "";
+        }
+        for (int i = 0; i < maxPairs; i++) {
+          secuenciaDeReaccion[i][0] = "";
+          secuenciaDeReaccion[i][1] = "";
+        }
+
+        String stringContent = String(content);
+        setSecuenceMatrix(stringContent);
+
+        setInitGame(true);
         return;
       }
       if (strcmp(function, "startGame") == 0) {

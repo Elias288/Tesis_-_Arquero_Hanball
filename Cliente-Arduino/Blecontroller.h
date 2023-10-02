@@ -12,13 +12,14 @@ void connectBLE();
 void sendData(std::string);
 void sendData(int);
 void unpackMSG(std::string);
-void redirectMSG(std::string);
+void redirectMSG(String);
 bool isDeviceConnected();
 bool isOldDeviceConnected();
 bool getInitGame();
 void setInitGame(bool);
-int** getSecuenceMatrix();
-void setSecuenceMatrix(std::string);
+String getSecuenceMatrix(int, int);
+void pushToSecuenciaDeReaccion(int, String, String);
+void setSecuenceMatrix(String);
 int getCantComps();
 std::string getReceivedMsg();
 
