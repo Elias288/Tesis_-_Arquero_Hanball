@@ -112,7 +112,7 @@ function useBLE(): BluetoothLowEnergyApi {
               // conecta el dispositivo
               device.isConnected().then((state) => {
                 if (!state) {
-                  console.log('connecting to device');
+                  // console.log('connecting to device');
 
                   connectToDevice(device);
                 } else {
@@ -122,7 +122,7 @@ function useBLE(): BluetoothLowEnergyApi {
                     console.log(device);
                   });
 
-                  console.log('already connected to device');
+                  // console.log('already connected to device');
                 }
               });
             }

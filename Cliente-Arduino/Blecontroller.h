@@ -8,7 +8,7 @@
 #include <BLE2902.h>
 
 void initBLE();
-void connectBLE();
+void connectBLE(const byte*, const byte*);
 void sendData(std::string);
 void sendData(int);
 void unpackMSG(std::string);
@@ -20,7 +20,6 @@ void setInitGame(bool);
 String getSecuenceMatrix(int, int);
 void pushToSecuenciaDeReaccion(int, String, String);
 void setSecuenceMatrix(String);
-int getCantComps();
 std::string getReceivedMsg();
 
 #endif

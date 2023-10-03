@@ -2,8 +2,39 @@
 * Necesitamos configurar la placa ESP32 como servidor BLE que reciba una secuencia, ejecute el
 * el juego y envie una respuesta hacia el celular.
 */
+#define LED_1 19
+#define LED_2 18
+#define LED_3 5
+#define LED_4 17
+
+#define BUTTON_1 34
+#define BUTTON_2 35
+#define BUTTON_3 32
+#define BUTTON_4 25
+
+#define CANT_CAMPS 4
+
 #include "Blecontroller.h"
-#include "Game.h"
+
+const byte LEDPinArray[4] = {
+  LED_1,
+  LED_2,
+  LED_3,
+  LED_4
+};
+const byte BUTTONPinArray[4] = {
+  BUTTON_1,
+  BUTTON_2,
+  BUTTON_3,
+  BUTTON_4
+};
+
+void initComponents() {
+  for (int i = 0; i < CANT_CAMPS; i++) {
+    pinMode(LEDPinArray[i], OUTPUT);
+    pinMode(BUTTONPinArray[i], INPUT);
+  }
+}
 
 void setup() {
   Serial.begin(115200);
@@ -11,35 +42,7 @@ void setup() {
   initComponents();
 }
 
-// ************************************* funcion para testear botones *************************************
-void inout() {
-  if (digitalRead(BUTTON_1) == HIGH) {
-    Serial.println("led1");
-    digitalWrite(LED_1, HIGH);
-  }
-  if (digitalRead(BUTTON_2) == HIGH) {
-    Serial.println("led2");
-    digitalWrite(LED_2, HIGH);
-  }
-  if (digitalRead(BUTTON_3) == HIGH) {
-    Serial.println("led3");
-    digitalWrite(LED_3, HIGH);
-  }
-  if (digitalRead(BUTTON_4) == HIGH) {
-    Serial.println("led4");
-    digitalWrite(LED_4, HIGH);
-  }
-
-  delay(100);
-  digitalWrite(LED_1, LOW);
-  digitalWrite(LED_2, LOW);
-  digitalWrite(LED_3, LOW);
-  digitalWrite(LED_4, LOW);
-}
 
 void loop() {
-  // blink();
-  connectBLE();
-  game();
-  // inout();
+  connectBLE(LEDPinArray, BUTTONPinArray);
 }

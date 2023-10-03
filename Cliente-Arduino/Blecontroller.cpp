@@ -1,10 +1,10 @@
 #include "Blecontroller.h"
+#include "Game.h"
 
 #define SERVICE_UUID "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID "00002a37-0000-1000-8000-00805f9b34fb"
 #define bleServerName "ESP32-server v2"
 
-int CANT_COMPS = 4;
 const int MAX_MESSAGE_SIZE = 512;
 char receivedMessage[MAX_MESSAGE_SIZE];
 int messageIndex = 0;
@@ -15,7 +15,6 @@ bool oldDeviceConnected = false;
 uint32_t value = 0;
 
 bool initGame = false;
-// int **secuenceMatrix = new int *[2];
 const int maxPairs = 10;
 String matrix[maxPairs][2];
 String secuenciaDeReaccion[maxPairs][2];
@@ -106,10 +105,6 @@ void setSecuenceMatrix(String input) {
   }
 }
 
-int getCantComps() {
-  return CANT_COMPS;
-}
-
 // ************************************* Redirige el mensaje segun su tipo *************************************
 void redirectMSG(String inMsg) {
   /*
@@ -129,7 +124,7 @@ void redirectMSG(String inMsg) {
 
     if (function != NULL && content != NULL) {
       if (strcmp(function, "secuence") == 0) {
-        Serial.print("starting game: ");
+        Serial.print("Secuencia: ");
         Serial.println(content);
 
         // Inicializar la matriz
@@ -219,11 +214,16 @@ void initBLE() {
 }
 
 // ***************************************** Funcion de conexión (loop) *****************************************
-void connectBLE() {
+int cantMsgSend = 1;
+void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // notify changed value
   if (deviceConnected) {
-    sendData("saludo desde ESP32");
-    delay(5000);  // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
+    if (cantMsgSend >= 1) {
+      sendData("saludo desde ESP32");
+      cantMsgSend--;
+    }
+
+    game(LEDPinArray, BUTTONPinArray);
   }
   // disconnecting
   if (!deviceConnected && oldDeviceConnected) {
