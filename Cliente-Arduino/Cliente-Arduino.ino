@@ -42,7 +42,6 @@ void setup() {
   initComponents();
 }
 
-
 void loop() {
   connectBLE(LEDPinArray, BUTTONPinArray);
 }

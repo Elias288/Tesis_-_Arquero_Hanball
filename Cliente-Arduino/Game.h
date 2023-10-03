@@ -3,44 +3,37 @@
 
 #include <Arduino.h>
 
-int indiceActual = 0; // posicion de la lista de secuencia
+int indiceActual = 0;          // posicion de la lista de secuencia
+int buttonpressed = 0;         // indicador de boton pulsao
+bool startGame = true;         // inicia el blink inicial del juego
+unsigned long startTime = 0;   // tiempo de inicio
+unsigned long startTime2 = 0;  // tiempo para mostrar en serial
 int indiceToSecuenciaDeReaccion = 0;
-bool startGame = true;
-int blinkCount = 2;
-int buttonpressed = 0;       // indicador de boton pulsao
-unsigned long startTime = 0; // tiempo de inicio
 
 // ********************************************************* blink *********************************************************
-void blink(int cantRep, long interval, const byte *LEDPinArray)
-{
+void blink(int cantRep, long interval, const byte *LEDPinArray) {
   /*
    * Esta función recibe la cantidad de veces que va a hacer el blik (prender y apagar), el intervalo que indica
    * cuanto tiempo demora el blink y el array de leds.
    */
   unsigned int contador = 0;
 
-  while (contador <= cantRep - 1)
-  {
+  while (contador <= cantRep - 1) {
     unsigned long currentMillis = millis();
     static unsigned long previousMillis = 0;
     static int ledState = LOW;
 
-    if (currentMillis - previousMillis >= interval)
-    {
+    if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
 
-      if (ledState == LOW)
-      {
+      if (ledState == LOW) {
         ledState = HIGH;
-      }
-      else
-      {
+      } else {
         ledState = LOW;
         contador++;
       }
 
-      for (int i = 0; i < 4; i++)
-      {
+      for (int i = 0; i < 4; i++) {
         digitalWrite(LEDPinArray[i], ledState);
       }
     }
@@ -48,9 +41,7 @@ void blink(int cantRep, long interval, const byte *LEDPinArray)
 }
 
 // **************************************************** Imprimir tiempo ****************************************************
-unsigned long startTime2 = 0;
-void printTime(long currentTime, int indiceActual)
-{
+void printTime(long currentTime, int indiceActual) {
   Serial.print(indiceActual);
   Serial.print(" - ");
   Serial.print("Led: [");
@@ -88,14 +79,20 @@ void printTime(long currentTime, int indiceActual)
   digitalWrite(LED_4, LOW);
 } */
 
+void resetAll() {
+  setInitGame(false);
+  indiceActual = 0;
+  indiceToSecuenciaDeReaccion = 0;
+  startTime = 0;
+  startTime2 = 0;
+  startGame = true;
+}
+
 // ******************************************************** Game 2 ********************************************************
-void game(const byte *LEDPinArray, const byte *BUTTONPinArray)
-{
+void game(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // ********************************************** si se recibe la secuencia **********************************************
-  if (getInitGame())
-  {
-    if (startGame)
-    {
+  if (getInitGame()) {
+    if (startGame) {
       // *********************************** Ejecuta el blink 4 veces antes de comenzar ***********************************
       blink(4, 1000, LEDPinArray);
       startGame = false;
@@ -103,12 +100,10 @@ void game(const byte *LEDPinArray, const byte *BUTTONPinArray)
     unsigned long currentTime = millis();
 
     // ******************** Si el indice actual llega al final de la secuencia o el resto están vacias ********************
-    if (indiceActual >= 10 || getSecuenceMatrix(indiceActual, 0) == "")
-    {
+    if (indiceActual >= 10 || getSecuenceMatrix(indiceActual, 0) == "") {
       blink(2, 1000, LEDPinArray);
-      setInitGame(false);
       Serial.println("Game over");
-      blinkCount = 2;
+      resetAll();
       return;
       // if (isDeviceConnected()) {
       //   sendData("1");
@@ -116,39 +111,33 @@ void game(const byte *LEDPinArray, const byte *BUTTONPinArray)
     }
 
     // *************** Si el tiempo actual menos el tiempo de inicio es mayor o igual al tiempo en segundos ***************
-    if (startTime != 0 && currentTime - startTime >= getSecuenceMatrix(indiceActual, 1).toInt())
-    {
-      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], LOW); // Apagar el LED actual
+    if (startTime != 0 && currentTime - startTime >= getSecuenceMatrix(indiceActual, 1).toInt()) {
+      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], LOW);  // Apagar el LED actual
       buttonpressed = 0;
 
-      indiceActual++; // Cambiar al siguiente LED
+      indiceActual++;  // Cambiar al siguiente LED
 
       // **************************************** si la secuencia actual está vacia ****************************************
-      if (getSecuenceMatrix(indiceActual, 0) == "")
-      {
+      if (getSecuenceMatrix(indiceActual, 0) == "") {
         return;
       }
 
-      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], HIGH); // Encender el siguiente LED
+      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], HIGH);  // Encender el siguiente LED
       startTime = currentTime;
 
       // ************************************************ primera ejecución ************************************************
-    }
-    else if (startTime == 0)
-    {
-      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], HIGH); // Encender el primer LED
+    } else if (startTime == 0) {
+      digitalWrite(LEDPinArray[getSecuenceMatrix(indiceActual, 0).toInt()], HIGH);  // Encender el primer LED
       startTime = currentTime;
     }
 
-    if (currentTime - startTime2 >= 1000)
-    {
+    if (currentTime - startTime2 >= 1000) {
       printTime(currentTime, indiceActual);
       startTime2 = currentTime;
     }
 
     // ********************************** imprime el tiempo de la secuencia cada segundo **********************************
-    if (digitalRead(BUTTONPinArray[getSecuenceMatrix(indiceActual, 0).toInt()]) == HIGH && buttonpressed == 0)
-    {
+    if (digitalRead(BUTTONPinArray[getSecuenceMatrix(indiceActual, 0).toInt()]) == HIGH && buttonpressed == 0) {
       unsigned long buttonPressTime = currentTime - startTime;
       Serial.print("Tiempo de reacción: ");
       Serial.print(((float)buttonPressTime / 1000));
