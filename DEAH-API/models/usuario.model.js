@@ -9,13 +9,21 @@ var UsuarioSchema = new Schema({
         type: ObjectID,
         auto: true
     },
-    nombre: {
+    username: {
         type: String,
+        required: true,
         validate: [
             function (name) {
                 return name.length <= 50;
             },
-            'El nombre no deberia exceder los 200 caracteres '],
+            'El nombre no deberia exceder los 50 caracteres '],
+    },
+    contrasenia: {
+        type: String,
+        required: true,
+    },
+    nombre: {
+        type: String,
     },
     rutinas: { type: ObjectID, ref: 'Rutina' },
 }, { versionKey: false });

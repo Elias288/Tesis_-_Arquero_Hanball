@@ -6,5 +6,6 @@ router.use('/resultado', require('./resultado.routes'));
 router.use('/rutina', require('./rutina.routes'));
 router.use('/secuencia', require('./secuencia.routes'));
 router.use('/usuario', require('./usuario.routes'));
+router.use('/Login', require('./login.routes'));
 
 module.exports = router;
