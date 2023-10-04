@@ -15,11 +15,8 @@ void unpackMSG(std::string);
 void redirectMSG(String);
 bool isDeviceConnected();
 bool isOldDeviceConnected();
-bool getInitGame();
-void setInitGame(bool);
-String getSecuenceMatrix(int, int);
-void pushToSecuenciaDeReaccion(int, String, String);
-void setSecuenceMatrix(String);
+// Get
 std::string getReceivedMsg();
+// Set
 
 #endif

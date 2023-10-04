@@ -14,11 +14,6 @@ bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
 
-bool initGame = false;
-const int maxPairs = 10;
-String matrix[maxPairs][2];
-String secuenciaDeReaccion[maxPairs][2];
-
 class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer *pServer) {
     deviceConnected = true;
@@ -51,60 +46,6 @@ std::string getReceivedMsg() {
   return receivedMessage;
 }
 
-bool getInitGame() {
-  return initGame;
-}
-
-void setInitGame(bool val) {
-  initGame = val;
-}
-
-String getSecuenceMatrix(int fila, int columna) {
-  if (fila >= 0 && fila < 10 && columna >= 0 && columna < 2) {
-    return matrix[fila][columna];
-  } else {
-    return "";  // Devolver una cadena vacía si las coordenadas están fuera de rango
-  }
-}
-
-void pushToSecuenciaDeReaccion(int indiceSecuencia, String led, String time) {
-  secuenciaDeReaccion[indiceSecuencia][0] = led;
-  secuenciaDeReaccion[indiceSecuencia][1] = time;
-}
-
-void setSecuenceMatrix(String input) {
-  int pairIndex = 0;
-  String pair = "";
-
-  // Recorrer la cadena
-  for (int i = 0; i < input.length(); i++) {
-    char c = input.charAt(i);
-
-    if (c == ';') {
-      // Se encontró un separador ';', dividir la subcadena en "led" y "time"
-      int commaIndex = pair.indexOf(',');
-      if (commaIndex != -1) {
-        String ledStr = pair.substring(0, commaIndex);
-        String timeStr = pair.substring(commaIndex + 1);
-
-        // Convertir las cadenas a enteros y almacenar en la matriz
-        matrix[pairIndex][0] = ledStr;
-        matrix[pairIndex][1] = timeStr;
-
-        /* Serial.print(pairIndex);
-        Serial.print("= ");
-        Serial.print(ledStr);
-        Serial.print(": ");
-        Serial.println(timeStr); */
-        pairIndex++;
-      }
-      pair = "";  // Restablecer la subcadena
-    } else {
-      pair += c;  // Agregar caracteres a la subcadena
-    }
-  }
-}
-
 // ************************************* Redirige el mensaje segun su tipo *************************************
 void redirectMSG(String inMsg) {
   /*
@@ -128,13 +69,11 @@ void redirectMSG(String inMsg) {
         Serial.println(content);
 
         // Inicializar la matriz
-        for (int i = 0; i < maxPairs; i++) {
-          matrix[i][0] = "";
-          matrix[i][1] = "";
+        for (int i = 0; i < getMaxPairs(); i++) {
+          pushToMatrix(i, "", "");
         }
-        for (int i = 0; i < maxPairs; i++) {
-          secuenciaDeReaccion[i][0] = "";
-          secuenciaDeReaccion[i][1] = "";
+        for (int i = 0; i < getMaxPairs(); i++) {
+          pushToSecuenciaDeReaccion(i, "", "");
         }
 
         String stringContent = String(content);
