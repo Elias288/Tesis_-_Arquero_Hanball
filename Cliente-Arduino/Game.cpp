@@ -10,6 +10,7 @@ const int maxPairs = 10;
 bool initGame = false;
 String matrix[maxPairs][2];
 String secuenciaDeReaccion[maxPairs][2];
+String respuesta = "";
 
 bool getInitGame() {
   return initGame;
@@ -23,9 +24,25 @@ void setInitGame(bool val) {
   initGame = val;
 }
 
+void setRespuesta(String res) {
+  respuesta = res;
+}
+
+String getRespuesta() {
+  return respuesta;
+}
+
 String getSecuenceMatrix(int fila, int columna) {
   if (fila >= 0 && fila < 10 && columna >= 0 && columna < 2) {
     return matrix[fila][columna];
+  } else {
+    return "";  // Devolver una cadena vacía si las coordenadas están fuera de rango
+  }
+}
+
+String getSecuenciaDeReaccion(int fila, int columna) {
+  if (fila >= 0 && fila < 10 && columna >= 0 && columna < 2) {
+    return secuenciaDeReaccion[fila][columna];
   } else {
     return "";  // Devolver una cadena vacía si las coordenadas están fuera de rango
   }
@@ -81,11 +98,11 @@ void blink(int cantRep, long interval, const byte *LEDPinArray) {
    * cuanto tiempo demora el blink y el array de leds.
    */
   unsigned int contador = 0;
-
+  static int ledState = LOW;
+  
   while (contador <= cantRep - 1) {
     unsigned long currentMillis = millis();
     static unsigned long previousMillis = 0;
-    static int ledState = LOW;
 
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
@@ -155,7 +172,7 @@ void resetAll() {
 // ******************************************************** Game 2 ********************************************************
 void game(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // ********************************************** si se recibe la secuencia **********************************************
-  if (getInitGame()) {
+  if (initGame) {
     if (startGame) {
       // *********************************** Ejecuta el blink 4 veces antes de comenzar ***********************************
       blink(4, 1000, LEDPinArray);
@@ -165,13 +182,22 @@ void game(const byte *LEDPinArray, const byte *BUTTONPinArray) {
 
     // ******************** Si el indice actual llega al final de la secuencia o el resto están vacias ********************
     if (indiceActual >= 10 || getSecuenceMatrix(indiceActual, 0) == "") {
-      blink(2, 1000, LEDPinArray);
       Serial.println("Game over");
+      blink(2, 1000, LEDPinArray);
+
+      String resultado = "";
+      for (int fila = 0; fila <= 10; fila++) {
+        if (getSecuenciaDeReaccion(fila, 0) == "" && getSecuenciaDeReaccion(fila, 1) == "") { break; }
+
+        resultado += getSecuenciaDeReaccion(fila, 0);
+        resultado += ",";
+        resultado += getSecuenciaDeReaccion(fila, 1);
+        resultado += ";";
+      }
+      setRespuesta(resultado);
+
       resetAll();
       return;
-      // if (isDeviceConnected()) {
-      //   sendData("1");
-      // }
     }
 
     // *************** Si el tiempo actual menos el tiempo de inicio es mayor o igual al tiempo en segundos ***************

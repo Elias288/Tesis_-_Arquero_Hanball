@@ -11,8 +11,11 @@ void game(const byte*, const byte*);
 bool getInitGame();
 int getMaxPairs();
 String getSecuenceMatrix(int, int);
+String getSecuenciaDeReaccion(int, int);
+String getRespuesta();
 // Set
 void setInitGame(bool);
+void setRespuesta(String);
 void pushToMatrix(int, String, String);
 void pushToSecuenciaDeReaccion(int, String, String);
 void setSecuenceMatrix(String);

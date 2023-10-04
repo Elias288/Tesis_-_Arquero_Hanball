@@ -158,11 +158,21 @@ void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // notify changed value
   if (deviceConnected) {
     if (cantMsgSend >= 1) {
-      sendData("saludo desde ESP32");
+      sendData("saludo:desde ESP32");
       cantMsgSend--;
     }
 
     game(LEDPinArray, BUTTONPinArray);
+
+    if (getRespuesta() != "") {
+      String res = "res:";
+      res += getRespuesta();
+
+      Serial.println(res);
+      sendData(res.c_str());
+
+      setRespuesta("");
+    }
   }
   // disconnecting
   if (!deviceConnected && oldDeviceConnected) {
@@ -170,6 +180,7 @@ void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
     pServer->startAdvertising();  // restart advertising
     // Serial.println("start advertising");
     oldDeviceConnected = deviceConnected;
+    cantMsgSend = 1;
   }
   // connecting
   if (deviceConnected && !oldDeviceConnected) {
