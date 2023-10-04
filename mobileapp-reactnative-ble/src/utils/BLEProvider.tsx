@@ -2,7 +2,7 @@
  * Este contexto comparte entre todos sus componentes hijos la logica de los estados de useBLE.tsx y sus datos
  */
 
-import { createContext, FC, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 import useBLE from '../components/useBLE';
 import { BleError, Device } from 'react-native-ble-plx';
 

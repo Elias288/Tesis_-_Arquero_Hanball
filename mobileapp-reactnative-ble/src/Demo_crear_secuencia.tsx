@@ -62,7 +62,7 @@ const DemoCrearSecuenca = () => {
           data={secuencia}
           renderItem={({ item }) => (
             <Text>
-              {+item.ledId + 1}: {item.time}
+              Led: {+item.ledId + 1} - Time: {item.time/1000}s
             </Text>
           )}
           keyExtractor={(item) => item.id}
