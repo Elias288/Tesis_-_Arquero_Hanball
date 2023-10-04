@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { View } from 'react-native';
-import { Text, Button, TextInput } from 'react-native-paper';
-import { Device } from 'react-native-ble-plx';
+import { FlatList, View } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 import { useCustomBLEProvider } from './utils/BLEProvider';
 import { SelectList } from 'react-native-dropdown-select-list';
 
@@ -58,7 +57,18 @@ const DemoCrearSecuenca = () => {
 
       <SecuenciaInput addSecuencia={pushSecuencia} cleanSecuencia={cleanSecuencia} />
 
-      <Text style={{ padding: 20 }}>{secuenciaFormateada}</Text>
+      <View style={{ padding: 20 }}>
+        <FlatList
+          data={secuencia}
+          renderItem={({ item }) => (
+            <Text>
+              {+item.ledId + 1}: {item.time}
+            </Text>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
+      {/* <Text style={{ padding: 20 }}>{}</Text> */}
       {/* <Text>{JSON.stringify(secuencia, null, 4)}</Text> */}
       <Button mode="contained" onPress={sendFormatedSecuencia}>
         Enviar

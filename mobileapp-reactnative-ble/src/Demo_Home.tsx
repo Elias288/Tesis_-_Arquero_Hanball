@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { BleError, Device } from 'react-native-ble-plx';
 import { stackScreens } from './Main';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCustomBLEProvider } from './utils/BLEProvider';
