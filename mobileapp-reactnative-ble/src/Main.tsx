@@ -1,15 +1,15 @@
-import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from '@react-navigation/native';
-import { BleError, Device } from 'react-native-ble-plx';
+import React, { useEffect, useState } from 'react';
+import { Portal, Snackbar, PaperProvider } from 'react-native-paper';
 
 import ListJugadores from './pages/List';
 import Secuencias from './pages/Secuencias';
 import AllScreens from './pages/AllScreens';
+import { useCustomBLEProvider } from './utils/BLEProvider';
 
-type homeProps = {
+/* type homeProps = {
   requestPermissions(): Promise<boolean>;
   scanAndConnectPeripherals(): void;
   disconnectFromDevice: () => void;
@@ -18,7 +18,7 @@ type homeProps = {
   connectedDevice: Device | undefined;
   BLEmsg: string | BleError;
   espStatus: Boolean;
-};
+}; */
 /************************************************* Main *************************************************/
 type screenType={
   Home:undefined,
@@ -27,10 +27,53 @@ type screenType={
   AllScreens:undefined
 }
 const Tab = createBottomTabNavigator<screenType>();
+interface Funciones {
+  [nombreFuncion: string]: (dato: string) => void;
+}
 
 const Main = () => {
+  const { receivedMSG } = useCustomBLEProvider();
+  const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
+  const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
+
+  const funciones: Funciones = {
+    res: (dato) => {
+      setVisibleSnackbar(true);
+      SetsnackbarMsg(dato);
+    },
+    saludo: (dato) => {
+      setVisibleSnackbar(true);
+      SetsnackbarMsg(dato);
+    },
+  };
+
+  useEffect(() => {
+    const partes = receivedMSG.split('\t');
+    partes.forEach((parte) => {
+      const [nombreFuncion, dato] = parte.split(':');
+      const funcion = funciones[nombreFuncion];
+      if (funcion) {
+        funcion(dato);
+      }
+    });
+  }, [receivedMSG]);
+
   return (
-    <NavigationContainer>
+    <PaperProvider>
+      <Portal>
+        <Snackbar
+          visible={visibleSnackbar}
+          onDismiss={() => setVisibleSnackbar(false)}
+          action={{
+            label: 'Undo',
+            onPress: () => {
+              setVisibleSnackbar(false);
+            },
+          }}
+        >
+          {snackbarMsg}
+        </Snackbar>
+      </Portal>
       <Tab.Navigator initialRouteName='Home'
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -98,7 +141,7 @@ const Main = () => {
                     ),
                 }}/>
         </Tab.Navigator>
-    </NavigationContainer>
+    </PaperProvider>
   );
 };
 
