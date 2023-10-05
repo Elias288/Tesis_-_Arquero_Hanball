@@ -3,7 +3,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { DATA_S } from "./Secuencias";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { stackScreens } from '../Main';
+import { stackScreens } from './AllScreens';
 
 type propsType= NativeStackScreenProps<stackScreens,'JugarSec'>;
 
