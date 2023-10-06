@@ -30,7 +30,8 @@ const DemoCrearSecuenca = () => {
       setsecuenciaFormateada(secuencia.map((item) => `${item.ledId},${item.time}`).join(';'));
   }, [secuencia]);
 
- {/* const sendFormatedSecuencia = async () => {
+  {
+    /* const sendFormatedSecuencia = async () => {
     if (connectedDevice) {
       sendData(connectedDevice, `secuence:${secuenciaFormateada};`);
 
@@ -47,8 +48,8 @@ const DemoCrearSecuenca = () => {
         sendData(connectedDevice, `par:end`);
       // } 
     }
-  };*/}
-
+  };*/
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#bebebe', padding: 20 }}>
@@ -62,7 +63,7 @@ const DemoCrearSecuenca = () => {
           data={secuencia}
           renderItem={({ item }) => (
             <Text>
-              Led: {+item.ledId + 1} - Time: {item.time/1000}s
+              Led: {+item.ledId + 1} - Time: {item.time / 1000}s
             </Text>
           )}
           keyExtractor={(item) => item.id}
@@ -70,7 +71,9 @@ const DemoCrearSecuenca = () => {
       </View>
       {/* <Text style={{ padding: 20 }}>{}</Text> */}
       {/* <Text>{JSON.stringify(secuencia, null, 4)}</Text> */}
-      <Button mode="contained" > {/*onPress={sendFormatedSecuencia}*/}
+      <Button mode="contained">
+        {' '}
+        {/*onPress={sendFormatedSecuencia}*/}
         Enviar
       </Button>
     </View>
