@@ -4,21 +4,31 @@ import { BleError, BleManager, Characteristic, Device } from 'react-native-ble-p
 import base64 from 'react-native-base64';
 
 import * as ExpoDevice from 'expo-device';
+import {
+  BLUETOOTHCONNECTED,
+  BLUETOOTHERROR,
+  BLUETOOTHNOTCONNECTED,
+  BLUETOOTHNOTSTATUS,
+  BLUETOOTHTIMEOUT,
+} from '../utils/BleCodes';
 
 const ESP32_NAME = 'ESP32-server';
 const ESP32_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const ESP32_CHARACTERISTIC_UUID = '00002a37-0000-1000-8000-00805f9b34fb';
 
-interface BluetoothLowEnergyApi {
+export interface BluetoothLowEnergyApi {
   requestPermissions(): Promise<boolean>;
   scanAndConnectPeripherals(): void;
   connectToDevice(deviceId: Device): Promise<void>;
   disconnectFromDevice(): void;
   sendData(device: Device, msg: string): Promise<void>;
+  cleanBLECode(): void;
   connectedDevice: Device | undefined;
   espDevice: Device | undefined;
-  BLEmsg: string | BleError;
+  BLEmsg: string;
+  BLECode: number;
   espStatus: Boolean;
+  isScanningLoading: Boolean;
   receivedMSG: string;
 }
 
@@ -27,8 +37,10 @@ function useBLE(): BluetoothLowEnergyApi {
   const [espDevice, setEspDevice] = useState<Device>();
   const [connectedDevice, setConnectedDevice] = useState<Device>();
   const [bleStatus, setbleStatus] = useState<Boolean>(false);
-  const [BLEmsg, setMsg] = useState<string | BleError>('');
+  const [BLEmsg, setMsg] = useState<string>('');
   const [receivedMSG, setReceivedMSG] = useState<string>('');
+  const [isScanningLoading, setScanningLoading] = useState<Boolean>(false);
+  const [BLECode, setBLECode] = useState<number>(BLUETOOTHNOTSTATUS);
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -89,19 +101,23 @@ function useBLE(): BluetoothLowEnergyApi {
     const suscription = bleManager.onStateChange((state) => {
       if (state === 'PoweredOn') {
         setbleStatus(true);
+        setScanningLoading(true);
+
         // ****************************** Si el bluetooth está a encendido ******************************
         bleManager.stopDeviceScan();
+        setBLECode(0);
         setMsg('Scanning...');
         setEspDevice(undefined);
 
         let espdevice: Device | undefined = undefined;
         bleManager.startDeviceScan(null, null, (error, device) => {
           if (error) {
-            return setMsg(error);
+            setBLECode(BLUETOOTHERROR);
+            setMsg(`${error}`);
+            return;
           }
 
           // *********************************** Busca el dispositivo ***********************************
-
           if (device) {
             if (device.name?.includes(ESP32_NAME)) {
               bleManager.stopDeviceScan();
@@ -112,12 +128,9 @@ function useBLE(): BluetoothLowEnergyApi {
               // conecta el dispositivo
               device.isConnected().then((state) => {
                 if (!state) {
-                  // console.log('connecting to device');
-
                   connectToDevice(device);
                 } else {
                   setConnectedDevice(device);
-
                   bleManager.connectedDevices([ESP32_SERVICE_UUID]).then((device) => {
                     console.log(device);
                   });
@@ -133,15 +146,19 @@ function useBLE(): BluetoothLowEnergyApi {
         // ************************* Detiene el escaneo despues de 10 segundos *************************
         setTimeout(() => {
           if (espdevice === undefined) {
-            setMsg('Time out. Esp32 not found');
             bleManager.stopDeviceScan();
+            setScanningLoading(false);
+            setMsg('Time out. Esp32 not found');
+            setBLECode(BLUETOOTHTIMEOUT);
             return;
           }
         }, 10000);
       } else if (state === 'PoweredOff') {
         // ******************************* si el bluetooth está a pagado *******************************
         setbleStatus(false);
+        setScanningLoading(false);
         setMsg('Bluetooth off');
+        setBLECode(BLUETOOTHNOTCONNECTED);
       }
     }, true);
   };
@@ -156,6 +173,8 @@ function useBLE(): BluetoothLowEnergyApi {
         setConnectedDevice(connectedDevice);
         readData(connectedDevice);
         sendData(connectedDevice, 'react native conectado');
+        setBLECode(BLUETOOTHCONNECTED);
+        setScanningLoading(false);
       })
       .catch((e) => {
         console.log('FAILED TO CONNECT', e);
@@ -231,15 +250,22 @@ function useBLE(): BluetoothLowEnergyApi {
     return chunks;
   };
 
+  const cleanBLECode = () => {
+    setBLECode(0);
+  };
+
   return {
     scanAndConnectPeripherals,
     requestPermissions,
     connectToDevice,
     disconnectFromDevice,
     sendData,
+    cleanBLECode,
     connectedDevice,
     espDevice,
     BLEmsg,
+    BLECode,
+    isScanningLoading,
     espStatus: bleStatus,
     receivedMSG,
   };

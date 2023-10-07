@@ -13,6 +13,7 @@ import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { stackScreens } from '../components/AllScreens';
+import HeaderComponent from '../components/Header.component';
 
 type propsType = NativeStackScreenProps<stackScreens, 'List'>;
 
@@ -50,41 +51,44 @@ const ListJugadores = (props: propsType) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Lista de Jugadores</Text>
-      <FlatList
-        data={DATA}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <View>
-              <Icon name="circle" size={50} color="#3CB371" />
+    <>
+      <HeaderComponent title={'Lista de Jugadores'} />
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.heading}>Lista de Jugadores</Text>
+        <FlatList
+          data={DATA}
+          renderItem={({ item }) => (
+            <View style={styles.item}>
+              <View>
+                <Icon name="circle" size={50} color="#3CB371" />
+              </View>
+              <Text style={styles.title}>{item.title}</Text>
+              <View style={styles.icon}>
+                <TouchableOpacity>
+                  <Icon name="account-edit" size={30} color="#3CB371" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.icon}>
+                <TouchableOpacity onPress={() => gotoHist_Jugadores(item.title)}>
+                  <Icon name="clipboard-text-outline" size={30} color="#3CB371" />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.icon}>
+                <TouchableOpacity>
+                  <Icon name="trash-can" size={30} color="#3CB371" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <Text style={styles.title}>{item.title}</Text>
-            <View style={styles.icon}>
-              <TouchableOpacity>
-                <Icon name="account-edit" size={30} color="#3CB371" />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.icon}>
-              <TouchableOpacity onPress={() => gotoHist_Jugadores(item.title)}>
-                <Icon name="clipboard-text-outline" size={30} color="#3CB371" />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.icon}>
-              <TouchableOpacity>
-                <Icon name="trash-can" size={30} color="#3CB371" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-        keyExtractor={(item) => item.title}
-      />
-      <View style={styles.mas}>
-        <TouchableOpacity style={styles.button} onPress={gotoAgregarJug}>
-          <Text style={styles.text}>+</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+          )}
+          keyExtractor={(item) => item.title}
+        />
+        <View style={styles.mas}>
+          <TouchableOpacity style={styles.button} onPress={gotoAgregarJug}>
+            <Text style={styles.text}>+</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 

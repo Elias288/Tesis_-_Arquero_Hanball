@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Home from '../pages/Home';
+import HomePage from '../pages/Home.page';
 import ListJugadores from '../pages/List';
 import Jugar from '../pages/Jugar';
 import Secuencias from '../pages/Secuencias';
@@ -12,7 +12,7 @@ import Hist_Jugadores from '../pages/Hist_Jugadores';
 import DemoCrearSecuenca from '../pages/CrearSecuencia';
 
 export type stackScreens = {
-  Home: undefined;
+  HomePage: undefined;
   Jugar: undefined;
   List: { jug: string };
   Secuencias: undefined;
@@ -26,8 +26,8 @@ const Stack = createNativeStackNavigator<stackScreens>();
 
 const AllScreens = () => {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={Home} />
+    <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomePage" component={HomePage} />
       <Stack.Screen name="Jugar" component={Jugar} />
       <Stack.Screen name="List" component={ListJugadores} />
       <Stack.Screen name="Secuencias" component={Secuencias} />

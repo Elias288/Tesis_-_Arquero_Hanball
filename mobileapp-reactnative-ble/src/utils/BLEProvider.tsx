@@ -1,24 +1,10 @@
 /*
  * Este contexto comparte entre todos sus componentes hijos la logica de los estados de useBLE.tsx y sus datos
  */
-
 import { createContext, ReactNode, useContext } from 'react';
-import useBLE from '../components/useBLE';
-import { BleError, Device } from 'react-native-ble-plx';
+import useBLE, { BluetoothLowEnergyApi } from '../components/useBLE';
 
-type CustomData = {
-  requestPermissions(): Promise<boolean>;
-  scanAndConnectPeripherals(): void;
-  disconnectFromDevice: () => void;
-  sendData(device: Device, msg: string): Promise<void>;
-  connectToDevice(device: Device): void;
-  connectedDevice: Device | undefined;
-  BLEmsg: string | BleError;
-  espStatus: Boolean;
-  receivedMSG: string;
-};
-
-const BLEContext = createContext<CustomData | undefined>(undefined);
+const BLEContext = createContext<BluetoothLowEnergyApi | undefined>(undefined);
 
 export function useCustomBLEProvider() {
   const context = useContext(BLEContext);
@@ -29,35 +15,7 @@ export function useCustomBLEProvider() {
 }
 
 const BleContext: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const {
-    requestPermissions,
-    scanAndConnectPeripherals,
-    disconnectFromDevice,
-    connectToDevice,
-    sendData,
-    BLEmsg,
-    connectedDevice,
-    espStatus,
-    receivedMSG,
-  } = useBLE();
-
-  return (
-    <BLEContext.Provider
-      value={{
-        requestPermissions,
-        scanAndConnectPeripherals,
-        disconnectFromDevice,
-        connectToDevice,
-        sendData,
-        BLEmsg,
-        connectedDevice,
-        espStatus,
-        receivedMSG,
-      }}
-    >
-      {children}
-    </BLEContext.Provider>
-  );
+  return <BLEContext.Provider value={useBLE()}>{children}</BLEContext.Provider>;
 };
 
 export default BleContext;

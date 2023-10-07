@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import HeaderComponent from '../components/Header.component';
 
 type dataTypeList = {
   id: string;
@@ -33,29 +34,32 @@ export const DATA_S = [
 
 const Secuencias = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Secuencias Guardadas</Text>
-      <FlatList
-        data={DATA_S}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
-            <View style={styles.icon}>
-              <Icon name="application-edit-outline" size={30} color="#3CB371" />
+    <>
+      <HeaderComponent title={'Rutinas'} />
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.heading}>Secuencias Guardadas</Text>
+        <FlatList
+          data={DATA_S}
+          renderItem={({ item }) => (
+            <View style={styles.item}>
+              <Text style={styles.title}>{item.title}</Text>
+              <View style={styles.icon}>
+                <Icon name="application-edit-outline" size={30} color="#3CB371" />
+              </View>
+              <View style={styles.icon}>
+                <Icon name="trash-can" size={30} color="#3CB371" />
+              </View>
             </View>
-            <View style={styles.icon}>
-              <Icon name="trash-can" size={30} color="#3CB371" />
-            </View>
-          </View>
-        )}
-        keyExtractor={(item: dataTypeList) => item.id}
-      />
-      <View style={styles.mas}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.text}>+</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+          )}
+          keyExtractor={(item: dataTypeList) => item.id}
+        />
+        <View style={styles.mas}>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.text}>+</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
