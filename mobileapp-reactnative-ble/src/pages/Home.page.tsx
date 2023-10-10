@@ -1,255 +1,159 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, { ReactNode } from 'react';
+import { View, StyleSheet, Text, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button } from 'react-native-paper';
 
 import { stackScreens } from '../components/AllScreens';
 import HeaderComponent from '../components/Header.component';
 
 type propsType = NativeStackScreenProps<stackScreens, 'HomePage'>;
 
-const HomePage = (props: propsType) => {
-  const { navigation, route } = props;
-
-  const gotoSecuencias = () => {
-    navigation.navigate('Secuencias');
-  };
-  const gotoAgregarJug = () => {
-    navigation.navigate('Agregar_Jug');
-  };
-  const gotoCrearSecuencia = () => {
-    navigation.navigate('DemoCrearSecuenca');
-  };
-
+const HomePage = ({ navigation, route }: propsType) => {
   return (
     <>
       <HeaderComponent title={'BLE App'} />
-      <View style={styles.container}>
-        {/*<ScrollView showsVerticalScrollIndicator={true}>*/}
-        <View style={styles.ind_container1}>
-          <View style={styles.containerTitle}>
-            <Text style={styles.title}>Iniciar Rutina</Text>
-          </View>
-          <View style={styles.container2}>
-            <View style={styles.container3}>
-              <Text style={styles.text}>{`\u25CF Última rutina realizada + info relevante`}</Text>
-              <Text
-                style={styles.text}
-              >{`\u25CF Muestra mensaje de estado de conexión del ESP`}</Text>
-            </View>
-            <View style={styles.container4}>
-              <View style={styles.container5}>
-                <TouchableOpacity>
-                  <Icon name="dice-5" size={30} color="#3CB371" />
-                </TouchableOpacity>
-                <Text style={styles.text}>Rutina Aleatoria</Text>
-              </View>
-              <View style={styles.container5}>
-                <TouchableOpacity onPress={gotoCrearSecuencia}>
-                  <Icon name="plus-circle" size={30} color="#3CB371" />
-                </TouchableOpacity>
-                <Text style={styles.text}>Crear rutina</Text>
-              </View>
-              <View style={styles.container5}>
-                <TouchableOpacity onPress={gotoSecuencias}>
-                  <Icon name="upload" size={30} color="#3CB371" />
-                </TouchableOpacity>
-                <Text style={styles.text}>Cargar rutina</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={styles.ind_container2}>
-          <View style={styles.container5}>
-            <TouchableOpacity onPress={gotoAgregarJug}>
-              <Icon name="plus-circle" size={30} color="#3CB371" />
-            </TouchableOpacity>
-            <Text style={styles.title}>Agregar Jugador</Text>
-          </View>
-        </View>
-        <View style={styles.ind_container3}>
-          <View style={styles.containerTitle}>
-            <Text style={styles.title}>Historial de rutinas</Text>
-          </View>
-          <View style={styles.container6}>
-            <View style={styles.container7}>
-              <Text style={styles.bigText}>0</Text>
-              <Text style={styles.text}>{`Entrenamientos en \n la semana`}</Text>
-            </View>
-            <View style={styles.container9}>
-              <Text style={styles.bigText}>0h</Text>
-              <Text style={styles.text}>{`Duración total \n entrenamientos \n de  la semana`}</Text>
-            </View>
-          </View>
-          <View style={styles.container8}>
-            <View style={styles.container10}>
-              <View style={styles.containerPhoto}>
-                <Icon name="circle" size={50} color="#3CB371" />
-              </View>
-              <View style={styles.container11}>
-                <Text style={styles.bigText}>Nombre Jugador</Text>
-                <Text style={styles.text}>Info del jugador</Text>
-              </View>
-              <View style={styles.containerDate}>
-                <Text style={styles.smallText}>DD/MM/YYYY</Text>
-              </View>
-            </View>
-            <View style={styles.container10}>
-              <View style={styles.containerPhoto}>
-                <Icon name="circle" size={50} color="#3CB371" />
-              </View>
-              <View style={styles.container11}>
-                <Text style={styles.bigText}>Nombre Jugador</Text>
-                <Text style={styles.text}>Info del jugador</Text>
-              </View>
-              <View style={styles.containerDate}>
-                <Text style={styles.smallText}>DD/MM/YYYY</Text>
-              </View>
-            </View>
-            <View style={styles.container10}>
-              <View style={styles.containerPhoto}>
-                <Icon name="circle" size={50} color="#3CB371" />
-              </View>
-              <View style={styles.container11}>
-                <Text style={styles.bigText}>Nombre Jugador</Text>
-                <Text style={styles.text}>Info del jugador</Text>
-              </View>
-              <View style={styles.containerDate}>
-                <Text style={styles.smallText}>DD/MM/YYYY</Text>
-              </View>
-            </View>
-          </View>
-          <View style={{ alignItems: 'center', marginBottom: 1 }}>
-            <TouchableOpacity>
-              <Text style={styles.text}>Ver más</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/*</ScrollView>*/}
-      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#dbdbdb' }}>
+        <ScrollView style={{ paddingHorizontal: 13 }}>
+          <IniciarRutina navigation={navigation} />
+          <AgregarJugador navigation={navigation} />
+          <HistorialRutinas />
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 };
 
-/*********************************************** Styles ************************************************/
-const styles = StyleSheet.create({
-  container: {
-    //marginTop:'20%',
-    //justifyContent:'center',
-    alignItems: 'center',
-    flex: 1,
-    padding: 15,
-    paddingBottom: 0,
-  },
-  ind_container1: {
-    backgroundColor: '#ffffff',
-    width: Dimensions.get('window').width - 40,
-    height: 50,
-    marginBottom: 15,
-    borderRadius: 10,
-    flex: 3,
-  },
-  ind_container2: {
-    backgroundColor: '#ffffff',
-    width: Dimensions.get('window').width - 40,
-    height: 50,
-    marginBottom: 15,
-    borderRadius: 10,
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  ind_container3: {
-    backgroundColor: '#ffffff',
-    width: Dimensions.get('window').width - 40,
-    height: 50,
-    marginBottom: 15,
-    borderRadius: 10,
-    flex: 6,
-  },
-  containerTitle: {
-    flex: 2,
-    justifyContent: 'center',
-    borderColor: '#dcdcdc',
-    borderBottomWidth: 1,
-  },
-  container2: {
-    flex: 8,
-    flexDirection: 'row',
-  },
-  container3: {
-    flex: 1,
-    justifyContent: 'space-around',
-    borderColor: '#dcdcdc',
-    borderRightWidth: 1,
-  },
-  container4: {
-    flex: 1,
-    justifyContent: 'space-around',
-  },
-  container5: {
-    flexDirection: 'row',
-    marginLeft: 5,
-  },
-  container6: {
-    flex: 3,
-    flexDirection: 'row',
-    margin: 5,
-    borderRadius: 10,
-    backgroundColor: '#E2E2E2',
-  },
-  container7: {
-    alignItems: 'center',
-    flex: 5,
-    borderColor: '#D1D1D1',
-    borderRightWidth: 1,
-  },
-  container8: {
-    flex: 8,
-    //flexDirection: 'row',
-    margin: 5,
-  },
-  container9: {
-    alignItems: 'center',
-    flex: 5,
-  },
-  container10: {
-    flex: 1,
-    justifyContent: 'space-around',
-    marginLeft: 5,
-    flexDirection: 'row',
-  },
-  container11: {
-    flex: 4,
-    // justifyContent: 'space-around',
-    marginLeft: 5,
-  },
-  containerPhoto: {
-    flex: 1,
-  },
-  containerDate: {
-    flex: 1,
-    marginRight: 2,
-  },
+/********************************************* Custom Card *********************************************/
+const CustomCard = ({ children }: { children: ReactNode }) => {
+  return <View style={cardStyles.container}>{children}</View>;
+};
+const cardStyles = StyleSheet.create({
+  container: { backgroundColor: '#fff', borderRadius: 10, padding: 10, marginBottom: 13 },
   title: {
-    fontWeight: 'bold',
     fontSize: 20,
-    height: 'auto',
-    marginLeft: 10,
-    color: '#444444',
-    //backgroundColor: "#ffffff"
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
-  text: {
-    fontSize: 15,
-    color: '#444444',
+  options: {
+    flex: 1,
     padding: 5,
   },
-  bigText: {
-    fontSize: 27,
-  },
-  smallText: {
-    fontSize: 10,
-  },
 });
+
+/******************************************** Iniciar Rutina ********************************************/
+const IniciarRutina = ({ navigation }: { navigation: any }) => {
+  const gotoSecuencias = () => {
+    navigation.navigate('Secuencias');
+  };
+  const gotoCrearSecuencia = () => {
+    navigation.navigate('DemoCrearSecuenca');
+  };
+  const OptionButtons = ({
+    text,
+    icon,
+    action,
+  }: {
+    text: string;
+    icon: string;
+    action?: () => void;
+  }) => {
+    return (
+      <Button
+        mode="elevated"
+        style={{
+          marginBottom: 10,
+        }}
+        icon={icon}
+        buttonColor="#e7d84f"
+        textColor="#fff"
+        onPress={action}
+      >
+        {text}
+      </Button>
+    );
+  };
+
+  return (
+    <CustomCard>
+      <Text style={cardStyles.title}>Iniciar Rutina</Text>
+
+      <View style={{ flexDirection: 'row' }}>
+        <View style={cardStyles.options}>
+          <Text>*Última rutina jugada e información relevante</Text>
+          <Text>*Mostrar mensaje al clickear si el ESP no está conectaddo</Text>
+        </View>
+
+        <View style={{ borderColor: '#b6b6b6', borderWidth: 1 }}></View>
+
+        <View style={cardStyles.options}>
+          <OptionButtons
+            text="Rutina Aleatoria"
+            icon="dice-6"
+            action={() => alert('not implemented yet')}
+          />
+          <OptionButtons text="Crear Rutina" icon="plus" action={gotoCrearSecuencia} />
+          <OptionButtons text=" Cargar Rutina" icon="upload" action={gotoSecuencias} />
+        </View>
+      </View>
+    </CustomCard>
+  );
+};
+
+/******************************************* Agregar Jugador *******************************************/
+const AgregarJugador = ({ navigation }: { navigation: any }) => {
+  const gotAgregarJugador = () => {
+    navigation.navigate('Agregar_Jug');
+  };
+  return (
+    <CustomCard>
+      <Button textColor="#000" onPress={gotAgregarJugador}>
+        Agregar Jugador
+      </Button>
+    </CustomCard>
+  );
+};
+
+/***************************************** Historial de Rutinas *****************************************/
+const HistorialRutinas = () => {
+  const ContadorCard = () => {
+    return (
+      <View
+        style={{ backgroundColor: '#E7E7E7', borderRadius: 10, flexDirection: 'row', padding: 3 }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>0</Text>
+          <Text style={{ textAlign: 'center' }}>Total de entrenamientos esta semana</Text>
+        </View>
+        <View style={{ borderColor: '#b6b6b6', borderWidth: 1 }}></View>
+        <View style={{ flex: 1 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'baseline',
+            }}
+          >
+            <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>0</Text>
+            <Text>m</Text>
+          </View>
+          <Text style={{ textAlign: 'center' }}>Duración total de entrenamientos esta semana</Text>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <CustomCard>
+      <Text style={cardStyles.title}>Historial de Rutinas</Text>
+
+      <ContadorCard />
+
+      {/* Componente que Lista los jugadores */}
+      <Text>Lista de jugadores</Text>
+    </CustomCard>
+  );
+};
 
 export default HomePage;
