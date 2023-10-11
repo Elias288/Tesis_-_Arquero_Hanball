@@ -3,7 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomePage from '../pages/Home.page';
-import ListJugadores from '../pages/List';
+import ListaJugadoresPage from '../pages/ListaJugadores.page';
 import Jugar from '../pages/Jugar';
 import Secuencias from '../pages/Secuencias';
 import JugarSec from '../pages/JugarSecuencia';
@@ -29,7 +29,7 @@ const AllScreens = () => {
     <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomePage" component={HomePage} />
       <Stack.Screen name="Jugar" component={Jugar} />
-      <Stack.Screen name="List" component={ListJugadores} />
+      <Stack.Screen name="List" component={ListaJugadoresPage} />
       <Stack.Screen name="Secuencias" component={Secuencias} />
       <Stack.Screen name="JugarSec" component={JugarSec} />
       <Stack.Screen name="Agregar_Jug" component={Agregar_Jug} />

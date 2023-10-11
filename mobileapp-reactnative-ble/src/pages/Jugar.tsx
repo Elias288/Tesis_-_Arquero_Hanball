@@ -1,7 +1,7 @@
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { DATA } from './List';
+// import { DATA } from './ListaJugadores.page';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { stackScreens } from '../components/AllScreens';
 

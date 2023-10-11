@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 
-import ListJugadores from './pages/List';
+import ListaJugadoresPage from './pages/ListaJugadores.page';
 import Secuencias from './pages/Secuencias';
 import AllScreens from './components/AllScreens';
 import { useCustomBLEProvider } from './utils/BLEProvider';
@@ -92,7 +92,7 @@ const Main = () => {
           />
           <Tab.Screen
             name="List"
-            component={ListJugadores}
+            component={ListaJugadoresPage}
             options={{
               headerShown: false,
             }}
