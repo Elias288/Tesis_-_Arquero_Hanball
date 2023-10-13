@@ -1,16 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { stackScreens } from '../components/AllScreens';
 import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
 import { IconButton } from 'react-native-paper';
+import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
 
-type propsType = NativeStackScreenProps<stackScreens, 'List'>;
+type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;
 
 const ListaJugadoresPage = (props: propsType) => {
   const { navigation, route } = props;
-  const { jug } = route.params || {};
 
   const gotoAgregarJug = () => {
     navigation.navigate('Agregar_Jug');

@@ -3,14 +3,14 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 // import { DATA } from './ListaJugadores.page';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { stackScreens } from '../components/AllScreens';
+import { HomeTabPages } from '../navigation/HomeTab';
 
 type dataTypeList = {
   id: string;
   title: string;
 };
 
-type propsType = NativeStackScreenProps<stackScreens, 'Jugar'>;
+type propsType = NativeStackScreenProps<HomeTabPages, 'Jugar'>;
 
 const Jugar = (props: propsType) => {
   const { navigation } = props;

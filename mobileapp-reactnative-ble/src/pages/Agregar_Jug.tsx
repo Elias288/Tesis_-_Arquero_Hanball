@@ -10,16 +10,21 @@ import {
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { stackScreens } from '../components/AllScreens';
+import { HomeTabPages } from '../navigation/HomeTab';
 import { TextInput } from 'react-native';
 import { Button } from 'react-native';
+import { CompositeScreenProps } from '@react-navigation/native';
+import { RootTabs } from '../Main';
 
-type propsType = NativeStackScreenProps<stackScreens, 'Agregar_Jug'>;
+type propsType = CompositeScreenProps<
+  NativeStackScreenProps<HomeTabPages, 'Agregar_Jug'>,
+  NativeStackScreenProps<RootTabs>
+>;
 
 const Agregar_Jug = (props: propsType) => {
   const { navigation } = props;
-  const gotoList_Jugadores = (nomJug: string) => {
-    navigation.navigate('List', { jug: nomJug });
+  const gotoList_Jugadores = () => {
+    navigation.navigate('Jugadores', { screen: 'ListaJugadores' });
   };
 
   const [name, setName] = useState('');
@@ -38,7 +43,7 @@ const Agregar_Jug = (props: propsType) => {
         <TextInput style={styles.textInput} placeholder="Apellidos"></TextInput>
       </View>
       <View style={styles.button}>
-        <Button title="Agregar" color="#3CB371" onPress={() => gotoList_Jugadores(name)} />
+        <Button title="Agregar" color="#3CB371" onPress={gotoList_Jugadores} />
       </View>
     </View>
   );

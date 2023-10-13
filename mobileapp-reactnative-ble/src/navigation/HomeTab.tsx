@@ -3,34 +3,28 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomePage from '../pages/Home.page';
-import ListaJugadoresPage from '../pages/ListaJugadores.page';
 import Jugar from '../pages/Jugar';
-import Secuencias from '../pages/Secuencias';
 import JugarSec from '../pages/JugarSecuencia';
 import Agregar_Jug from '../pages/Agregar_Jug';
 import Hist_Jugadores from '../pages/Hist_Jugadores';
 import DemoCrearSecuenca from '../pages/CrearSecuencia';
 
-export type stackScreens = {
+export type HomeTabPages = {
   HomePage: undefined;
   Jugar: undefined;
-  List: { jug: string };
-  Secuencias: undefined;
   JugarSec: { jug: string };
   Agregar_Jug: undefined;
   Hist_Jugadores: { name: string };
   DemoCrearSecuenca: undefined;
 };
 
-const Stack = createNativeStackNavigator<stackScreens>();
+const Stack = createNativeStackNavigator<HomeTabPages>();
 
-const AllScreens = () => {
+const HomeTab = () => {
   return (
     <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomePage" component={HomePage} />
       <Stack.Screen name="Jugar" component={Jugar} />
-      <Stack.Screen name="List" component={ListaJugadoresPage} />
-      <Stack.Screen name="Secuencias" component={Secuencias} />
       <Stack.Screen name="JugarSec" component={JugarSec} />
       <Stack.Screen name="Agregar_Jug" component={Agregar_Jug} />
       <Stack.Screen name="Hist_Jugadores" component={Hist_Jugadores} />
@@ -39,6 +33,6 @@ const AllScreens = () => {
   );
 };
 
-export default AllScreens;
+export default HomeTab;
 
 const styles = StyleSheet.create({});

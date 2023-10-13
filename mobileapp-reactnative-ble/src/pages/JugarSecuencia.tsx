@@ -3,9 +3,9 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { DATA_S } from './Secuencias';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { stackScreens } from '../components/AllScreens';
+import { HomeTabPages } from '../navigation/HomeTab';
 
-type propsType = NativeStackScreenProps<stackScreens, 'JugarSec'>;
+type propsType = NativeStackScreenProps<HomeTabPages, 'JugarSec'>;
 
 type dataTypeList = {
   id: string;

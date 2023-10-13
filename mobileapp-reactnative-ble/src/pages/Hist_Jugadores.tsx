@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { stackScreens } from '../components/AllScreens';
+import { HomeTabPages } from '../navigation/HomeTab';
 
-type propsType = NativeStackScreenProps<stackScreens, 'Hist_Jugadores'>;
+type propsType = NativeStackScreenProps<HomeTabPages, 'Hist_Jugadores'>;
 
 const Hist_Jugadores = (props: propsType) => {
   const { navigation, route } = props;

@@ -3,25 +3,26 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
 import { PaperProvider } from 'react-native-paper';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 
-import ListaJugadoresPage from './pages/ListaJugadores.page';
 import Secuencias from './pages/Secuencias';
-import AllScreens from './components/AllScreens';
+import HomeTab, { HomeTabPages } from './navigation/HomeTab';
 import { useCustomBLEProvider } from './utils/BLEProvider';
 import HandleMSGs from './utils/HandleMSGs';
+import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
 
 /************************************************* Main *************************************************/
-type screenType = {
-  Home: undefined;
-  List: { jug: string };
-  Secuencia: undefined;
-  AllScreens: undefined;
+export type RootTabs = {
+  Home: NavigatorScreenParams<HomeTabPages>;
+  Jugadores: NavigatorScreenParams<ListaJugadoresTabPages>;
+  Rutinas: undefined;
 };
-const Tab = createBottomTabNavigator<screenType>();
+
 interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
 }
+
+const Tab = createBottomTabNavigator<RootTabs>();
 
 const Main = () => {
   const { espStatus, scanAndConnectPeripherals, requestPermissions } = useCustomBLEProvider();
@@ -61,10 +62,10 @@ const Main = () => {
       case 'Home':
         iconName = focused ? 'home' : 'home-outline';
         break;
-      case 'List':
+      case 'Jugadores':
         iconName = focused ? 'account-group' : 'account-group-outline';
         break;
-      case 'Secuencia':
+      case 'Rutinas':
         iconName = focused ? 'clipboard-list' : 'clipboard-list-outline';
         break;
     }
@@ -85,20 +86,20 @@ const Main = () => {
         >
           <Tab.Screen
             name="Home"
-            component={AllScreens}
+            component={HomeTab}
             options={{
               headerShown: false,
             }}
           />
           <Tab.Screen
-            name="List"
-            component={ListaJugadoresPage}
+            name="Jugadores"
+            component={ListaJugadoresTab}
             options={{
               headerShown: false,
             }}
           />
           <Tab.Screen
-            name="Secuencia"
+            name="Rutinas"
             component={Secuencias}
             options={{
               headerShown: false,

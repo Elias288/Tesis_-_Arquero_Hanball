@@ -3,17 +3,22 @@ import React, { FC, ReactNode } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 
-import { stackScreens } from '../components/AllScreens';
+import { HomeTabPages } from '../navigation/HomeTab';
 import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
+import { CompositeScreenProps } from '@react-navigation/native';
+import { RootTabs } from '../Main';
 
-type propsType = NativeStackScreenProps<stackScreens, 'HomePage'>;
+type propsType = CompositeScreenProps<
+  NativeStackScreenProps<HomeTabPages, 'HomePage'>,
+  NativeStackScreenProps<RootTabs>
+>;
 
 const HomePage: FC<propsType> = ({ navigation, route }) => {
   /******************************************** Iniciar Rutina ********************************************/
-  const IniciarRutina = ({ navigation }: { navigation: any }) => {
+  const IniciarRutina: FC = () => {
     const gotoSecuencias = () => {
-      navigation.navigate('Secuencias');
+      navigation.navigate('Rutinas');
     };
     const gotoCrearSecuencia = () => {
       navigation.navigate('DemoCrearSecuenca');
@@ -70,7 +75,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
   };
 
   /******************************************* Agregar Jugador *******************************************/
-  const AgregarJugador = ({ navigation }: { navigation: any }) => {
+  const AgregarJugador: FC = () => {
     const gotAgregarJugador = () => {
       navigation.navigate('Agregar_Jug');
     };
@@ -84,7 +89,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
   };
 
   /***************************************** Historial de Rutinas *****************************************/
-  const HistorialRutinas = () => {
+  const HistorialRutinas: FC = () => {
     const ContadorCard = () => {
       return (
         <View
@@ -114,6 +119,9 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
         </View>
       );
     };
+    const gotAgregarJugador = () => {
+      navigation.navigate('Jugadores', { screen: 'ListaJugadores' });
+    };
 
     return (
       <CustomCard>
@@ -121,9 +129,10 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
 
         <ContadorCard />
 
-        {/* Componente que Lista los jugadores */}
         <ListarJugadoresComponent cantRenderItems={2} simpleList={true} />
-        <Button textColor="#000">Ver más</Button>
+        <Button textColor="#000" onPress={gotAgregarJugador}>
+          Ver más
+        </Button>
       </CustomCard>
     );
   };
@@ -132,9 +141,9 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
     <>
       <HeaderComponent title={'BLE App'} />
       <ScrollView style={pageStyles.scrollViewStyle} nestedScrollEnabled>
-        <IniciarRutina navigation={navigation} />
+        <IniciarRutina />
 
-        <AgregarJugador navigation={navigation} />
+        <AgregarJugador />
 
         <HistorialRutinas />
       </ScrollView>
