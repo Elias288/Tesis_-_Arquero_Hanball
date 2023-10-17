@@ -10,56 +10,38 @@ import {
 } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
+import { IconButton } from 'react-native-paper';
 
-type dataTypeList = {
-  id: string;
-  title: string;
-};
+import { SecuenciasTabPages } from '../navigation/SecuenciasTab';
+import ListarSecuenciasComponent from '../components/Secuencias.component';
 
-export const DATA_S = [
-  {
-    id: '1',
-    title: 'Secuencia 1',
-  },
-  {
-    id: '2',
-    title: 'Secuencia 2',
-  },
-  {
-    id: '3',
-    title: 'Secuencia 3',
-  },
-];
+type propsType = NativeStackScreenProps<SecuenciasTabPages, 'Secuencias'>;
 
-const Secuencias = () => {
+const Secuencias = (props: propsType) => {
+  const { navigation, route } = props;
+
+  const gotoAgregarSecuencia = () => {
+    navigation.navigate('CrearSecuencaDef');
+  };
+
   return (
-    <>
+    <View style={styles.container}>
       <HeaderComponent title={'Rutinas'} />
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.heading}>Secuencias Guardadas</Text>
-        <FlatList
-          data={DATA_S}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.title}>{item.title}</Text>
-              <View style={styles.icon}>
-                <Icon name="application-edit-outline" size={30} color="#3CB371" />
-              </View>
-              <View style={styles.icon}>
-                <Icon name="trash-can" size={30} color="#3CB371" />
-              </View>
-            </View>
-          )}
-          keyExtractor={(item: dataTypeList) => item.id}
+      <ListarSecuenciasComponent navigation={navigation} />
+      <View>
+        <IconButton
+          icon={'plus'}
+          mode="contained"
+          containerColor="#e7d84f"
+          iconColor="#fff"
+          size={40}
+          style={{ position: 'absolute', right: 20, bottom: 20 }}
+          onPress={gotoAgregarSecuencia}
         />
-        <View style={styles.mas}>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.text}>+</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </>
+      </View>
+    </View>
   );
 };
 
@@ -68,9 +50,6 @@ export default Secuencias;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   item: {
     backgroundColor: '#f5f5f5',
