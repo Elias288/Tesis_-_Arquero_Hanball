@@ -29,7 +29,7 @@ const ListaJugadoresPage = (props: propsType) => {
       <IconButton
         icon={'plus'}
         mode="contained"
-        containerColor="#3CB371"
+        containerColor="#e7d84f"
         iconColor="#fff"
         size={40}
         style={{ position: 'absolute', right: 20, bottom: 20 }}

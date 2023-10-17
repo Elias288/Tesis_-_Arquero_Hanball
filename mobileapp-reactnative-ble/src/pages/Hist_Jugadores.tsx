@@ -13,6 +13,7 @@ import {
 import { TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeTabPages } from '../navigation/HomeTab';
+import HeaderComponent from '../components/Header.component';
 
 type propsType = NativeStackScreenProps<HomeTabPages, 'Hist_Jugadores'>;
 
@@ -21,41 +22,44 @@ const Hist_Jugadores = (props: propsType) => {
   const { name } = route.params;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.containerTitle}>
-        <Text style={styles.title}>Historial de entrenamientos de:</Text>
-        <Text style={styles.heading}>{name}</Text>
+    <>
+      <HeaderComponent title={'Historial'} />
+      <View style={styles.container}>
+        <View style={styles.containerTitle}>
+          <Text style={styles.title}>Historial de entrenamientos de:</Text>
+          <Text style={styles.heading}>{name}</Text>
+        </View>
+        <View style={styles.containerList}>
+          <View style={styles.container10}>
+            <View style={styles.container11}>
+              <Text style={styles.bigText}>Última rutina</Text>
+              <Text style={styles.text}>Info de última rutina</Text>
+            </View>
+            <View style={styles.containerDate}>
+              <Text style={styles.smallText}>DD/MM/YYYY</Text>
+            </View>
+          </View>
+          <View style={styles.container10}>
+            <View style={styles.container11}>
+              <Text style={styles.bigText}>Penúltima rutina</Text>
+              <Text style={styles.text}>Info de penúltima rutina</Text>
+            </View>
+            <View style={styles.containerDate}>
+              <Text style={styles.smallText}>DD/MM/YYYY</Text>
+            </View>
+          </View>
+          <View style={styles.container10}>
+            <View style={styles.container11}>
+              <Text style={styles.bigText}>Ante-penúltima rutina</Text>
+              <Text style={styles.text}>Info de ante-penúltima rutina</Text>
+            </View>
+            <View style={styles.containerDate}>
+              <Text style={styles.smallText}>DD/MM/YYYY</Text>
+            </View>
+          </View>
+        </View>
       </View>
-      <View style={styles.containerList}>
-        <View style={styles.container10}>
-          <View style={styles.container11}>
-            <Text style={styles.bigText}>Última rutina</Text>
-            <Text style={styles.text}>Info de última rutina</Text>
-          </View>
-          <View style={styles.containerDate}>
-            <Text style={styles.smallText}>DD/MM/YYYY</Text>
-          </View>
-        </View>
-        <View style={styles.container10}>
-          <View style={styles.container11}>
-            <Text style={styles.bigText}>Penúltima rutina</Text>
-            <Text style={styles.text}>Info de penúltima rutina</Text>
-          </View>
-          <View style={styles.containerDate}>
-            <Text style={styles.smallText}>DD/MM/YYYY</Text>
-          </View>
-        </View>
-        <View style={styles.container10}>
-          <View style={styles.container11}>
-            <Text style={styles.bigText}>Ante-penúltima rutina</Text>
-            <Text style={styles.text}>Info de ante-penúltima rutina</Text>
-          </View>
-          <View style={styles.containerDate}>
-            <Text style={styles.smallText}>DD/MM/YYYY</Text>
-          </View>
-        </View>
-      </View>
-    </View>
+    </>
   );
 };
 

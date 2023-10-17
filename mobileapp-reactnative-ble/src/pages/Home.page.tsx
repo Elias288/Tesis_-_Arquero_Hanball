@@ -18,7 +18,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
   /******************************************** Iniciar Rutina ********************************************/
   const IniciarRutina: FC = () => {
     const gotoSecuencias = () => {
-      navigation.navigate('Rutinas');
+      navigation.navigate('Rutinas', { screen: 'Secuencias' });
     };
     const gotoCrearSecuencia = () => {
       navigation.navigate('DemoCrearSecuenca');

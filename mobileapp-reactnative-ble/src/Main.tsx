@@ -10,12 +10,13 @@ import HomeTab, { HomeTabPages } from './navigation/HomeTab';
 import { useCustomBLEProvider } from './utils/BLEProvider';
 import HandleMSGs from './utils/HandleMSGs';
 import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
+import SecuenciasTab, { SecuenciasTabPages } from './navigation/SecuenciasTab';
 
 /************************************************* Main *************************************************/
 export type RootTabs = {
   Home: NavigatorScreenParams<HomeTabPages>;
   Jugadores: NavigatorScreenParams<ListaJugadoresTabPages>;
-  Rutinas: undefined;
+  Rutinas: NavigatorScreenParams<SecuenciasTabPages>;
 };
 
 interface Funciones {
@@ -100,7 +101,7 @@ const Main = () => {
           />
           <Tab.Screen
             name="Rutinas"
-            component={Secuencias}
+            component={SecuenciasTab}
             options={{
               headerShown: false,
             }}
