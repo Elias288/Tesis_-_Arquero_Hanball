@@ -1,10 +1,10 @@
 const httpStatusCodes = require('http-status-codes');
 
 class BaseController {
-    constructor(repoClass){
+    constructor(repoClass) {
         this.repo = new repoClass();
     }
-    getAll = (req,res) => {
+    getAll = (req, res) => {
         this.repo.findAll().then(doc => {
             return res.status(httpStatusCodes.OK).send(doc);
         }).catch(err => {
@@ -12,7 +12,7 @@ class BaseController {
             return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).send(err);
         })
     }
-    add = (req,res) => {
+    add = (req, res) => {
         const body = req.body;
         this.repo.create(body).then(doc => {
             return res.status(httpStatusCodes.CREATED).send(doc);
@@ -24,14 +24,14 @@ class BaseController {
     update = (req, res) => {
         let id = req.params.id;
         const body = req.body;
-        this.repo.update(body).then(doc =>{
+        this.repo.update(body).then(doc => {
             return res.status(httpStatusCodes.OK).send(doc);
         }).catch(err => {
             console.log(err);
             return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).send(err);
         })
     }
-    deleteById = (req, res ) => {
+    deleteById = (req, res) => {
         let id = req.params.id;
         this.repo.deleteById(id).then(doc => {
             return res.status(httpStatusCodes.CREATED).send(doc);
