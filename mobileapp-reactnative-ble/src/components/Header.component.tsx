@@ -1,9 +1,40 @@
-import { IconButton, Text } from 'react-native-paper';
-import { View, StyleSheet } from 'react-native';
-import BleStatus from './BleStatus';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
+import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
+import { useCustomBLEProvider } from '../utils/BLEProvider';
 
-const HeaderComponent = ({ ...props }) => {
+type headerProps = {
+  back?: boolean;
+  title?: string;
+};
+
+const HeaderComponent = (props: headerProps) => {
+  const BleStatus = () => {
+    const { requestPermissions, scanAndConnectPeripherals, isScanningLoading } =
+      useCustomBLEProvider();
+
+    const scanForDevices = async () => {
+      const isPermissionsEnabled = await requestPermissions();
+      if (isPermissionsEnabled) {
+        scanAndConnectPeripherals();
+      }
+    };
+
+    return (
+      <View>
+        {isScanningLoading ? (
+          <View style={{ marginHorizontal: 15 }}>
+            <ActivityIndicator animating={true} color={'#fff'} />
+          </View>
+        ) : (
+          <TouchableOpacity onPress={scanForDevices}>
+            <IconButton iconColor="#fff" icon={'reload-alert'} size={25} />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {props.back ? <Text>Back</Text> : <BleStatus />}
