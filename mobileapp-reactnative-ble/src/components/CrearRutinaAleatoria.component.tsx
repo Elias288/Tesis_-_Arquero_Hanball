@@ -1,7 +1,13 @@
 import { Slider } from '@react-native-assets/slider';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Text } from 'react-native-paper';
+import { HomeTabPages } from '../navigation/HomeTab';
+import { RootTabs } from '../Main';
+import { secuenciaType } from '../data/ListaRutinas.data';
+import { useCustomBLEProvider } from '../utils/BLEProvider';
 
 const CANTLEDS = 4;
 const MAXSECONDS = 5;
@@ -9,24 +15,35 @@ const MAXSECONDS = 5;
 type propsType = {
   visible: boolean;
   setVisibleDialogCreateRandom: (val: boolean) => void;
+  navigation?: CompositeNavigationProp<
+    NativeStackNavigationProp<HomeTabPages, 'HomePage', undefined>,
+    NativeStackNavigationProp<RootTabs>
+  >;
 };
 
-type rutinaType = { id: string; ledId: string; time: number };
-
 const CrearRutinaAleatoriaComponent = (props: propsType) => {
-  const { setVisibleDialogCreateRandom, visible } = props;
+  const { setVisibleDialogCreateRandom, visible, navigation } = props;
   const [randomSize, setRandomSize] = useState<number>(4);
+  const { espStatus } = useCustomBLEProvider();
 
   const CustomThumb = ({ value }: { value: number }) => {
     return <Text style={styles.CustomThumb}>{value}</Text>;
   };
 
-  /*
-   * Esta función debe generar una lista de rutinas de un tamaño dado por el usuario, que dependa de la cantidad
-   * de E/R conectados y de un maximo de 5 segundos.
-   */
+  const gotoJugar = (secuencia: Array<secuenciaType>) => {
+    const rutina = { id: 1, title: 'rutina random', secuencia };
+
+    navigation?.navigate('Jugar', {
+      rutina: rutina,
+    });
+  };
+
   const crearRutinaAleatoria = () => {
-    let rutina: Array<rutinaType> = [];
+    /*
+     * Esta función debe generar una lista de rutinas de un tamaño dado por el usuario, que dependa de la cantidad
+     * de E/R conectados y de un maximo de 5 segundos.
+     */
+    let rutina: Array<secuenciaType> = [];
     let previousLedId = 0; // Inicializado a 0 para asegurar que no coincida con el primer valor
 
     for (let i = 1; i <= randomSize; i++) {
@@ -41,43 +58,59 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
       const randomTime = Math.floor(Math.random() * MAXSECONDS) + 1; // Número aleatorio entre 1 y 5
 
       // construye el objeto Rutina
-      const jsonData = {
+      const newSecuencia = {
         id: i.toString(),
         ledId: randomLedId.toString(),
         time: randomTime,
       };
 
       // carga la lista de Rutinas
-      rutina.push(jsonData);
+      rutina.push(newSecuencia);
     }
 
-    alert(JSON.stringify(rutina, null, 2));
     setVisibleDialogCreateRandom(false);
+    gotoJugar(rutina);
   };
 
   return (
     <Dialog visible={visible}>
-      <Dialog.Content>
-        <View>
-          <Text style={styles.title}>Crear rutina aleatoria</Text>
+      {espStatus ? (
+        <>
+          <Dialog.Content>
+            <View>
+              <Text style={styles.title}>Crear rutina aleatoria</Text>
 
-          <View style={{ marginTop: 10 }}>
-            <Text>Tamaño de Rutina</Text>
-            <Slider
-              minimumValue={4}
-              maximumValue={10}
-              onValueChange={setRandomSize}
-              step={1}
-              CustomThumb={CustomThumb}
-              style={{ height: 40 }}
-            />
-          </View>
-        </View>
-      </Dialog.Content>
-      <Dialog.Actions>
-        <Button onPress={crearRutinaAleatoria}>Jugar</Button>
-        <Button onPress={() => setVisibleDialogCreateRandom(false)}>Cancel</Button>
-      </Dialog.Actions>
+              <View style={{ marginTop: 10 }}>
+                <Text>Tamaño de Rutina</Text>
+                <Slider
+                  minimumValue={4}
+                  maximumValue={10}
+                  onValueChange={setRandomSize}
+                  step={1}
+                  CustomThumb={CustomThumb}
+                  style={{ height: 40 }}
+                />
+              </View>
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={crearRutinaAleatoria}>Jugar</Button>
+            <Button onPress={() => setVisibleDialogCreateRandom(false)}>Cancel</Button>
+          </Dialog.Actions>
+        </>
+      ) : (
+        <>
+          <Dialog.Content>
+            <View style={{ paddingTop: 20 }}>
+              <Text style={styles.title}>Bluetooth no está conectado</Text>
+              <Text>Enciendaló para poder generar una rutina aleatoria</Text>
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setVisibleDialogCreateRandom(false)}>Ok</Button>
+          </Dialog.Actions>
+        </>
+      )}
     </Dialog>
   );
 };

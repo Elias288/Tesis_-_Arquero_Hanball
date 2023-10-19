@@ -9,10 +9,11 @@ import Agregar_Jug from '../pages/Agregar_Jug';
 import Hist_Jugadores from '../pages/Hist_Jugadores';
 import DemoCrearSecuenca from '../pages/CrearSecuencia';
 import Secuencias from '../pages/Secuencias';
+import { RutinaType } from '../data/ListaRutinas.data';
 
 export type HomeTabPages = {
   HomePage: undefined;
-  Jugar: undefined;
+  Jugar: { rutina: RutinaType };
   JugarSec: { jug: string };
   Agregar_Jug: undefined;
   Hist_Jugadores: { name: string };

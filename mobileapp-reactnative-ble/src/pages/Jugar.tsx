@@ -1,38 +1,27 @@
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
-// import { DATA } from './ListaJugadores.page';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeTabPages } from '../navigation/HomeTab';
-
-type dataTypeList = {
-  id: string;
-  title: string;
-};
+import HeaderComponent from '../components/Header.component';
+import { ActivityIndicator } from 'react-native-paper';
+import { useCustomBLEProvider } from '../utils/BLEProvider';
 
 type propsType = NativeStackScreenProps<HomeTabPages, 'Jugar'>;
 
 const Jugar = (props: propsType) => {
-  const { navigation } = props;
-  const gotoJugarSecuencia = (nomJug: string) => {
-    navigation.navigate('JugarSec', { jug: nomJug });
-  };
+  const { navigation, route } = props;
+  const { rutina } = route.params;
+  const {sendData} = useCustomBLEProvider()
+  const [loading, setLoading] = useState<boolean>(true);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.heading}>Seleccionar jugador</Text>
-      {/* <FlatList
-        data={DATA}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <TouchableOpacity onPress={() => gotoJugarSecuencia(item.title)}>
-              <Text style={styles.title}>{item.title}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        keyExtractor={(item: dataTypeList) => item.id}
-      /> */}
-    </SafeAreaView>
+    <>
+      <HeaderComponent title="Iniciar Rutina" />
+      <View style={styles.container}>
+        <Text>{JSON.stringify(rutina, null, 0)}</Text>
+        <ActivityIndicator animating={true} color={'#a9a9a9'} size={150} />
+      </View>
+    </>
   );
 };
 

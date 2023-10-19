@@ -153,6 +153,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
       <CrearRutinaAleatoriaComponent
         setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
         visible={visibleDialogCreateRandom}
+        navigation={navigation}
       />
     </>
   );
