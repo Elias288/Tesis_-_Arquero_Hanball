@@ -9,10 +9,15 @@ type headerProps = {
 };
 
 const HeaderComponent = (props: headerProps) => {
+  const {
+    requestPermissions,
+    scanAndConnectPeripherals,
+    isScanningLoading,
+    espStatus,
+    connectedDevice,
+    disconnectFromDevice,
+  } = useCustomBLEProvider();
   const BleStatus = () => {
-    const { requestPermissions, scanAndConnectPeripherals, isScanningLoading } =
-      useCustomBLEProvider();
-
     const scanForDevices = async () => {
       const isPermissionsEnabled = await requestPermissions();
       if (isPermissionsEnabled) {
@@ -22,14 +27,39 @@ const HeaderComponent = (props: headerProps) => {
 
     return (
       <View>
-        {isScanningLoading ? (
-          <View style={{ marginHorizontal: 15 }}>
-            <ActivityIndicator animating={true} color={'#fff'} />
-          </View>
+        {espStatus ? (
+          // si el esp está encendido
+          <>
+            {isScanningLoading ? (
+              // si está escaneando
+              <View style={{ marginHorizontal: 15 }}>
+                <ActivityIndicator animating={true} color={'#fff'} />
+              </View>
+            ) : (
+              // si no está escaneando
+              <>
+                {connectedDevice ? (
+                  // si está conectado
+                  <IconButton
+                    iconColor="#fff"
+                    icon={'bluetooth-connect'}
+                    onPress={() => disconnectFromDevice()}
+                  />
+                ) : (
+                  // si no está conectado
+                  <IconButton
+                    onPress={scanForDevices}
+                    iconColor="#fff"
+                    icon={'reload-alert'}
+                    size={25}
+                  />
+                )}
+              </>
+            )}
+          </>
         ) : (
-          <TouchableOpacity onPress={scanForDevices}>
-            <IconButton iconColor="#fff" icon={'reload-alert'} size={25} />
-          </TouchableOpacity>
+          // si el esp está apagado
+          <IconButton onPress={scanForDevices} iconColor={'#fff'} icon={'bluetooth-off'} />
         )}
       </View>
     );

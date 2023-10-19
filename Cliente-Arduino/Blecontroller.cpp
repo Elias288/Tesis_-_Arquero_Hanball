@@ -86,7 +86,7 @@ void redirectMSG(String inMsg) {
         Serial.println("startGame");
         return;
       }
-      if (strcmp(function, "inMsg") == 0 || strcmp(function, "") == 0) {
+      if (strcmp(function, "clientMsg") == 0 || strcmp(function, "") == 0) {
         Serial.print("inMsg: ");
         Serial.println(content);
         return;
@@ -158,7 +158,7 @@ void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // notify changed value
   if (deviceConnected) {
     if (cantMsgSend >= 1) {
-      sendData("saludo:desde ESP32");
+      sendData("bleMSG:ESP32 conectado");
       cantMsgSend--;
     }
 

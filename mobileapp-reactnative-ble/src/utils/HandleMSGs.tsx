@@ -3,7 +3,11 @@ import { Portal, Snackbar } from 'react-native-paper';
 import { useCustomBLEProvider } from './BLEProvider';
 import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
 
-const HandleMSGs = ({ ...props }) => {
+export interface Funciones {
+  [nombreFuncion: string]: (dato: string) => void;
+}
+
+const HandleMSGs = () => {
   const { receivedMSG, BLECode, BLEmsg, cleanBLECode } = useCustomBLEProvider();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
@@ -15,7 +19,7 @@ const HandleMSGs = ({ ...props }) => {
       const partes = receivedMSG.split('\t');
       partes.forEach((parte) => {
         const [nombreFuncion, dato] = parte.split(':');
-        const funcion = props.funciones[nombreFuncion];
+        const funcion = handleFunctions[nombreFuncion];
         if (funcion) {
           funcion(dato);
         }
@@ -29,6 +33,20 @@ const HandleMSGs = ({ ...props }) => {
     }
     cleanBLECode();
   }, [BLECode, receivedMSG]);
+
+  const handleFunctions: Funciones = {
+    // resultado del juego
+    res: (dato) => {
+      setVisibleSnackbar(true);
+      SetsnackbarMsg(dato);
+    },
+
+    // mensajes desde desde el servidor BLE
+    bleMSG: (dato) => {
+      setVisibleSnackbar(true);
+      SetsnackbarMsg(dato);
+    },
+  };
 
   return (
     <Portal>
