@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useState, useCallback } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 
@@ -8,6 +8,7 @@ import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { RootTabs } from '../Main';
+import CrearRutinaAleatoriaComponent from '../components/CrearRutinaAleatoria.component';
 
 type propsType = CompositeScreenProps<
   NativeStackScreenProps<HomeTabPages, 'HomePage'>,
@@ -15,6 +16,7 @@ type propsType = CompositeScreenProps<
 >;
 
 const HomePage: FC<propsType> = ({ navigation, route }) => {
+  const [visibleDialogCreateRandom, setVisibleDialogCreateRandom] = useState<boolean>(false);
   /******************************************** Iniciar Rutina ********************************************/
   const IniciarRutina: FC = () => {
     const gotoSecuencias = () => {
@@ -64,7 +66,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
             <OptionButtons
               text="Rutina Aleatoria"
               icon="dice-6"
-              action={() => alert('not implemented yet')}
+              action={() => setVisibleDialogCreateRandom(true)}
             />
             <OptionButtons text="Crear Rutina" icon="plus" action={gotoCrearSecuencia} />
             <OptionButtons text=" Cargar Rutina" icon="upload" action={gotoSecuencias} />
@@ -147,6 +149,11 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
 
         <HistorialRutinas />
       </ScrollView>
+
+      <CrearRutinaAleatoriaComponent
+        setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
+        visible={visibleDialogCreateRandom}
+      />
     </>
   );
 };
