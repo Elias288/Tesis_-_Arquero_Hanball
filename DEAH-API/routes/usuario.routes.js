@@ -11,4 +11,6 @@ router.put('/update/:id', usuarioController.update);
 router.delete('/delete/:id', usuarioController.deleteById);
 router.post('/login', usuarioController.login);
 
+router.put('/addRutina', usuarioController.asignarRutina);
+
 module.exports = router;

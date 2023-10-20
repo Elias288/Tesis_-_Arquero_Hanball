@@ -46,5 +46,16 @@ class UsuarioController extends BaseController {
             }
         )
     }
+    asignarRutina(req, res) {
+        return UsuarioSchema.findOneAndUpdate(
+            { username: req.body.username },
+            {
+                $push: {
+                    rutinas: req.body.id_rutina
+                }
+            }).then(result => {
+                res.status(200).json({ message: "Rutina asignada con exito" });
+            })
+    }
 }
 module.exports = UsuarioController;

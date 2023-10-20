@@ -15,8 +15,6 @@ module.exports = (req, res, next) => {
         }
     } catch {
         //console.log('Peticion invalida');
-        res.status(401).json({
-            error: new Error({ msg: 'Peticion invalida' })
-        });
+        res.status(401).json({ message: 'No autorizado' });
     }
 };

@@ -15,9 +15,7 @@ var ResultadoSchema = new Schema({
     id_rutina: {
         type: Number,
     },
-    secuencias: {
-        type: Array,//Array<Id_secuencia>
-    },
+    secuencias: { type: ObjectID, ref: 'Secuencia' },
 }, { versionKey: false });
 
 // Exportar el modelo

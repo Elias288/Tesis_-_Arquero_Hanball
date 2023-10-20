@@ -26,7 +26,7 @@ var UsuarioSchema = new Schema({
     nombre: {
         type: String,
     },
-    rutinas: { type: ObjectID, ref: 'Rutina' },
+    rutinas: [{ type: ObjectID, ref: 'Rutina' }],
 }, { versionKey: false });
 
 UsuarioSchema.pre('save', function (next) {
@@ -42,7 +42,7 @@ UsuarioSchema.pre('save', function (next) {
     });
 });
 
-UsuarioSchema.methods.compare = function (password, cb) {
+UsuarioSchema.methods.compare = function (password) {
     bcrypt.compare(password, this.contrasenia, (err, isMatch) => {
         if (err) {
             return cb(err);
