@@ -9,9 +9,10 @@
 
 void initBLE();
 void connectBLE(const byte*, const byte*);
-void sendData(std::string);
+void sendData(std::vector<std::string>);
 void sendData(int);
 void unpackMSG(std::string);
+void packMSG(std::string &, std::vector<std::string> &);
 void redirectMSG(String);
 bool isDeviceConnected();
 bool isOldDeviceConnected();

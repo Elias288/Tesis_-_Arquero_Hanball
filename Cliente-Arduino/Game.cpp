@@ -1,3 +1,4 @@
+#include <string>
 #include "Game.h"
 
 int indiceActual = 0;          // posicion de la lista de secuencia
@@ -9,6 +10,7 @@ int indiceToSecuenciaDeReaccion = 0;
 const int maxPairs = 10;
 bool initGame = false;
 String matrix[maxPairs][2];
+String secuenciaString = "";
 String secuenciaDeReaccion[maxPairs][2];
 String respuesta = "";
 
@@ -30,6 +32,10 @@ void setRespuesta(String res) {
 
 String getRespuesta() {
   return respuesta;
+}
+
+String getSecuenciaString() {
+  return secuenciaString;
 }
 
 String getSecuenceMatrix(int fila, int columna) {
@@ -61,6 +67,8 @@ void pushToSecuenciaDeReaccion(int indiceSecuencia, String led, String time) {
 void setSecuenceMatrix(String input) {
   int pairIndex = 0;
   String pair = "";
+
+  secuenciaString = input; // guarda la secuencia original
 
   // Recorrer la cadena
   for (int i = 0; i < input.length(); i++) {
@@ -99,7 +107,7 @@ void blink(int cantRep, long interval, const byte *LEDPinArray) {
    */
   unsigned int contador = 0;
   static int ledState = LOW;
-  
+
   while (contador <= cantRep - 1) {
     unsigned long currentMillis = millis();
     static unsigned long previousMillis = 0;
@@ -169,11 +177,25 @@ void resetAll() {
   startGame = true;
 }
 
+void printMatrix() {
+  Serial.print("Secuencia: ");
+  for (int i = 0; i < maxPairs; i++) {
+    if (matrix[i][0] != "") {
+      Serial.print(matrix[i][0].toInt() + 1);
+      Serial.print(",");
+      Serial.print(matrix[i][1]);
+      Serial.print(";");
+    }
+  }
+  Serial.println(" ");
+}
+
 // ******************************************************** Game 2 ********************************************************
 void game(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // ********************************************** si se recibe la secuencia **********************************************
   if (initGame) {
     if (startGame) {
+      printMatrix();
       // *********************************** Ejecuta el blink 4 veces antes de comenzar ***********************************
       blink(4, 1000, LEDPinArray);
       startGame = false;
@@ -194,6 +216,8 @@ void game(const byte *LEDPinArray, const byte *BUTTONPinArray) {
         resultado += getSecuenciaDeReaccion(fila, 1);
         resultado += ";";
       }
+
+      if (resultado == "") resultado = "null";
       setRespuesta(resultado);
 
       resetAll();

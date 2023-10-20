@@ -1,3 +1,4 @@
+#include "esp32-hal.h"
 #include "Blecontroller.h"
 #include "Game.h"
 
@@ -5,8 +6,8 @@
 #define CHARACTERISTIC_UUID "00002a37-0000-1000-8000-00805f9b34fb"
 #define bleServerName "ESP32-server v2"
 
-const int MAX_MESSAGE_SIZE = 512;
-char receivedMessage[MAX_MESSAGE_SIZE];
+const int MAX_MESSAGE_SIZE = 23;
+char receivedMessage[100];
 int messageIndex = 0;
 BLEServer *pServer = NULL;
 BLECharacteristic *pCharacteristic = NULL;
@@ -50,14 +51,14 @@ std::string getReceivedMsg() {
 void redirectMSG(String inMsg) {
   /*
    * FORMATO DE MENSAJE RECIBIDO
-   * funcion1:content1\tfuncion2:content2\t...\n
+   * funcion1:content1^funcion2:content2^...~
    */
   char *token;
   char *strtokIndx;
   char *function;
   char *content;
 
-  token = strtok_r((char *)inMsg.c_str(), "\t", &strtokIndx);
+  token = strtok_r((char *)inMsg.c_str(), "^", &strtokIndx);
   while (token != NULL) {
     // Dividir el par "funcion: contenido" en función y contenido
     function = strtok(token, ":");
@@ -65,8 +66,6 @@ void redirectMSG(String inMsg) {
 
     if (function != NULL && content != NULL) {
       if (strcmp(function, "secuence") == 0) {
-        Serial.print("Secuencia: ");
-        Serial.println(content);
 
         // Inicializar la matriz
         for (int i = 0; i < getMaxPairs(); i++) {
@@ -77,7 +76,7 @@ void redirectMSG(String inMsg) {
         }
 
         String stringContent = String(content);
-        setSecuenceMatrix(stringContent);
+        setSecuenceMatrix(stringContent);  // convierte la secuencia en una matriz
 
         setInitGame(true);
         return;
@@ -87,7 +86,7 @@ void redirectMSG(String inMsg) {
         return;
       }
       if (strcmp(function, "clientMsg") == 0 || strcmp(function, "") == 0) {
-        Serial.print("inMsg: ");
+        Serial.print("clientMsg: ");
         Serial.println(content);
         return;
       }
@@ -102,7 +101,7 @@ void unpackMSG(std::string inMsg) {
   for (size_t i = 0; i < inMsg.length(); i++) {
     char receivedChar = inMsg[i];
 
-    if (receivedChar == '\n') {
+    if (receivedChar == '~') {
       // Procesar el mensaje completo
       receivedMessage[messageIndex] = '\0';  // Agregar terminador nulo
       redirectMSG(receivedMessage);
@@ -110,10 +109,24 @@ void unpackMSG(std::string inMsg) {
       messageIndex = 0;
     } else {
       // Almacenar el carácter en el buffer del mensaje
-      if (messageIndex < MAX_MESSAGE_SIZE - 1) {
+      if (messageIndex < 100 - 1) {
         receivedMessage[messageIndex++] = receivedChar;
       }
     }
+  }
+}
+
+void packMSG(const std::string &input, std::vector<std::string> &output) {
+  /* 
+   * Funcion que empaqueta los mensajes a enviar al cliente
+   */
+  std::string inputMSG = input + "~";
+  int inputLength = inputMSG.length();
+  int maxSize = MAX_MESSAGE_SIZE - 3;
+  int numStrings = inputLength / maxSize + (inputLength % maxSize == 0 ? 0 : 1);
+
+  for (int i = 0; i < numStrings; i++) {
+    output.push_back(inputMSG.substr(i * maxSize, maxSize));
   }
 }
 
@@ -157,19 +170,24 @@ int cantMsgSend = 1;
 void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   // notify changed value
   if (deviceConnected) {
-    if (cantMsgSend >= 1) {
-      sendData("bleMSG:ESP32 conectado");
-      cantMsgSend--;
-    }
-
     game(LEDPinArray, BUTTONPinArray);
 
     if (getRespuesta() != "") {
-      String res = "res:";
+      // envia la rutina
+      String rutina = "rut:";
+      rutina += getSecuenciaString();
+
+      // envia el resultado
+      String res = rutina + "^" + "res:";
       res += getRespuesta();
 
       Serial.println(res);
-      sendData(res.c_str());
+
+      std::vector<std::string> subStrings;
+      // se empaqueta el mensaje
+      packMSG(res.c_str(), subStrings);
+      // se envian los paquetes
+      sendData(subStrings);
 
       setRespuesta("");
     }
@@ -184,14 +202,45 @@ void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
   }
   // connecting
   if (deviceConnected && !oldDeviceConnected) {
-    // do stuff here on connecting
     oldDeviceConnected = deviceConnected;
-    Serial.println("client connected");
+    Serial.println("new client connected");
+    if (cantMsgSend >= 1) {
+      // Envia el saludo inicial
+      std::vector<std::string> subStrings;
+      packMSG("bleMSG: BLE server connected", subStrings);
+      sendData(subStrings);
+
+      cantMsgSend--;
+    }
   }
 }
 
 // ******************************************* Enviar data al cliente *******************************************
-void sendData(std::string txValue) {
-  pCharacteristic->setValue(txValue);
-  pCharacteristic->notify();
+const unsigned long interval = 1000;  // Intervalo de 1 segundo
+void sendData(std::vector<std::string> subStrings) {
+  int currentStringIndex = 0;
+  bool done = false;
+  unsigned long previousMillis = 0;
+
+  while (!done) {
+    unsigned long currentMillis = millis();
+    // caad 1 segundo va a entrar
+    if (currentMillis - previousMillis >= interval) {
+      // si ya no hay paquetes por enviar finaliza el bucle
+      if (currentStringIndex >= subStrings.size()) {
+        done = true;
+        break;
+      }
+
+      // envia los paquetes
+      Serial.print("sending:");
+      Serial.print(subStrings[currentStringIndex].c_str());
+      Serial.println("...");
+      pCharacteristic->setValue(subStrings[currentStringIndex].c_str());
+      pCharacteristic->notify();
+
+      currentStringIndex++;
+      previousMillis = currentMillis;
+    }
+  }
 }

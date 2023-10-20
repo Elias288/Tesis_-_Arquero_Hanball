@@ -13,6 +13,7 @@ int getMaxPairs();
 String getSecuenceMatrix(int, int);
 String getSecuenciaDeReaccion(int, int);
 String getRespuesta();
+String getSecuenciaString();
 // Set
 void setInitGame(bool);
 void setRespuesta(String);
