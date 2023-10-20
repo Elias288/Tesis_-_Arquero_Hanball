@@ -1,7 +1,10 @@
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
 import { useCustomBLEProvider } from '../utils/BLEProvider';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeTabPages } from '../navigation/HomeTab';
 
 type headerProps = {
   back?: boolean;
@@ -9,6 +12,8 @@ type headerProps = {
 };
 
 const HeaderComponent = (props: headerProps) => {
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+
   const {
     requestPermissions,
     scanAndConnectPeripherals,
@@ -66,9 +71,19 @@ const HeaderComponent = (props: headerProps) => {
     );
   };
 
+  const BackButton = () => {
+    return (
+      <IconButton
+        icon={'arrow-u-left-top-bold'}
+        iconColor="#fff"
+        onPress={() => navigator.goBack()}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {props.back ? <Text>Back</Text> : <BleStatus />}
+      {props.back ? <BackButton /> : <BleStatus />}
       <Text style={styles.textTitle}>{props.title}</Text>
       <IconButton iconColor="#fff" icon={'cog'} size={30}></IconButton>
     </View>

@@ -87,6 +87,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
     const gotAgregarJugador = () => {
       navigation.navigate('Agregar_Jug');
     };
+
     return (
       <CustomCard>
         <Button textColor="#000" onPress={gotAgregarJugador}>
