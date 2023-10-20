@@ -38,7 +38,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     navigation.navigate('Hist_Jugadores', { name: nomJug });
   };
 
-  const RenderItem: FC<JugadorType> = ({ title, id }) => {
+  const RenderItem: FC<JugadorType> = ({ name: title, id }) => {
     return (
       <View style={styles.completeItemContainer}>
         <View>
@@ -72,7 +72,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     );
   };
 
-  const RenderSimpleItem: FC<JugadorType> = ({ title, id }) => {
+  const RenderSimpleItem: FC<JugadorType> = ({ name: title, id }) => {
     return (
       <View style={styles.simpleItemContainer}>
         <View>

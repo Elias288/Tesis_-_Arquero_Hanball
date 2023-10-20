@@ -6,10 +6,12 @@ import base64 from 'react-native-base64';
 import * as ExpoDevice from 'expo-device';
 import {
   BLUETOOTHCONNECTED,
-  BLUETOOTHERROR,
+  BLUETOOTHOFF,
   BLUETOOTHNOTCONNECTED,
   BLUETOOTHNOTSTATUS,
   BLUETOOTHTIMEOUT,
+  BLUETOOTHERROR,
+  BLUETOOTHDISCONNECTED,
 } from '../utils/BleCodes';
 import { secuenciaType } from '../data/ListaRutinas.data';
 
@@ -25,14 +27,15 @@ export interface BluetoothLowEnergyApi {
   sendData(device: Device, msg: string): Promise<void>;
   cleanBLECode(): void;
   initBle(): void;
-  formatRutina(secuencia: Array<secuenciaType>): string;
+  secuenciaToString(secuencia: Array<secuenciaType>): string;
   connectedDevice: Device | undefined;
   espDevice: Device | undefined;
   BLEmsg: string;
   BLECode: number;
-  espStatus: Boolean;
+  espConnectedStatus: Boolean;
   isScanningLoading: Boolean;
   receivedMSG: string;
+  BLEPowerStatus: Boolean
 }
 
 function useBLE(): BluetoothLowEnergyApi {
@@ -41,8 +44,10 @@ function useBLE(): BluetoothLowEnergyApi {
   const [espDevice, setEspDevice] = useState<Device>(); // objeto device
   const [connectedDevice, setConnectedDevice] = useState<Device | undefined>(); // objeto device si está conectado
 
-  const [BLEStatus, setBLEStatus] = useState<Boolean>(false); // estado del esp, conectado true, no conectado false
+  const [BLEConectedStatus, setBLEConnectedStatus] = useState<Boolean>(false); // estado del esp, conectado true, no conectado false
+  const [BLEPowerStatus, setBLEPowerStatus] = useState<Boolean>(false);
   const [receivedMSG, setReceivedMSG] = useState<string>(''); // mensaje recibido desde el servidor BLE
+  let receivedArrayMessage: Array<string> = [];
   const [isScanningLoading, setScanningLoading] = useState<Boolean>(false); // estado del escaner
   const [BLEmsg, setBLEMsg] = useState<string>(''); // mensajes de estado
   const [BLECode, setBLECode] = useState<number>(BLUETOOTHNOTSTATUS); // codigo de estado y resultados
@@ -105,21 +110,24 @@ function useBLE(): BluetoothLowEnergyApi {
   const scanAndConnectPeripherals = () => {
     const suscription = bleManager.onStateChange((state) => {
       if (state === 'PoweredOn') {
-        setBLEStatus(true);
+        setBLEPowerStatus(true);
         setScanningLoading(true);
 
         // ****************************** Si el bluetooth está a encendido ******************************
         bleManager.stopDeviceScan();
-        setBLECode(0);
+
         setBLEMsg('Scanning...');
         setEspDevice(undefined);
 
         let espdevice: Device | undefined;
         bleManager.startDeviceScan(null, null, (error, device) => {
           if (error) {
-            setBLECode(BLUETOOTHERROR);
             setBLEMsg(`${error}`);
-            return;
+            setBLECode(BLUETOOTHERROR);
+            console.log(`DeviceScanError - BLECode: ${BLUETOOTHERROR}`);
+
+            bleManager.stopDeviceScan();
+            return () => suscription.remove();
           }
 
           // *********************************** Busca el dispositivo ***********************************
@@ -134,6 +142,7 @@ function useBLE(): BluetoothLowEnergyApi {
               device.isConnected().then((state) => {
                 if (!state) {
                   connectToDevice(device);
+                  setBLEConnectedStatus(true);
                 } else {
                   setConnectedDevice(device);
                   bleManager.connectedDevices([ESP32_SERVICE_UUID]).then((device) => {
@@ -150,17 +159,26 @@ function useBLE(): BluetoothLowEnergyApi {
           if (espdevice === undefined) {
             bleManager.stopDeviceScan();
             setScanningLoading(false);
-            setBLEMsg('Time out. Esp32 not found');
+
+            setBLEMsg('Tiempo agotado. Esp32 no encontrado');
             setBLECode(BLUETOOTHTIMEOUT);
+            console.log(`Time out - BLECode: ${BLUETOOTHTIMEOUT}`);
+            bleManager.stopDeviceScan();
             return;
           }
         }, 10000);
       } else if (state === 'PoweredOff') {
         // ******************************* si el bluetooth está a pagado *******************************
-        setBLEStatus(false);
+        setBLEConnectedStatus(false);
+        setBLEPowerStatus(false);
         setScanningLoading(false);
-        setBLEMsg('Bluetooth off');
-        setBLECode(BLUETOOTHNOTCONNECTED);
+
+        setBLEMsg('Bluetooth apagado');
+        setBLECode(BLUETOOTHOFF);
+        console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);
+        bleManager.stopDeviceScan();
+
+        return () => suscription.remove();
       }
     }, true);
     return () => suscription.remove();
@@ -181,12 +199,15 @@ function useBLE(): BluetoothLowEnergyApi {
       })
       .then((connectedDevice) => {
         if (connectedDevice) {
-          setConnectedDevice(connectedDevice);
           readData(connectedDevice);
-          sendData(connectedDevice, 'clientMsg: react native conectado');
-          setBLEMsg('connected');
+          setConnectedDevice(connectedDevice);
+
+          setBLEMsg('Dispositivo conectado');
           setBLECode(BLUETOOTHCONNECTED);
+          console.log(`connectToDevice - BLECode: ${BLUETOOTHCONNECTED}`);
+
           setScanningLoading(false);
+          sendData(connectedDevice, 'clientMsg: cliente conectado');
         }
       })
       .catch((e) => {
@@ -200,67 +221,105 @@ function useBLE(): BluetoothLowEnergyApi {
     if (connectedDevice) {
       bleManager.cancelDeviceConnection(connectedDevice.id);
       setConnectedDevice(undefined);
-      setBLEMsg('Disconnected');
-      setBLEStatus(false);
+      setBLEConnectedStatus(false);
+      setReceivedMSG('');
+
+      setBLEMsg('Dispositivo desconectado');
+      setBLECode(BLUETOOTHDISCONNECTED);
+      console.log(`disconnectFromDevice - BLECode: ${BLUETOOTHDISCONNECTED}`);
+
       setReceivedMSG('');
     }
   };
 
-  const sendData = async (device: Device, msg: string) => {
-    const messageChunks: Array<string> = formatMSG(device.mtu, msg);
+  const sendData = async (connectedDevice: Device, msg: string) => {
+    /*
+     * Esta funcion se encarga de empaquetar los mensajes y enviarlos al servidor BLE
+     */
+    if (connectedDevice) {
+      const messageChunks: Array<string> = packMSG(connectedDevice.mtu, msg);
 
-    try {
-      messageChunks.map((msgChunk) => {
-        const msgBase64 = base64.encode(msgChunk);
-        if (device) {
-          device
-            .writeCharacteristicWithoutResponseForService(
-              ESP32_SERVICE_UUID,
-              ESP32_CHARACTERISTIC_UUID,
-              msgBase64
-            )
-            .catch((error) => {
-              console.log('error in writing data');
-              console.log(error);
-            });
-        }
-      });
-    } catch (error) {
-      console.log('error sending data');
+      try {
+        messageChunks.map((msgChunk) => {
+          const msgBase64 = base64.encode(msgChunk);
+          if (connectedDevice) {
+            connectedDevice
+              .writeCharacteristicWithoutResponseForService(
+                ESP32_SERVICE_UUID,
+                ESP32_CHARACTERISTIC_UUID,
+                msgBase64
+              )
+              .catch((error) => {
+                console.log('error in writing data');
+                console.log(error);
+              });
+          }
+        });
+      } catch (error) {
+        console.log('error sending data');
+      }
+    } else {
+      setBLEMsg('Dispositivo no conectado');
+      setBLECode(BLUETOOTHNOTCONNECTED);
+      console.log(`sendDataNotConnected - BLECode: ${BLUETOOTHNOTCONNECTED}`);
     }
   };
 
-  const formatRutina = (secuencia: Array<secuenciaType>): string => {
-    // result "secuence:1,1000;2,2000;3,3000;"
+  const secuenciaToString = (secuencia: Array<secuenciaType>): string => {
+    /*
+     * formatea una secuencia en string "secuence:1,1000;2,2000;3,3000;"
+     */
     return (
-      'secuence:' + secuencia.map((item) => `${item.ledId},${item.time * 1000}`).join(';') + ';'
+      'secuence:' +
+      secuencia.map((item) => `${+item.ledId - 1},${item.time * 1000}`).join(';') +
+      ';'
     );
   };
 
   const readData = async (device: Device) => {
+    /*
+     * Despaqueta los mensajes recibidos del servidor BLE
+     */
+
     if (device) {
+      // escucha activa al servidor BLE
       device.monitorCharacteristicForService(
         ESP32_SERVICE_UUID,
         ESP32_CHARACTERISTIC_UUID,
         (error, characteristic) => {
           if (characteristic !== null) {
-            setReceivedMSG(base64.decode(characteristic.value ?? ''));
+            const val = unpackMSG(base64.decode(characteristic.value ?? ''));
+            if (val != '') {
+              // console.log('monitorVal:' + val);
+              setReceivedMSG(val);
+              receivedArrayMessage = [];
+            }
           }
         }
       );
 
+      // escucha el primer mensaje del servidor BLE
       device
         .readCharacteristicForService(ESP32_SERVICE_UUID, ESP32_CHARACTERISTIC_UUID)
         .then((valec) => {
-          setReceivedMSG(base64.decode(valec.value ?? ''));
+          const val = unpackMSG(base64.decode(valec.value ?? ''));
+          if (val != '') {
+            // console.log('readVal:' + val);
+            setReceivedMSG(val);
+            receivedArrayMessage = [];
+          }
         });
     } else {
       setBLEMsg('not connected device');
     }
   };
 
-  const formatMSG = (deviceMtuSize: number, message: string): Array<string> => {
-    const formatedMSG = `${message}\n`;
+  const packMSG = (deviceMtuSize: number, message: string): Array<string> => {
+    /*
+     * Empaqueta los mensajes a enviar al servidor BLE
+     */
+
+    const formatedMSG = `${message}~`;
     const chunkSize = deviceMtuSize - 3;
     const chunks = [];
 
@@ -271,8 +330,29 @@ function useBLE(): BluetoothLowEnergyApi {
     return chunks;
   };
 
+  const unpackMSG = (message: string) => {
+    /*
+     * Funcion que desempaqueta un mensaje recibido del servidor BLE
+     * Formato de mensaje: "funcion1:dato1^funcion2:dato2^...~"
+     */
+
+    for (let i = 0; i < message.length; i++) {
+      let receivedChar = message.charAt(i);
+
+      if (receivedChar == '~') {
+        if (receivedArrayMessage.join('') != '') {
+          return receivedArrayMessage.join('');
+        }
+        return 'null';
+      } else {
+        receivedArrayMessage.push(receivedChar);
+      }
+    }
+    return '';
+  };
+
   const cleanBLECode = () => {
-    setBLECode(0);
+    setBLECode(BLUETOOTHNOTSTATUS);
   };
 
   return {
@@ -283,14 +363,15 @@ function useBLE(): BluetoothLowEnergyApi {
     sendData,
     cleanBLECode,
     initBle,
-    formatRutina,
+    secuenciaToString,
     connectedDevice,
     espDevice,
     BLEmsg,
     BLECode,
     isScanningLoading,
-    espStatus: BLEStatus,
+    espConnectedStatus: BLEConectedStatus,
     receivedMSG,
+    BLEPowerStatus
   };
 }
 

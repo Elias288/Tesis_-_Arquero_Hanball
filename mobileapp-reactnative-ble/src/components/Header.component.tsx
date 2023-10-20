@@ -13,10 +13,11 @@ const HeaderComponent = (props: headerProps) => {
     requestPermissions,
     scanAndConnectPeripherals,
     isScanningLoading,
-    espStatus,
-    connectedDevice,
+    espConnectedStatus,
+    BLEPowerStatus,
     disconnectFromDevice,
   } = useCustomBLEProvider();
+
   const BleStatus = () => {
     const scanForDevices = async () => {
       const isPermissionsEnabled = await requestPermissions();
@@ -27,7 +28,7 @@ const HeaderComponent = (props: headerProps) => {
 
     return (
       <View>
-        {espStatus ? (
+        {BLEPowerStatus ? (
           // si el esp está encendido
           <>
             {isScanningLoading ? (
@@ -38,7 +39,7 @@ const HeaderComponent = (props: headerProps) => {
             ) : (
               // si no está escaneando
               <>
-                {connectedDevice ? (
+                {espConnectedStatus ? (
                   // si está conectado
                   <IconButton
                     iconColor="#fff"

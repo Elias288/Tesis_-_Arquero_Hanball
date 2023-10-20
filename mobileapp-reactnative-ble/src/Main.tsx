@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 
-import Secuencias from './pages/Secuencias';
 import HomeTab, { HomeTabPages } from './navigation/HomeTab';
 import { useCustomBLEProvider } from './utils/BLEProvider';
 import HandleMSGs from './utils/HandleMSGs';
@@ -19,43 +18,14 @@ export type RootTabs = {
   Rutinas: NavigatorScreenParams<SecuenciasTabPages>;
 };
 
-interface Funciones {
-  [nombreFuncion: string]: (dato: string) => void;
-}
-
 const Tab = createBottomTabNavigator<RootTabs>();
 
 const Main = () => {
-  const { espStatus, scanAndConnectPeripherals, requestPermissions } = useCustomBLEProvider();
-  const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
-  const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
-
-  const funciones: Funciones = {
-    // resultado del juego
-    res: (dato) => {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(dato);
-    },
-
-    // saludo desde el servidor BLE
-    saludo: (dato) => {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(dato);
-    },
-  };
+  const { initBle } = useCustomBLEProvider();
 
   useEffect(() => {
-    if (espStatus) {
-      scanForDevices();
-    }
+    initBle();
   }, []);
-
-  const scanForDevices = async () => {
-    const isPermissionsEnabled = await requestPermissions();
-    if (isPermissionsEnabled) {
-      scanAndConnectPeripherals();
-    }
-  };
 
   const pageOptions = (routeName: string, focused: boolean) => {
     let iconName = '';
@@ -76,7 +46,8 @@ const Main = () => {
   return (
     <NavigationContainer>
       <PaperProvider>
-        <HandleMSGs funcion={funciones} />
+        <HandleMSGs />
+
         <Tab.Navigator
           initialRouteName="Home"
           screenOptions={({ route }) => ({

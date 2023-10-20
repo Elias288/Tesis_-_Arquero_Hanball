@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { SecuenciaType, ListaSecuencias } from '../data/Secuencias.data';
+import { RutinaType, ListaRutinas } from '../data/ListaRutinas.data';
 import { IconButton } from 'react-native-paper';
 
 const ItemHeigth = 80;
@@ -17,7 +17,7 @@ interface ListarSecuenciasProps {
 const ListarSecuenciasComponent: FC<ListarSecuenciasProps> = (props) => {
   const { simpleList, cantRenderItems, containerStyle, navigation } = props;
   const [listMode, setListMode] = useState<boolean>(false);
-  const [secuenciasList, setSecuenciasList] = useState<Array<SecuenciaType>>([]);
+  const [secuenciasList, setSecuenciasList] = useState<Array<RutinaType>>([]);
 
   useEffect(() => {
     // si mode no está definido lo define
@@ -26,15 +26,15 @@ const ListarSecuenciasComponent: FC<ListarSecuenciasProps> = (props) => {
     }
 
     // carga todos los jugadores
-    setSecuenciasList(ListaSecuencias);
+    setSecuenciasList(ListaRutinas);
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
-      setSecuenciasList(ListaSecuencias.slice(0, cantRenderItems));
+      setSecuenciasList(ListaRutinas.slice(0, cantRenderItems));
     }
   }, []);
 
-  const RenderItem: FC<SecuenciaType> = ({ title, id }) => {
+  const RenderItem: FC<RutinaType> = ({ title, id }) => {
     return (
       <View style={styles.completeItemContainer}>
         <View>
@@ -59,7 +59,7 @@ const ListarSecuenciasComponent: FC<ListarSecuenciasProps> = (props) => {
     );
   };
 
-  const RenderSimpleItem: FC<SecuenciaType> = ({ title, id }) => {
+  const RenderSimpleItem: FC<RutinaType> = ({ title, id }) => {
     return (
       <View style={styles.simpleItemContainer}>
         <View>

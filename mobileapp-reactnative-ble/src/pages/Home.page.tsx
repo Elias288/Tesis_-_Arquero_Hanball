@@ -72,6 +72,12 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
             <OptionButtons text=" Cargar Rutina" icon="upload" action={gotoSecuencias} />
           </View>
         </View>
+
+        <CrearRutinaAleatoriaComponent
+          setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
+          visible={visibleDialogCreateRandom}
+          navigation={navigation}
+        />
       </CustomCard>
     );
   };
@@ -149,12 +155,6 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
 
         <HistorialRutinas />
       </ScrollView>
-
-      <CrearRutinaAleatoriaComponent
-        setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
-        visible={visibleDialogCreateRandom}
-        navigation={navigation}
-      />
     </>
   );
 };
