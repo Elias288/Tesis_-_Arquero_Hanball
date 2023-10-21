@@ -19,7 +19,7 @@ type selectListJugadoresType = {
 const JugarPage = (props: propsType) => {
   const { navigation, route } = props;
   const { rutina } = route.params;
-  const { sendData, formatRutina, BLECode, connectedDevice } = useCustomBLEProvider();
+  const { sendData, secuenciaToString, BLECode, connectedDevice } = useCustomBLEProvider();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [formatedRutina, setFormatedRutina] = useState<string>('');
@@ -31,7 +31,7 @@ const JugarPage = (props: propsType) => {
   useEffect(() => {
     setSelectedListJugadores([]);
     chargeJugadores();
-    setFormatedRutina(formatRutina(rutina.secuencia));
+    setFormatedRutina(secuenciaToString(rutina.secuencia));
   }, []);
 
   useEffect(() => {
@@ -64,6 +64,10 @@ const JugarPage = (props: propsType) => {
       setLoading(true);
       // alert(`iniciar juego \n(${selectedJugador.id}) ${selectedJugador.name} \n "${formatedRutina}"`);
       sendData(connectedDevice, formatedRutina);
+    } else {
+      setLoading(true);
+      alert('No hay dispositivo conectado');
+      return;
     }
   };
 

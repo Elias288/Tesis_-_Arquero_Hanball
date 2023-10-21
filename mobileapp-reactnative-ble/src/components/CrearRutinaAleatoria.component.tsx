@@ -33,9 +33,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const gotoJugar = (secuencia: Array<secuenciaType>) => {
     const rutina = { id: 1, title: 'rutina random', secuencia };
 
-    navigation?.navigate('Jugar', {
-      rutina: rutina,
-    });
+    navigation?.navigate('Jugar', { rutina });
   };
 
   const crearRutinaAleatoria = () => {
