@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
-import { BleError, BleManager, Characteristic, Device } from 'react-native-ble-plx';
+import { BleManager, Device } from 'react-native-ble-plx';
 import base64 from 'react-native-base64';
 
 import * as ExpoDevice from 'expo-device';
@@ -13,7 +13,7 @@ import {
   BLUETOOTHERROR,
   BLUETOOTHDISCONNECTED,
 } from '../utils/BleCodes';
-import { secuenciaType } from '../data/ListaRutinas.data';
+import { RutinaType, secuenciaType } from '../data/ListaRutinas.data';
 
 const ESP32_NAME = 'ESP32-server';
 const ESP32_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
@@ -28,6 +28,9 @@ export interface BluetoothLowEnergyApi {
   cleanBLECode(): void;
   initBle(): void;
   secuenciaToString(secuencia: Array<secuenciaType>): string;
+  selectRutina(rutina: RutinaType): void;
+  runGame: (run: boolean) => void;
+  stringToSecuencia: (secuencia: string) => Array<secuenciaType>;
   connectedDevice: Device | undefined;
   espDevice: Device | undefined;
   BLEmsg: string;
@@ -35,7 +38,9 @@ export interface BluetoothLowEnergyApi {
   espConnectedStatus: Boolean;
   isScanningLoading: Boolean;
   receivedMSG: string;
-  BLEPowerStatus: Boolean
+  BLEPowerStatus: Boolean;
+  selectedRutina: RutinaType | undefined;
+  isGameRunning: boolean;
 }
 
 function useBLE(): BluetoothLowEnergyApi {
@@ -47,10 +52,12 @@ function useBLE(): BluetoothLowEnergyApi {
   const [BLEConectedStatus, setBLEConnectedStatus] = useState<Boolean>(false); // estado del esp, conectado true, no conectado false
   const [BLEPowerStatus, setBLEPowerStatus] = useState<Boolean>(false);
   const [receivedMSG, setReceivedMSG] = useState<string>(''); // mensaje recibido desde el servidor BLE
-  let receivedArrayMessage: Array<string> = [];
+  let receivedArrayMessage: Array<string> = []; // paquetes recibidos
+  const [selectedRutina, setSelectedRutina] = useState<RutinaType>();
   const [isScanningLoading, setScanningLoading] = useState<Boolean>(false); // estado del escaner
   const [BLEmsg, setBLEMsg] = useState<string>(''); // mensajes de estado
   const [BLECode, setBLECode] = useState<number>(BLUETOOTHNOTSTATUS); // codigo de estado y resultados
+  const [isGameRunning, setIsGameRunning] = useState<boolean>(false);
 
   const requestAndroid31Permissions = async () => {
     const bluetoothScanPermission = await PermissionsAndroid.request(
@@ -177,11 +184,9 @@ function useBLE(): BluetoothLowEnergyApi {
         setBLECode(BLUETOOTHOFF);
         console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);
         bleManager.stopDeviceScan();
-
-        return () => suscription.remove();
+        suscription.remove();
       }
     }, true);
-    return () => suscription.remove();
   };
 
   const initBle = async () => {
@@ -276,6 +281,25 @@ function useBLE(): BluetoothLowEnergyApi {
     );
   };
 
+  const stringToSecuencia = (secuenciaString: string) => {
+    const elements = secuenciaString.split(';');
+    const newSecuencia: Array<secuenciaType> = [];
+
+    elements.forEach((element, index) => {
+      if (element != '' && selectedRutina) {
+        const [ledId, time] = element.split(',');
+        newSecuencia.push({
+          id: index.toString(),
+          ledId: ledId,
+          time: selectedRutina.secuencia[index].time,
+          resTime: time != '-' ? +time / 1000 : '-',
+        });
+      }
+    });
+
+    return newSecuencia;
+  };
+
   const readData = async (device: Device) => {
     /*
      * Despaqueta los mensajes recibidos del servidor BLE
@@ -364,6 +388,9 @@ function useBLE(): BluetoothLowEnergyApi {
     cleanBLECode,
     initBle,
     secuenciaToString,
+    selectRutina: setSelectedRutina,
+    runGame: setIsGameRunning,
+    stringToSecuencia,
     connectedDevice,
     espDevice,
     BLEmsg,
@@ -371,7 +398,9 @@ function useBLE(): BluetoothLowEnergyApi {
     isScanningLoading,
     espConnectedStatus: BLEConectedStatus,
     receivedMSG,
-    BLEPowerStatus
+    BLEPowerStatus,
+    selectedRutina,
+    isGameRunning,
   };
 }
 

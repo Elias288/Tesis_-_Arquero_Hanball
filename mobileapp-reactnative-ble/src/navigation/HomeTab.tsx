@@ -14,7 +14,7 @@ import { RutinaType } from '../data/ListaRutinas.data';
 export type HomeTabPages = {
   HomePage: undefined;
   Jugar: { rutina: RutinaType };
-  ViewResult: { res: string, rutina: string };
+  ViewResult: { res: string };
   Agregar_Jug: undefined;
   Hist_Jugadores: { name: string };
   Secuencias: undefined;
@@ -38,5 +38,3 @@ const HomeTab = () => {
 };
 
 export default HomeTab;
-
-const styles = StyleSheet.create({});

@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { FC, ReactNode, useState, useCallback } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 
@@ -39,10 +39,12 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
           mode="elevated"
           style={{
             marginBottom: 10,
+            borderColor: '#746c26',
+            borderWidth: 1,
           }}
           icon={icon}
           buttonColor="#e7d84f"
-          textColor="#fff"
+          textColor="#746c26"
           onPress={action}
         >
           {text}

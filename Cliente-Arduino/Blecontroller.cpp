@@ -173,12 +173,8 @@ void connectBLE(const byte *LEDPinArray, const byte *BUTTONPinArray) {
     game(LEDPinArray, BUTTONPinArray);
 
     if (getRespuesta() != "") {
-      // envia la rutina
-      String rutina = "rut:";
-      rutina += getSecuenciaString();
-
       // envia el resultado
-      String res = rutina + "^" + "res:";
+      String res = "res:";
       res += getRespuesta();
 
       Serial.println(res);

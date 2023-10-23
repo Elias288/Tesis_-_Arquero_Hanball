@@ -1,4 +1,9 @@
-export type secuenciaType = { id: string; ledId: string; time: number };
+export type secuenciaType = {
+  id: string;
+  ledId: string;
+  time: number;
+  resTime?: string | number;
+};
 
 export type RutinaType = {
   id: Number;

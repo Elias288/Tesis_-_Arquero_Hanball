@@ -13,16 +13,15 @@ export interface Funciones {
 const HandleMSGs = () => {
   const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
 
-  const { receivedMSG, BLECode, BLEmsg, cleanBLECode } = useCustomBLEProvider();
+  const { receivedMSG, BLECode, BLEmsg, cleanBLECode, runGame } = useCustomBLEProvider();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
-  const [rutinaOriginal, setRutinaOriginal] = useState<string>('');
 
   useEffect(() => {
     // si recibe un mensaje desde el servidor BLE
     if (receivedMSG) {
       console.log('receivedMSG: ' + receivedMSG);
-
+      runGame(false);
       // convierte el mensaje en funcion:dato
       const partes = receivedMSG.split('^');
       partes.forEach((parte) => {
@@ -43,14 +42,9 @@ const HandleMSGs = () => {
   }, [BLECode, receivedMSG]);
 
   const handleFunctions: Funciones = {
-    rut: (rutinaOriginal) => {
-      setRutinaOriginal(rutinaOriginal);
-    },
     // resultado del juego
     res: (dato) => {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(dato);
-      navigator.navigate('ViewResult', { res: dato, rutina: rutinaOriginal });
+      navigator.navigate('ViewResult', { res: dato });
     },
 
     // mensajes desde desde el servidor BLE

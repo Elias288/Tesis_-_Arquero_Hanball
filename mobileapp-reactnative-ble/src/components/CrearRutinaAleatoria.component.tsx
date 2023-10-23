@@ -44,7 +44,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
     let rutina: Array<secuenciaType> = [];
     let previousLedId = 0; // Inicializado a 0 para asegurar que no coincida con el primer valor
 
-    for (let i = 1; i <= randomSize; i++) {
+    for (let i = 0; i <= randomSize - 1; i++) {
       let randomLedId;
 
       // evita que se repitan consecutivamente 2 leds

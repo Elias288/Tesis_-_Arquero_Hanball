@@ -68,7 +68,7 @@ void setSecuenceMatrix(String input) {
   int pairIndex = 0;
   String pair = "";
 
-  secuenciaString = input; // guarda la secuencia original
+  secuenciaString = input;  // guarda la secuencia original
 
   // Recorrer la cadena
   for (int i = 0; i < input.length(); i++) {
@@ -84,6 +84,9 @@ void setSecuenceMatrix(String input) {
         // Convertir las cadenas a enteros y almacenar en la matriz
         matrix[pairIndex][0] = ledStr;
         matrix[pairIndex][1] = timeStr;
+
+        secuenciaDeReaccion[pairIndex][0] = String(ledStr.toInt() + 1);  // carga los leds
+        secuenciaDeReaccion[pairIndex][1] = "-";         // carga los tiempos
 
         /* Serial.print(pairIndex);
         Serial.print("= ");
@@ -258,8 +261,7 @@ void game(const byte *LEDPinArray, const byte *BUTTONPinArray) {
       Serial.println("s");
       buttonpressed = 1;
 
-      pushToSecuenciaDeReaccion(indiceToSecuenciaDeReaccion, getSecuenceMatrix(indiceActual, 0), String(buttonPressTime));
-      indiceToSecuenciaDeReaccion++;
+      secuenciaDeReaccion[indiceActual][1] = String(buttonPressTime);  // guarda en la posicion actual el tiempo
     }
   }
 }
