@@ -140,7 +140,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
 
         <ContadorCard />
 
-        <ListarJugadoresComponent cantRenderItems={2} simpleList={true} />
+        <ListarJugadoresComponent cantRenderItems={2} isSimpleList={true} />
         <Button textColor="#000" onPress={gotAgregarJugador}>
           Ver más
         </Button>

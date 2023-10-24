@@ -2,15 +2,18 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView } from 'react-native';
 
 import Main from './src/Main';
-import BleContext from './src/utils/BLEProvider';
+import BleProvider from './src/contexts/BLEProvider';
+import LocalStorageProvider from './src/contexts/LocalStorageProvider';
 
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
-      <BleContext>
-        <Main />
-        <StatusBar style="auto" />
-      </BleContext>
+      <LocalStorageProvider>
+        <BleProvider>
+          <Main />
+          <StatusBar style="auto" />
+        </BleProvider>
+      </LocalStorageProvider>
     </SafeAreaView>
   );
 }

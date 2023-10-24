@@ -1,11 +1,9 @@
-import { StyleSheet } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomePage from '../pages/Home.page';
 import JugarPage from '../pages/Jugar.page';
 import ViewResultPage from '../pages/ViewResult.page';
-import Agregar_Jug from '../pages/Agregar_Jug';
 import Hist_Jugadores from '../pages/Hist_Jugadores';
 import DemoCrearSecuenca from '../pages/CrearSecuencia';
 import Secuencias from '../pages/Secuencias';
@@ -29,7 +27,6 @@ const HomeTab = () => {
       <Stack.Screen name="HomePage" component={HomePage} />
       <Stack.Screen name="Jugar" component={JugarPage} />
       <Stack.Screen name="ViewResult" component={ViewResultPage} />
-      <Stack.Screen name="Agregar_Jug" component={Agregar_Jug} />
       <Stack.Screen name="Hist_Jugadores" component={Hist_Jugadores} />
       <Stack.Screen name="Secuencias" component={Secuencias} />
       <Stack.Screen name="DemoCrearSecuenca" component={DemoCrearSecuenca} />
