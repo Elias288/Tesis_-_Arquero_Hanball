@@ -6,10 +6,10 @@ const resultadoController = new ResultadoController();
 
 router.get('/list', resultadoController.getAll);
 router.get('/details/:id', resultadoController.getById);
-router.post('/add', resultadoController.add);
-router.put('/update/:id', resultadoController.update);
-router.delete('/delete/:id', resultadoController.deleteById);
+router.post('/add', auth, resultadoController.add);
+router.put('/update/:id', auth, resultadoController.update);
+router.delete('/delete/:id', auth, resultadoController.deleteById);
 
-router.put('/addSecuencia', resultadoController.asignarSecuencia);
+router.put('/addSecuencia', auth, resultadoController.asignarSecuencia);
 
 module.exports = router;

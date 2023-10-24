@@ -2,3 +2,5 @@ build/
 node_modules/
 DEAH-API/.env
 DEAH-API/.vscode/settings.json
+DEAH-API/.env
+DEAH-API/.vscode/settings.json

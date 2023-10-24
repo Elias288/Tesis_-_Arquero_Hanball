@@ -7,8 +7,8 @@ const usuarioController = new UsuarioController();
 router.get('/list', usuarioController.getAll);
 router.get('/details/:id', usuarioController.getById);
 router.post('/add', usuarioController.add);
-router.put('/update/:id', usuarioController.update);
-router.delete('/delete/:id', usuarioController.deleteById);
+router.put('/update/:id', auth, usuarioController.update);
+router.delete('/delete/:id', auth, usuarioController.deleteById);
 router.post('/login', usuarioController.login);
 
 router.put('/addRutina', usuarioController.asignarRutina);

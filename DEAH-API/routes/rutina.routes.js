@@ -6,10 +6,10 @@ const rutinaController = new RutinaController();
 
 router.get('/list', rutinaController.getAll);
 router.get('/details/:id', rutinaController.getById);
-router.post('/add', rutinaController.add);
-router.put('/update/:id', rutinaController.update);
-router.delete('/delete/:id', rutinaController.deleteById);
+router.post('/add', auth, rutinaController.add);
+router.put('/update/:id', auth, rutinaController.update);
+router.delete('/delete/:id', auth, rutinaController.deleteById);
 
-router.put('/addSecuencia', rutinaController.asignarSecuencia);
+router.put('/addSecuencia', auth, rutinaController.asignarSecuencia);
 
 module.exports = router;
