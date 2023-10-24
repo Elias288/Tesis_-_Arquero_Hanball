@@ -7,7 +7,7 @@ import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import { HomeTabPages } from '../navigation/HomeTab';
 import { RootTabs } from '../Main';
 import { secuenciaType } from '../data/ListaRutinas.data';
-import { useCustomBLEProvider } from '../utils/BLEProvider';
+import { useCustomBLE } from '../contexts/BLEProvider';
 
 const CANTLEDS = 4;
 const MAXSECONDS = 5;
@@ -24,7 +24,7 @@ type propsType = {
 const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const { setVisibleDialogCreateRandom, visible, navigation } = props;
   const [randomSize, setRandomSize] = useState<number>(4);
-  const { espConnectedStatus, BLEPowerStatus } = useCustomBLEProvider();
+  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
   const CustomThumb = ({ value }: { value: number }) => {
     return <Text style={styles.CustomThumb}>{value}</Text>;
@@ -73,7 +73,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   return (
     <Portal>
       <Dialog visible={visible}>
-          {espConnectedStatus && BLEPowerStatus ? (
+        {espConnectedStatus && BLEPowerStatus ? (
           <>
             <Dialog.Content>
               <View style={{ paddingTop: 20 }}>

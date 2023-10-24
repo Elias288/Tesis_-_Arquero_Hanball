@@ -9,6 +9,7 @@ import ListarJugadoresComponent from '../components/ListarJugadores.component';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { RootTabs } from '../Main';
 import CrearRutinaAleatoriaComponent from '../components/CrearRutinaAleatoria.component';
+import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
 
 type propsType = CompositeScreenProps<
   NativeStackScreenProps<HomeTabPages, 'HomePage'>,
@@ -86,15 +87,18 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
 
   /******************************************* Agregar Jugador *******************************************/
   const AgregarJugador: FC = () => {
-    const gotAgregarJugador = () => {
-      navigation.navigate('Agregar_Jug');
-    };
+    const [isVisibleAgregarJugador, setVisibleAgregarJugador] = useState(false);
 
     return (
       <CustomCard>
-        <Button textColor="#000" onPress={gotAgregarJugador}>
+        <Button textColor="#000" onPress={() => setVisibleAgregarJugador(true)}>
           Agregar Jugador
         </Button>
+
+        <ModalAgregarJugador
+          hideModal={() => setVisibleAgregarJugador(false)}
+          visible={isVisibleAgregarJugador}
+        />
       </CustomCard>
     );
   };

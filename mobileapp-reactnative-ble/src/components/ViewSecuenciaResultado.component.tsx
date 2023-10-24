@@ -2,7 +2,6 @@ import { FlatList, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-na
 import React, { FC } from 'react';
 import { secuenciaType } from '../data/ListaRutinas.data';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useCustomBLEProvider } from '../utils/BLEProvider';
 
 interface ViewSecuenciasResProps {
   secuencias: Array<secuenciaType>;
