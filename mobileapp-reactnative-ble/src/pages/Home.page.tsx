@@ -23,7 +23,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
       navigation.navigate('Rutinas', { screen: 'Secuencias' });
     };
     const gotoCrearSecuencia = () => {
-      navigation.navigate('DemoCrearSecuenca');
+      navigation.navigate('CrearSecuenca');
     };
     const OptionButtons = ({
       text,

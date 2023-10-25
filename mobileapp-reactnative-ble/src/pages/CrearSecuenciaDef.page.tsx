@@ -4,26 +4,21 @@ import { Text, Button } from 'react-native-paper';
 import { SelectList } from 'react-native-dropdown-select-list';
 
 import HeaderComponent from '../components/Header.component';
-import { JugadorType, ListaDeJugadores } from '../data/ListaDeJugadores.data';
-import { secuenciaType } from '../data/ListaRutinas.data';
-import ViewSecuenciaComponent from '../components/ViewSecuencia.component';
 
 type secuencia = { id: string; ledId: string; time: number };
 
-type selectListJugadoresType = {
-  key: string;
-  value: string;
-};
-
-const CrearSecuenca = () => {
+const CrearSecuencaDef = () => {
   const [secuencia, setSecuencia] = useState<secuencia[]>([]);
   const [secuenciaFormateada, setsecuenciaFormateada] = useState<string>('');
 
-  let newSecuencia: Array<secuenciaType> = [];
   //const { sendData, connectedDevice } = useCustomBLEProvider();
 
   const pushSecuencia = (ledId: string, time: string) => {
-    setSecuencia([...secuencia, { id: `${secuencia.length}`, ledId, time: +time }]);
+    if (secuencia?.length) {
+      setSecuencia([...secuencia, { id: `${secuencia.length + 1}`, ledId, time: +time }]);
+    } else {
+      setSecuencia([{ id: '1', ledId, time: +time }]);
+    }
   };
 
   const cleanSecuencia = () => {
@@ -32,10 +27,10 @@ const CrearSecuenca = () => {
   };
 
   // ***************** da formato a la secuencia cada vez que se agrega un nuevo par *****************
-  /* useEffect(() => {
+  useEffect(() => {
     if (secuencia !== undefined)
-        rutina.push(secuencia);
-  }, [secuencia]); */
+      setsecuenciaFormateada(secuencia.map((item) => `${item.ledId},${item.time}`).join(';'));
+  }, [secuencia]);
 
   {
     /* const sendFormatedSecuencia = async () => {
@@ -60,27 +55,32 @@ const CrearSecuenca = () => {
 
   return (
     <>
-      <HeaderComponent title={'Crear rutina'} />
-      <View style={styles.container}>
-        <Text style={styles.title}>Seleccionar jugador:</Text>
-        {/*<Text>{connectedDevice !== undefined ? 'Conectado' : 'No conectado'}</Text>*/}
+    <HeaderComponent title={'Crear rutina'} />
+    <View style={styles.container}>
+      {/*<Text>{connectedDevice !== undefined ? 'Conectado' : 'No conectado'}</Text>*/}
 
-        <SecuenciaInput addSecuencia={pushSecuencia} cleanSecuencia={cleanSecuencia} />
+      <SecuenciaInput addSecuencia={pushSecuencia} cleanSecuencia={cleanSecuencia} />
 
-        <View style={{ padding: 20 }}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.title}>Secuencia</Text>
-            <ViewSecuenciaComponent secuencias={newSecuencia} style={styles.viewSecuenciasStyle} />
-          </View>
-        </View>
-        {/* <Text style={{ padding: 20 }}>{}</Text> */}
-        {/* <Text>{JSON.stringify(secuencia, null, 4)}</Text> */}
-        <Button mode="contained" buttonColor="#e7d84f">
-          {' '}
-          {/*onPress={sendFormatedSecuencia}*/}
-          Enviar
-        </Button>
+      <View style={{ padding: 20 }}>
+        <FlatList
+          data={secuencia}
+          renderItem={({ item }) => (
+            <Text>
+              Led: {+item.ledId + 1} - Time: {item.time / 1000}s
+            </Text>
+          )}
+          keyExtractor={(item) => item.id}
+        />
       </View>
+      {/* <Text style={{ padding: 20 }}>{}</Text> */}
+      {/* <Text>{JSON.stringify(secuencia, null, 4)}</Text> */}
+      <Button mode="contained" 
+          buttonColor='#e7d84f'>
+        {' '}
+        {/*onPress={sendFormatedSecuencia}*/}
+        Guardar secuencia
+      </Button>
+    </View>
     </>
   );
 };
@@ -104,26 +104,16 @@ const SecuenciaInput = (props: SecuenciaInputProps) => {
 
   const [ledIdSelected, setLedIdSelected] = useState<string>('');
   const [secondSelected, setSecondSelected] = useState<string>('');
-  const [selectedJugador, setSelectedJugador] = useState<JugadorType | undefined>();
-  const [selectedListJugadores, setSelectedListJugadores] = useState<
-    Array<selectListJugadoresType>
-  >([]);
+  const [jugIdSelected, setJugIdSelected] = useState<string>('');
 
   const createSecuencia = () => {
     if (ledIdSelected.trim() !== '') {
       addSecuencia(ledIdSelected, secondSelected);
       setLedIdSelected('');
       setSecondSelected('');
-      //setJugIdSelected('');
+      setJugIdSelected('');
     }
   };
-
-  useEffect(() => {
-    chargeLedList();
-    chargeSecondsList();
-    setSelectedListJugadores([]);
-    chargeJugadores();
-  }, []);
 
   const chargeLedList = () => {
     const ledsIdList = [];
@@ -132,7 +122,6 @@ const SecuenciaInput = (props: SecuenciaInputProps) => {
     }
     setLedsIdList(ledsIdList);
   };
-
   const chargeSecondsList = () => {
     const secondsList = [];
     for (let i = 1; i <= 10; i++) {
@@ -141,34 +130,20 @@ const SecuenciaInput = (props: SecuenciaInputProps) => {
     setSecondsList(secondsList);
   };
 
-  const chargeJugadores = () => {
-    ListaDeJugadores.map((jugador) => {
-      setSelectedListJugadores((selectedListJugadores) => [
-        ...selectedListJugadores,
-        { key: jugador.id.toString(), value: jugador.name },
-      ]);
-    });
-  };
+  useEffect(() => {
+    chargeLedList();
+    chargeSecondsList();
+  }, []);
 
   return (
     <View>
-      <View>
-        <SelectList
-          data={selectedListJugadores}
-          setSelected={(jugadorId: number) => {
-            setSelectedJugador(ListaDeJugadores.find((jugador) => jugador.id == jugadorId));
-          }}
-        />
-      </View>
-      <Text style={styles.title}>Seleccionar secuencia:</Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          margin: 10,
-        }}
-      >
+      <Text style={styles.title}>Seleccionar led y tiempo de encendido:</Text>
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        margin: 10,
+      }}>
         <SelectList
           setSelected={(ledId: number) => setLedIdSelected(`${ledId - 1}`)}
           data={ledsIdList}
@@ -178,24 +153,20 @@ const SecuenciaInput = (props: SecuenciaInputProps) => {
         <SelectList
           setSelected={(second: number) => setSecondSelected(`${second * 1000}`)}
           data={secondsList}
-          placeholder="Seconds"
+          placeholder="Segundos"
           search={false}
         />
         <Button
           mode="contained"
           onPress={createSecuencia}
-          buttonColor="#e7d84f"
-          style={{ borderRadius: 20, marginLeft: 10 }}
+          buttonColor='#e7d84f'
+          style={{ borderRadius: 20, marginLeft: 8 }}
         >
           Añadir
         </Button>
 
-        <Button
-          mode="contained"
-          onPress={cleanSecuencia}
-          buttonColor="#e7d84f"
-          style={{ borderRadius: 20, marginLeft: 10 }}
-        >
+        <Button mode="contained" onPress={cleanSecuencia} 
+          buttonColor='#e7d84f' style={{ borderRadius: 20, marginLeft: 8 }}>
           Limpiar
         </Button>
       </View>
@@ -203,13 +174,13 @@ const SecuenciaInput = (props: SecuenciaInputProps) => {
   );
 };
 
-export default CrearSecuenca;
+export default CrearSecuencaDef;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container:{
+    flex: 1, 
     //backgroundColor: '#bebebe',
-    padding: 20,
+     padding: 20
   },
   title: {
     fontWeight: 'bold',
@@ -218,8 +189,5 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: '#444444',
     //backgroundColor: "#ffffff"
-  },
-  viewSecuenciasStyle: {
-    flex: 1,
   },
 });
