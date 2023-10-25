@@ -16,7 +16,6 @@ export type HomeTabPages = {
   Agregar_Jug: undefined;
   Hist_Jugadores: { name: string };
   RutinasPage: undefined;
-  DemoCrearSecuenca: undefined;
 };
 
 const Stack = createNativeStackNavigator<HomeTabPages>();
@@ -29,7 +28,6 @@ const HomeTab = () => {
       <Stack.Screen name="ViewResult" component={ViewResultPage} />
       <Stack.Screen name="Hist_Jugadores" component={Hist_Jugadores} />
       <Stack.Screen name="RutinasPage" component={RutinasPage} />
-      <Stack.Screen name="DemoCrearSecuenca" component={DemoCrearSecuenca} />
     </Stack.Navigator>
   );
 };
