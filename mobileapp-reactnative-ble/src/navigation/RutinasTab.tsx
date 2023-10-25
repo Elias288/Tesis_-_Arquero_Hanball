@@ -1,21 +1,21 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CrearSecuencaDef from '../pages/CrearSecuenciaDef.page';
-import Secuencias from '../pages/Secuencias';
+import RutinasPage from '../pages/Rutinas.page';
 
 export type SecuenciasTabPages = {
-  Secuencias: undefined;
+  Rutinas: undefined;
   CrearSecuencaDef: undefined;
 };
 
 const Stack = createNativeStackNavigator<SecuenciasTabPages>();
 
-const SecuenciasTab = () => {
+const RutinasTab = () => {
   return (
-    <Stack.Navigator initialRouteName="Secuencias" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Secuencias" component={Secuencias} />
+    <Stack.Navigator initialRouteName="Rutinas" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Rutinas" component={RutinasPage} />
       <Stack.Screen name="CrearSecuencaDef" component={CrearSecuencaDef} />
     </Stack.Navigator>
   );
 };
 
-export default SecuenciasTab;
+export default RutinasTab;

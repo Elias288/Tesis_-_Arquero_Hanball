@@ -7,14 +7,14 @@ import { IconButton } from 'react-native-paper';
 
 const ItemHeigth = 80;
 
-interface ListarSecuenciasProps {
+interface ListarRutinasProps {
   simpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
   containerStyle?: StyleProp<ViewStyle>; // estilo personalizado del componente
   navigation?: any; // permite que el componente navegue
 }
 
-const ListarSecuenciasComponent: FC<ListarSecuenciasProps> = (props) => {
+const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
   const { simpleList, cantRenderItems, containerStyle, navigation } = props;
   const [listMode, setListMode] = useState<boolean>(false);
   const [secuenciasList, setSecuenciasList] = useState<Array<RutinaType>>([]);
@@ -134,4 +134,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListarSecuenciasComponent;
+export default ListarRutinasComponent;

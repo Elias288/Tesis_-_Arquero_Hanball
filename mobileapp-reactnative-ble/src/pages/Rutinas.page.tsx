@@ -14,12 +14,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
 import { IconButton } from 'react-native-paper';
 
-import { SecuenciasTabPages } from '../navigation/SecuenciasTab';
-import ListarSecuenciasComponent from '../components/Secuencias.component';
+import { SecuenciasTabPages } from '../navigation/RutinasTab';
+import ListarRutinasComponent from '../components/ListarRutinas.component';
 
-type propsType = NativeStackScreenProps<SecuenciasTabPages, 'Secuencias'>;
+type propsType = NativeStackScreenProps<SecuenciasTabPages, 'Rutinas'>;
 
-const Secuencias = (props: propsType) => {
+const RutinasPage = (props: propsType) => {
   const { navigation, route } = props;
 
   const gotoAgregarSecuencia = () => {
@@ -29,7 +29,7 @@ const Secuencias = (props: propsType) => {
   return (
     <View style={styles.container}>
       <HeaderComponent title={'Rutinas'} />
-      <ListarSecuenciasComponent navigation={navigation} />
+      <ListarRutinasComponent navigation={navigation} />
       <View>
         <IconButton
           icon={'plus'}
@@ -45,7 +45,7 @@ const Secuencias = (props: propsType) => {
   );
 };
 
-export default Secuencias;
+export default RutinasPage;
 
 const styles = StyleSheet.create({
   container: {
