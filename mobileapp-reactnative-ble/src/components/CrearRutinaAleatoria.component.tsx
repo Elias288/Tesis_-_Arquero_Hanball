@@ -73,43 +73,27 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   return (
     <Portal>
       <Dialog visible={visible}>
-        {espConnectedStatus && BLEPowerStatus ? (
-          <>
-            <Dialog.Content>
-              <View style={{ paddingTop: 20 }}>
-                <Text style={styles.title}>Crear rutina aleatoria</Text>
+        <Dialog.Content>
+          <View style={{ paddingTop: 20 }}>
+            <Text style={styles.title}>Crear rutina aleatoria</Text>
 
-                <View style={{ marginTop: 10 }}>
-                  <Text>Tamaño de Rutina</Text>
-                  <Slider
-                    minimumValue={4}
-                    maximumValue={10}
-                    onValueChange={setRandomSize}
-                    step={1}
-                    CustomThumb={CustomThumb}
-                    style={{ height: 40 }}
-                  />
-                </View>
-              </View>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={crearRutinaAleatoria}>Jugar</Button>
-              <Button onPress={() => setVisibleDialogCreateRandom(false)}>Cancel</Button>
-            </Dialog.Actions>
-          </>
-        ) : (
-          <>
-            <Dialog.Content>
-              <View style={{ paddingTop: 20 }}>
-                <Text style={styles.title}>Bluetooth no está conectado</Text>
-                <Text>Enciendaló para poder generar una rutina aleatoria</Text>
-              </View>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={() => setVisibleDialogCreateRandom(false)}>Ok</Button>
-            </Dialog.Actions>
-          </>
-        )}
+            <View style={{ marginTop: 10 }}>
+              <Text>Tamaño de Rutina</Text>
+              <Slider
+                minimumValue={4}
+                maximumValue={10}
+                onValueChange={setRandomSize}
+                step={1}
+                CustomThumb={CustomThumb}
+                style={{ height: 40 }}
+              />
+            </View>
+          </View>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={crearRutinaAleatoria}>Jugar</Button>
+          <Button onPress={() => setVisibleDialogCreateRandom(false)}>Cancel</Button>
+        </Dialog.Actions>
       </Dialog>
     </Portal>
   );

@@ -1,43 +1,39 @@
-import { View, Text, StyleSheet, ViewStyle, StyleProp, TextStyle } from 'react-native';
+import { ReactNode } from 'react';
+import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Button, Modal, Portal } from 'react-native-paper';
 
 interface ModalProps {
   isVisible: boolean;
   hideModal: () => void;
-  message: string;
-  callBack: () => void;
+  children: ReactNode;
   // opcionales
+  onAceptar?: () => void;
+  isAccept?: boolean;
   isAcceptCancel?: boolean;
-  title?: string;
   containerStyle?: StyleProp<ViewStyle>;
-  titleStyle?: StyleProp<TextStyle>;
-  messageStyle?: StyleProp<TextStyle>;
 }
 const CustomModal = (props: ModalProps) => {
+  const { children, containerStyle, isVisible, isAccept, hideModal, onAceptar, isAcceptCancel } =
+    props;
+
   const acceptHandle = () => {
-    props.callBack();
-    props.hideModal();
+    if (onAceptar) onAceptar();
+    hideModal();
   };
 
   return (
     <Portal>
-      <Modal visible={props.isVisible}>
-        <View style={[props.containerStyle, styles.container]}>
-          {props.title && (
-            <View style={{ paddingBottom: 20 }}>
-              <Text style={[props.titleStyle, styles.title]}>{props.title}</Text>
-            </View>
-          )}
-
-          <View style={{ paddingBottom: 20 }}>
-            <Text style={[props.messageStyle, styles.message]}>{props.message}</Text>
-          </View>
+      <Modal visible={isVisible} onDismiss={hideModal}>
+        <View style={[containerStyle, styles.container]}>
+          {children}
 
           {/* Actions */}
-          <View style={styles.actions}>
-            <Button onPress={acceptHandle}>Aceptar</Button>
-            {props.isAcceptCancel ? <Button onPress={props.hideModal}>Cancelar</Button> : null}
-          </View>
+          {(isAccept || isAcceptCancel) && (
+            <View style={styles.actions}>
+              <Button onPress={acceptHandle}>Aceptar</Button>
+              {isAcceptCancel ? <Button onPress={hideModal}>Cancelar</Button> : null}
+            </View>
+          )}
         </View>
       </Modal>
     </Portal>
@@ -50,13 +46,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginHorizontal: 20,
     padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  message: {
-    fontSize: 16,
   },
   actions: {
     flexDirection: 'row',

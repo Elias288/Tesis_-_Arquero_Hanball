@@ -14,7 +14,7 @@ const ModalAgregarJugador = ({ visible, hideModal }: propsType) => {
   const { pushJugador, jugadores } = useCustomLocalStorage();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [modalText, setModalText] = useState<string>('');
+  const [modalMessage, setModalMessage] = useState<string>('');
 
   const handleSubmit = () => {
     if (name.trim() == '') {
@@ -34,7 +34,7 @@ const ModalAgregarJugador = ({ visible, hideModal }: propsType) => {
 
   const showModal = (message: string) => {
     setIsModalVisible(true);
-    setModalText(message);
+    setModalMessage(message);
   };
 
   const closeModal = () => {
@@ -70,12 +70,19 @@ const ModalAgregarJugador = ({ visible, hideModal }: propsType) => {
       </Portal>
 
       <CustomModal
-        title="Alerta"
-        message={modalText}
         hideModal={() => setIsModalVisible(false)}
-        callBack={() => {}}
+        isAccept={true}
+        onAceptar={() => {}}
         isVisible={isModalVisible}
-      />
+      >
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Alerta</Text>
+        </View>
+
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={{ fontSize: 16 }}>{modalMessage}</Text>
+        </View>
+      </CustomModal>
     </>
   );
 };

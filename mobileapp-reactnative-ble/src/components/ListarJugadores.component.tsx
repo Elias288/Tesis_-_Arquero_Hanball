@@ -27,8 +27,6 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedJugadorId, setSelectedJugadorId] = useState<number>(0);
-  const [modalText, setModalText] = useState<string>('');
-  const [modalTitle, setModalTitle] = useState<string>('');
 
   useEffect(() => {
     // si mode no está definido lo define
@@ -51,8 +49,6 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   };
 
   const showDeleteModal = (jugadorId: number) => {
-    setModalText('Seguro que quiere eliminar este jugador?');
-    setModalTitle('Borrar Jugador');
     setIsModalVisible(true);
     setSelectedJugadorId(jugadorId);
   };
@@ -78,13 +74,19 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   return (
     <View style={[styles.container, containerStyle]}>
       <CustomModal
-        title={modalTitle}
-        message={modalText}
         hideModal={() => setIsModalVisible(false)}
-        callBack={deleteJugador}
+        onAceptar={deleteJugador}
         isVisible={isModalVisible}
         isAcceptCancel={true}
-      />
+      >
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Borrar Jugador</Text>
+        </View>
+
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={{ fontSize: 16 }}>Seguro que quiere eliminar este jugador?</Text>
+        </View>
+      </CustomModal>
 
       <FlatList
         data={jugadoresList}
