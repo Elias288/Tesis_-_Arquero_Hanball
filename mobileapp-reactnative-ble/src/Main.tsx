@@ -6,22 +6,22 @@ import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 
 import HomeTab, { HomeTabPages } from './navigation/HomeTab';
-import { useCustomBLEProvider } from './utils/BLEProvider';
+import { useCustomBLE } from './contexts/BLEProvider';
 import HandleMSGs from './utils/HandleMSGs';
 import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
-import SecuenciasTab, { SecuenciasTabPages } from './navigation/SecuenciasTab';
+import RutinasTab, { RutinaTabPages } from './navigation/RutinasTab';
 
 /************************************************* Main *************************************************/
 export type RootTabs = {
   Home: NavigatorScreenParams<HomeTabPages>;
   Jugadores: NavigatorScreenParams<ListaJugadoresTabPages>;
-  Rutinas: NavigatorScreenParams<SecuenciasTabPages>;
+  Rutinas: NavigatorScreenParams<RutinaTabPages>;
 };
 
 const Tab = createBottomTabNavigator<RootTabs>();
 
 const Main = () => {
-  const { initBle } = useCustomBLEProvider();
+  const { initBle } = useCustomBLE();
 
   useEffect(() => {
     initBle();
@@ -72,7 +72,7 @@ const Main = () => {
           />
           <Tab.Screen
             name="Rutinas"
-            component={SecuenciasTab}
+            component={RutinasTab}
             options={{
               headerShown: false,
             }}

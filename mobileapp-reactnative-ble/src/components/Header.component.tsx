@@ -1,13 +1,13 @@
 import { View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
-import { useCustomBLEProvider } from '../utils/BLEProvider';
+import { useCustomBLE } from '../contexts/BLEProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeTabPages } from '../navigation/HomeTab';
 
 type headerProps = {
-  back?: boolean;
+  showBackButton?: boolean;
   title?: string;
 };
 
@@ -21,7 +21,7 @@ const HeaderComponent = (props: headerProps) => {
     espConnectedStatus,
     BLEPowerStatus,
     disconnectFromDevice,
-  } = useCustomBLEProvider();
+  } = useCustomBLE();
 
   const BleStatus = () => {
     const scanForDevices = async () => {
@@ -83,7 +83,7 @@ const HeaderComponent = (props: headerProps) => {
 
   return (
     <View style={styles.container}>
-      {props.back ? <BackButton /> : <BleStatus />}
+      {props.showBackButton ? <BackButton /> : <BleStatus />}
       <Text style={styles.textTitle}>{props.title}</Text>
       <IconButton iconColor="#fff" icon={'cog'} size={30}></IconButton>
     </View>

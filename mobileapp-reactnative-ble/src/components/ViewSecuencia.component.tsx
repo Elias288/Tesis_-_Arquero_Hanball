@@ -1,6 +1,6 @@
 import { FlatList, Text, View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import React, { FC } from 'react';
-import { secuenciaType } from '../data/ListaRutinas.data';
+import { secuenciaType } from '../data/RutinasType';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface ViewSecuenciasProps {

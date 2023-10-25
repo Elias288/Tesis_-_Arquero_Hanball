@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeTabPages } from '../navigation/HomeTab';
 import HeaderComponent from '../components/Header.component';
-import { ActivityIndicator, Button, List } from 'react-native-paper';
-import { useCustomBLEProvider } from '../utils/BLEProvider';
+import { ActivityIndicator, Button } from 'react-native-paper';
+import { useCustomBLE } from '../contexts/BLEProvider';
 import { SelectList } from 'react-native-dropdown-select-list';
-import { JugadorType, ListaDeJugadores } from '../data/ListaDeJugadores.data';
+import { JugadorType } from '../data/JugadoresType';
 import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
 import ViewSecuenciaComponent from '../components/ViewSecuencia.component';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 
 type propsType = NativeStackScreenProps<HomeTabPages, 'Jugar'>;
 
@@ -28,7 +29,9 @@ const JugarPage = (props: propsType) => {
     BLECode,
     connectedDevice,
     isGameRunning,
-  } = useCustomBLEProvider();
+  } = useCustomBLE();
+
+  const { jugadores } = useCustomLocalStorage();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [formatedRutina, setFormatedRutina] = useState<string>('');
@@ -54,7 +57,7 @@ const JugarPage = (props: propsType) => {
   }, [BLECode, isGameRunning]);
 
   const chargeJugadores = () => {
-    ListaDeJugadores.map((jugador) => {
+    jugadores.map((jugador) => {
       setSelectedListJugadores((selectedListJugadores) => [
         ...selectedListJugadores,
         { key: jugador.id.toString(), value: jugador.name },
@@ -106,7 +109,7 @@ const JugarPage = (props: propsType) => {
                 <SelectList
                   data={selectedListJugadores}
                   setSelected={(jugadorId: number) => {
-                    setSelectedJugador(ListaDeJugadores.find((jugador) => jugador.id == jugadorId));
+                    setSelectedJugador(jugadores.find((jugador) => jugador.id == jugadorId));
                   }}
                 />
               </View>

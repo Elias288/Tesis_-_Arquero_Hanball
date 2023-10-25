@@ -6,8 +6,8 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import { HomeTabPages } from '../navigation/HomeTab';
 import { RootTabs } from '../Main';
-import { secuenciaType } from '../data/ListaRutinas.data';
-import { useCustomBLEProvider } from '../utils/BLEProvider';
+import { secuenciaType } from '../data/RutinasType';
+import { useCustomBLE } from '../contexts/BLEProvider';
 
 const CANTLEDS = 4;
 const MAXSECONDS = 5;
@@ -24,7 +24,7 @@ type propsType = {
 const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const { setVisibleDialogCreateRandom, visible, navigation } = props;
   const [randomSize, setRandomSize] = useState<number>(4);
-  const { espConnectedStatus, BLEPowerStatus } = useCustomBLEProvider();
+  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
   const CustomThumb = ({ value }: { value: number }) => {
     return <Text style={styles.CustomThumb}>{value}</Text>;
@@ -73,43 +73,27 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   return (
     <Portal>
       <Dialog visible={visible}>
-        {/* {espConnectedStatus && BLEPowerStatus ? ( */}
-        <>
-          <Dialog.Content>
-            <View style={{ paddingTop: 20 }}>
-              <Text style={styles.title}>Crear rutina aleatoria</Text>
+        <Dialog.Content>
+          <View style={{ paddingTop: 20 }}>
+            <Text style={styles.title}>Crear rutina aleatoria</Text>
 
-              <View style={{ marginTop: 10 }}>
-                <Text>Tamaño de Rutina</Text>
-                <Slider
-                  minimumValue={4}
-                  maximumValue={10}
-                  onValueChange={setRandomSize}
-                  step={1}
-                  CustomThumb={CustomThumb}
-                  style={{ height: 40 }}
-                />
-              </View>
+            <View style={{ marginTop: 10 }}>
+              <Text>Tamaño de Rutina</Text>
+              <Slider
+                minimumValue={4}
+                maximumValue={10}
+                onValueChange={setRandomSize}
+                step={1}
+                CustomThumb={CustomThumb}
+                style={{ height: 40 }}
+              />
             </View>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={crearRutinaAleatoria}>Jugar</Button>
-            <Button onPress={() => setVisibleDialogCreateRandom(false)}>Cancel</Button>
-          </Dialog.Actions>
-        </>
-        {/* ) : (
-          <>
-            <Dialog.Content>
-              <View style={{ paddingTop: 20 }}>
-                <Text style={styles.title}>Bluetooth no está conectado</Text>
-                <Text>Enciendaló para poder generar una rutina aleatoria</Text>
-              </View>
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={() => setVisibleDialogCreateRandom(false)}>Ok</Button>
-            </Dialog.Actions>
-          </>
-        )} */}
+          </View>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={crearRutinaAleatoria}>Jugar</Button>
+          <Button onPress={() => setVisibleDialogCreateRandom(false)}>Cancel</Button>
+        </Dialog.Actions>
       </Dialog>
     </Portal>
   );

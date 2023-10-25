@@ -1,30 +1,30 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
-import { IconButton } from 'react-native-paper';
+import { IconButton, Modal, Portal, Text } from 'react-native-paper';
 import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
+import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;
 
-const ListaJugadoresPage = (props: propsType) => {
+const JugadoresPage = (props: propsType) => {
   const { navigation, route } = props;
+  const [visible, setVisible] = useState(false);
 
-  const gotoAgregarJug = () => {
-    navigation.navigate('Agregar_Jug');
+  const hideModal = () => {
+    setVisible(false);
   };
 
-  /* const [data, setData] = useState(DATA);
-  if (jug) {
-    setData((prevData) => [...prevData, { title: jug }]);
-  } */
-
   return (
-    <View style={styles.container}>
-      <HeaderComponent title={'Lista de Jugadores'} />
+    <View style={{ flex: 1 }}>
+      <HeaderComponent title={'Lista de Jugadores'} showBackButton={true} />
 
       <ListarJugadoresComponent navigation={navigation} />
+
+      {/* Agregar jugador como modal */}
+      <ModalAgregarJugador isVisible={visible} hideModal={hideModal} />
 
       <IconButton
         icon={'plus'}
@@ -33,21 +33,10 @@ const ListaJugadoresPage = (props: propsType) => {
         iconColor="#fff"
         size={40}
         style={{ position: 'absolute', right: 20, bottom: 20 }}
-        onPress={gotoAgregarJug}
+        onPress={() => setVisible(true)}
       />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  title: {
-    flex: 4,
-    fontSize: 18,
-    marginLeft: 5,
-  },
-});
-
-export default ListaJugadoresPage;
+export default JugadoresPage;

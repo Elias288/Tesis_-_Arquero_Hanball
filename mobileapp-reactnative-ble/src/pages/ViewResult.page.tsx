@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeTabPages } from '../navigation/HomeTab';
 import HeaderComponent from '../components/Header.component';
-import { useCustomBLEProvider } from '../utils/BLEProvider';
-import { secuenciaType } from '../data/ListaRutinas.data';
+import { useCustomBLE } from '../contexts/BLEProvider';
+import { secuenciaType } from '../data/RutinasType';
 import ViewSecuenciaResultadoComponent from '../components/ViewSecuenciaResultado.component';
 import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
 
@@ -13,7 +13,7 @@ type propsType = NativeStackScreenProps<HomeTabPages, 'ViewResult'>;
 const ViewResultPage = (props: propsType) => {
   const { navigation, route } = props;
   const { res } = route.params;
-  const { BLECode, selectedRutina, stringToSecuencia } = useCustomBLEProvider();
+  const { BLECode, selectedRutina, stringToSecuencia } = useCustomBLE();
   const [resultadoGame, setResultadoGame] = useState<Array<secuenciaType>>([]);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const ViewResultPage = (props: propsType) => {
 
   return (
     <>
-      <HeaderComponent title="Ver resultado" back={true} />
+      <HeaderComponent title="Ver resultado" showBackButton={true} />
       <View style={styles.container}>
         <View style={{ alignItems: 'flex-start' }}>
           <Text style={styles.title}>Jugador:</Text>

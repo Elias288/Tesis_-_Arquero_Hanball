@@ -1,113 +1,169 @@
 import React, { FC, useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { JugadorType, ListaDeJugadores } from '../data/ListaDeJugadores.data';
+import { JugadorType } from '../data/JugadoresType';
 import { IconButton } from 'react-native-paper';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeTabPages } from '../navigation/HomeTab';
+import CustomModal from './CustomModal.component';
 
 const ItemHeigth = 80;
 
 interface ListarJugadoresProps {
-  simpleList?: boolean; // muestra un lista sin opciones
+  isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
   containerStyle?: StyleProp<ViewStyle>; // estilo personalizado del componente
   navigation?: any; // permite que el componente navegue
 }
 
 const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
-  const { simpleList, cantRenderItems, containerStyle, navigation } = props;
+  const { isSimpleList, cantRenderItems, containerStyle, navigation } = props;
+
   const [listMode, setListMode] = useState<boolean>(false);
+  const { jugadores: storedJugadores, popJugador } = useCustomLocalStorage();
   const [jugadoresList, setJugadoresList] = useState<Array<JugadorType>>([]);
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [selectedJugadorId, setSelectedJugadorId] = useState<number>(0);
 
   useEffect(() => {
     // si mode no está definido lo define
-    if (listMode !== simpleList) {
-      setListMode(simpleList || false);
+    if (listMode !== isSimpleList) {
+      setListMode(isSimpleList || false);
     }
 
     // carga todos los jugadores
-    setJugadoresList(ListaDeJugadores);
+    setJugadoresList(storedJugadores);
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
-      setJugadoresList(ListaDeJugadores.slice(0, cantRenderItems));
+      setJugadoresList(storedJugadores.slice(0, cantRenderItems));
     }
-  }, []);
+  }, [storedJugadores]);
 
-  const gotoHist_Jugadores = (nomJug: string) => {
-    navigation.navigate('Hist_Jugadores', { name: nomJug });
+  const deleteJugador = () => {
+    popJugador(selectedJugadorId);
+    setIsModalVisible(false);
   };
 
-  const RenderItem: FC<JugadorType> = ({ name: title, id }) => {
+  const showDeleteModal = (jugadorId: number) => {
+    setIsModalVisible(true);
+    setSelectedJugadorId(jugadorId);
+  };
+
+  if (jugadoresList.length == 0) {
     return (
-      <View style={styles.completeItemContainer}>
-        <View>
-          <Icon name="circle" size={50} color="#3CB371" />
-        </View>
-
-        <Text style={styles.itemTitle}>{title}</Text>
-
-        {/******************************************* Options *******************************************/}
-        <View style={styles.itemIcon}>
-          <TouchableOpacity>
-            <Icon name="account-edit" size={30} color="#3CB371" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.itemIcon}>
-          <IconButton
-            icon={'clipboard-text-outline'}
-            size={30}
-            iconColor="#3CB371"
-            onPress={() => gotoHist_Jugadores(title)}
-          />
-        </View>
-
-        <View style={styles.itemIcon}>
-          <TouchableOpacity>
-            <Icon name="trash-can" size={30} color="#3CB371" />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.emptyJugadoresBody}>
+        <Text style={styles.emptyJugadoresText}>Sin jugadores</Text>
       </View>
     );
-  };
+  }
 
-  const RenderSimpleItem: FC<JugadorType> = ({ name: title, id }) => {
+  if (isSimpleList) {
     return (
-      <View style={styles.simpleItemContainer}>
-        <View>
-          <Icon name="circle" size={50} color="#3CB371" />
-        </View>
-
-        <View style={{ flex: 1 }}>
-          <Text style={styles.itemTitle}>{title}</Text>
-          <Text style={styles.simpleItemSubText}>
-            * Info relevante del jugador (horas de entrenamiento, cantidad de rutinas, etc)
-          </Text>
-        </View>
-        <Text style={styles.simpleItemSubText}>fecha</Text>
-      </View>
+      <>
+        {jugadoresList.map((jugador) => (
+          <RenderSimpleItem key={jugador.id.toString()} jugador={jugador} />
+        ))}
+      </>
     );
-  };
+  }
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {simpleList ? (
-        // lista simple
-        <>
-          {jugadoresList.map((item) => (
-            <RenderSimpleItem key={item.id.toString()} {...item} />
-          ))}
-        </>
-      ) : (
-        // lista completa
-        <FlatList
-          data={jugadoresList}
-          renderItem={({ item }) => <RenderItem {...item} />}
-          keyExtractor={(item) => item.id.toString()}
-          ListFooterComponent={<View style={{ height: ItemHeigth - 30 }}></View>} // agrega un espacio en blanco al final
+      <CustomModal
+        hideModal={() => setIsModalVisible(false)}
+        onAceptar={deleteJugador}
+        isVisible={isModalVisible}
+        isAcceptCancel={true}
+      >
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Borrar Jugador</Text>
+        </View>
+
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={{ fontSize: 16 }}>Seguro que quiere eliminar este jugador?</Text>
+        </View>
+      </CustomModal>
+
+      <FlatList
+        data={jugadoresList}
+        renderItem={({ item: jugador }) => (
+          <RenderItem jugador={jugador} deleteJugador={() => showDeleteModal(jugador.id)} />
+        )}
+        keyExtractor={(jugador) => jugador.id.toString()}
+        ListFooterComponent={<View style={{ height: ItemHeigth - 30 }}></View>} // agrega un espacio en blanco al final
+      />
+    </View>
+  );
+};
+
+interface RenderProps {
+  jugador: JugadorType;
+  deleteJugador: (id: number) => void;
+}
+
+const RenderItem = ({ jugador, deleteJugador }: RenderProps) => {
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+
+  const gotoHist_Jugadores = (nomJug: string) => {
+    navigator.navigate('Hist_Jugadores', { name: nomJug });
+  };
+
+  return (
+    <View style={styles.completeItemContainer}>
+      <View style={styles.jugadorImage}></View>
+
+      <View style={{ flex: 1, alignItems: 'center' }}>
+        <Text style={styles.jugadorName}>{jugador.name}</Text>
+      </View>
+
+      {/******************************************* Options *******************************************/}
+      <View style={{ flexDirection: 'row' }}>
+        <IconButton
+          icon={'account-edit'}
+          containerColor="#3CB371"
+          iconColor="#fff"
+          size={30}
+          mode="contained"
         />
-      )}
+        <IconButton
+          icon={'clipboard-text-outline'}
+          containerColor="#3CB371"
+          iconColor="#fff"
+          size={30}
+          onPress={() => gotoHist_Jugadores(jugador.name)}
+          mode="contained"
+        />
+        <IconButton
+          icon={'delete'}
+          containerColor="#3CB371"
+          iconColor="#fff"
+          size={30}
+          onPress={() => deleteJugador(jugador.id)}
+          mode="contained"
+        />
+      </View>
+    </View>
+  );
+};
+
+const RenderSimpleItem = ({ jugador }: { jugador: JugadorType }) => {
+  return (
+    <View style={styles.simpleItemContainer}>
+      <View>
+        <Icon name="circle" size={50} color="#3CB371" />
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <Text style={styles.itemTitle}>{jugador.name}</Text>
+        <Text style={styles.simpleItemSubText}>
+          * Info relevante del jugador (horas de entrenamiento, cantidad de rutinas, etc)
+        </Text>
+      </View>
+      <Text style={styles.simpleItemSubText}>fecha</Text>
     </View>
   );
 };
@@ -142,8 +198,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 1,
   },
-  itemIcon: {
-    marginHorizontal: 5,
+  jugadorName: { fontSize: 18 },
+  jugadorImage: {
+    backgroundColor: '#3CB371',
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+  },
+  emptyJugadoresBody: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyJugadoresText: {
+    color: '#aaaaaa',
+    fontSize: 30,
+    fontWeight: '500',
   },
 });
 
