@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { HomeTabPages } from '../navigation/HomeTab';
 import HeaderComponent from '../components/Header.component';
 import { useCustomBLE } from '../contexts/BLEProvider';
-import { secuenciaType } from '../data/ListaRutinas.data';
+import { secuenciaType } from '../data/RutinasType';
 import ViewSecuenciaResultadoComponent from '../components/ViewSecuenciaResultado.component';
 import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
 

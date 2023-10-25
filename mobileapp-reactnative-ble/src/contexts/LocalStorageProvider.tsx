@@ -5,24 +5,30 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { JugadorType } from '../data/JugadoresType';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RutinaType } from '../data/RutinasType';
 
 interface useLocalStorageType {
-  jugadores: JugadorType[];
+  jugadores: Array<JugadorType>;
   pushJugador: (newJugador: JugadorType) => void;
   clearJugadoresDB: () => void;
-  popJugador: (id: number) => void;
+  popJugador: (jugadorId: number) => void;
+  rutinas: Array<RutinaType>;
+  pushRutina: (newRutina: RutinaType) => void;
+  popRutina: (rutinaId: number) => void;
 }
 
 const LocalStorageContext = createContext<useLocalStorageType | undefined>(undefined);
 
 const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [jugadores, setJugadores] = useState<Array<JugadorType>>([]);
-  const [rutinas, setRutinas] = useState([]);
+  const [rutinas, setRutinas] = useState<Array<RutinaType>>([]);
 
   useEffect(() => {
     findJugadores();
+    findRutinas();
   }, []);
 
+  // ****************************************** Jugadores ******************************************
   const findJugadores = async () => {
     try {
       const value = await AsyncStorage.getItem('jugadores');
@@ -48,8 +54,39 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('jugadores', JSON.stringify([]));
   };
 
+  // ****************************************** Rutinas ******************************************
+  const findRutinas = async () => {
+    try {
+      const value = await AsyncStorage.getItem('rutinas');
+      if (value !== null) setRutinas(JSON.parse(value));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const pushRutina = async (newRutina: RutinaType) => {
+    setRutinas([...rutinas, newRutina]);
+    await AsyncStorage.setItem('rutinas', JSON.stringify([...rutinas, newRutina]));
+  };
+
+  const popRutina = async (popRutinaId: number) => {
+    const newRutinaList = rutinas.filter((j) => j.id !== popRutinaId);
+    setRutinas(newRutinaList);
+    await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinaList));
+  };
+
   return (
-    <LocalStorageContext.Provider value={{ jugadores, pushJugador, clearJugadoresDB, popJugador }}>
+    <LocalStorageContext.Provider
+      value={{
+        jugadores,
+        pushJugador,
+        clearJugadoresDB,
+        popJugador,
+        rutinas,
+        popRutina,
+        pushRutina,
+      }}
+    >
       {children}
     </LocalStorageContext.Provider>
   );

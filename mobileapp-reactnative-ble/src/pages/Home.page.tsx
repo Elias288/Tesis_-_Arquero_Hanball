@@ -10,6 +10,8 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { RootTabs } from '../Main';
 import CrearRutinaAleatoriaComponent from '../components/CrearRutinaAleatoria.component';
 import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
+import { useCustomBLE } from '../contexts/BLEProvider';
+import CustomModal from '../components/CustomModal.component';
 
 type propsType = CompositeScreenProps<
   NativeStackScreenProps<HomeTabPages, 'HomePage'>,
@@ -18,13 +20,11 @@ type propsType = CompositeScreenProps<
 
 const HomePage: FC<propsType> = ({ navigation, route }) => {
   const [visibleDialogCreateRandom, setVisibleDialogCreateRandom] = useState<boolean>(false);
+  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
   /******************************************** Iniciar Rutina ********************************************/
   const IniciarRutina: FC = () => {
     const gotoSecuencias = () => {
-      navigation.navigate('Rutinas', { screen: 'Secuencias' });
-    };
-    const gotoCrearSecuencia = () => {
-      navigation.navigate('DemoCrearSecuenca');
+      navigation.navigate('Rutinas', { screen: 'RutinasPage' });
     };
     const OptionButtons = ({
       text,
@@ -71,16 +71,39 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
               icon="dice-6"
               action={() => setVisibleDialogCreateRandom(true)}
             />
-            <OptionButtons text="Crear Rutina" icon="plus" action={gotoCrearSecuencia} />
+            <OptionButtons text="Crear Rutina" icon="plus" action={() => {}} />
             <OptionButtons text=" Cargar Rutina" icon="upload" action={gotoSecuencias} />
           </View>
         </View>
 
-        <CrearRutinaAleatoriaComponent
-          setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
-          visible={visibleDialogCreateRandom}
-          navigation={navigation}
-        />
+        {espConnectedStatus && BLEPowerStatus ? (
+          <CrearRutinaAleatoriaComponent
+            setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
+            visible={visibleDialogCreateRandom}
+            navigation={navigation}
+          />
+        ) : (
+          <CustomModal
+            isAccept={true}
+            hideModal={() => setVisibleDialogCreateRandom(false)}
+            isVisible={visibleDialogCreateRandom}
+          >
+            <View>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  marginBottom: 20,
+                }}
+              >
+                Bluetooth no está conectado
+              </Text>
+              <Text style={{ marginBottom: 20 }}>
+                Enciendaló para poder generar una rutina aleatoria
+              </Text>
+            </View>
+          </CustomModal>
+        )}
       </CustomCard>
     );
   };
@@ -97,7 +120,7 @@ const HomePage: FC<propsType> = ({ navigation, route }) => {
 
         <ModalAgregarJugador
           hideModal={() => setVisibleAgregarJugador(false)}
-          visible={isVisibleAgregarJugador}
+          isVisible={isVisibleAgregarJugador}
         />
       </CustomCard>
     );

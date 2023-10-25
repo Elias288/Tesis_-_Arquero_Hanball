@@ -1,34 +1,35 @@
-import { View, StyleSheet, Text } from 'react-native';
+import { useState } from 'react';
+import { Text, StyleSheet, View } from 'react-native';
 import { Button, Modal, Portal, TextInput } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import { useState } from 'react';
 import CustomModal from './CustomModal.component';
 
-type propsType = {
+interface propsType {
   isVisible: boolean;
   hideModal: () => void;
-};
+}
 
-const ModalAgregarJugador = ({ isVisible, hideModal }: propsType) => {
-  const [name, setName] = useState<string>('');
-  const { pushJugador, jugadores } = useCustomLocalStorage();
+const ModalAgregarRutina = (props: propsType) => {
+  const { isVisible: visible, hideModal } = props;
+  const [title, setTitle] = useState('');
+  const { pushRutina, rutinas } = useCustomLocalStorage();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState<string>('');
 
   const handleSubmit = () => {
-    if (name.trim() == '') {
-      showModal('Nombre no puede estár vacio');
+    if (title.trim() == '') {
+      showModal('Titulo no puede estár vacio');
       return;
     }
 
-    if (name.trim().length < 4) {
-      showModal('Nombre demaciado corto');
-      return;
-    }
-
-    pushJugador({ id: jugadores.length, name: name.trim() });
+    pushRutina({ id: rutinas.length, title, secuencia: [] });
     closeModal();
+  };
+
+  const closeModal = () => {
+    setTitle('');
+    hideModal();
   };
 
   const showModal = (message: string) => {
@@ -36,26 +37,22 @@ const ModalAgregarJugador = ({ isVisible, hideModal }: propsType) => {
     setModalMessage(message);
   };
 
-  const closeModal = () => {
-    setName('');
-    hideModal();
-  };
-
   return (
     <>
       <Portal>
-        <Modal visible={isVisible} onDismiss={hideModal}>
+        <Modal visible={visible} onDismiss={hideModal}>
           <View style={styles.container}>
-            <Text style={styles.title}>Agregar Jugador</Text>
+            <Text style={styles.title}>Agregar Rutina</Text>
 
             <View style={{ flex: 1 }}>
               <TextInput
-                label={'Nombre*'}
+                label={'Titulo de la Rutina*'}
                 style={{ marginVertical: 10 }}
-                value={name}
-                onChangeText={setName}
+                value={title}
+                onChangeText={setTitle}
               />
             </View>
+
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginVertical: 10 }}>
               <Button mode="contained" onPress={handleSubmit}>
                 Agregar
@@ -99,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalAgregarJugador;
+export default ModalAgregarRutina;

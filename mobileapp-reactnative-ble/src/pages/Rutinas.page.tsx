@@ -1,35 +1,27 @@
-import {
-  FlatList,
-  Image,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { View } from 'react-native';
+import React, { useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
 import { IconButton } from 'react-native-paper';
 
-import { SecuenciasTabPages } from '../navigation/RutinasTab';
+import { RutinaTabPages } from '../navigation/RutinasTab';
 import ListarRutinasComponent from '../components/ListarRutinas.component';
+import ModalAgregarRutina from '../components/ModalAgregarRutina.component';
 
-type propsType = NativeStackScreenProps<SecuenciasTabPages, 'Rutinas'>;
+type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasPage'>;
 
 const RutinasPage = (props: propsType) => {
   const { navigation, route } = props;
-
-  const gotoAgregarSecuencia = () => {
-    navigation.navigate('CrearSecuencaDef');
-  };
+  const [visibleModal, setVisibleModal] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <HeaderComponent title={'Rutinas'} />
+    <View style={{ flex: 1 }}>
+      <HeaderComponent title={'Rutinas'} showBackButton={true} />
+
       <ListarRutinasComponent navigation={navigation} />
+
+      <ModalAgregarRutina isVisible={visibleModal} hideModal={() => setVisibleModal(false)} />
+
       <View>
         <IconButton
           icon={'plus'}
@@ -38,7 +30,7 @@ const RutinasPage = (props: propsType) => {
           iconColor="#fff"
           size={40}
           style={{ position: 'absolute', right: 20, bottom: 20 }}
-          onPress={gotoAgregarSecuencia}
+          onPress={() => setVisibleModal(true)}
         />
       </View>
     </View>
@@ -46,50 +38,3 @@ const RutinasPage = (props: propsType) => {
 };
 
 export default RutinasPage;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  item: {
-    backgroundColor: '#f5f5f5',
-    padding: 20,
-    marginVertical: 5,
-    marginHorizontal: 10,
-    width: 350,
-    flexDirection: 'row',
-  },
-  title: {
-    flex: 4,
-    fontSize: 18,
-  },
-  heading: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  icon: {
-    marginHorizontal: 5,
-  },
-  button: {
-    backgroundColor: '#3CB371',
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    marginBottom: 20,
-  },
-  text: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  mas: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-  },
-});

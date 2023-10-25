@@ -6,7 +6,7 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import { HomeTabPages } from '../navigation/HomeTab';
 import { RootTabs } from '../Main';
-import { secuenciaType } from '../data/ListaRutinas.data';
+import { secuenciaType } from '../data/RutinasType';
 import { useCustomBLE } from '../contexts/BLEProvider';
 
 const CANTLEDS = 4;

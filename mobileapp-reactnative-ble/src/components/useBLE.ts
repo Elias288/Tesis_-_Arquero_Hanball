@@ -13,7 +13,7 @@ import {
   BLUETOOTHERROR,
   BLUETOOTHDISCONNECTED,
 } from '../utils/BleCodes';
-import { RutinaType, secuenciaType } from '../data/ListaRutinas.data';
+import { RutinaType, secuenciaType } from '../data/RutinasType';
 
 const ESP32_NAME = 'ESP32-server';
 const ESP32_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';

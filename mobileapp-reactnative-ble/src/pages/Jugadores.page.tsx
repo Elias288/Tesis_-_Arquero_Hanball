@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
@@ -18,13 +18,13 @@ const JugadoresPage = (props: propsType) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
       <HeaderComponent title={'Lista de Jugadores'} showBackButton={true} />
 
       <ListarJugadoresComponent navigation={navigation} />
 
       {/* Agregar jugador como modal */}
-      <ModalAgregarJugador visible={visible} hideModal={hideModal} />
+      <ModalAgregarJugador isVisible={visible} hideModal={hideModal} />
 
       <IconButton
         icon={'plus'}
@@ -38,16 +38,5 @@ const JugadoresPage = (props: propsType) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  title: {
-    flex: 4,
-    fontSize: 18,
-    marginLeft: 5,
-  },
-});
 
 export default JugadoresPage;
