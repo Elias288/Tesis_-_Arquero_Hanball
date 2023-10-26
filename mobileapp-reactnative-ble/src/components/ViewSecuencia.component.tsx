@@ -5,30 +5,35 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface ViewSecuenciasProps {
   secuencias: Array<secuenciaType>;
-  style?: StyleProp<ViewStyle>;
+  listStyle?: StyleProp<ViewStyle>;
+  itemStyle?: StyleProp<ViewStyle>;
 }
 
-const ViewSecuenciaComponent: FC<ViewSecuenciasProps> = ({ secuencias, style }) => {
+const ViewSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuenciasProps) => {
+  const { secuencias, listStyle, itemStyle } = props;
   return (
-    <View style={style}>
+    <View style={listStyle}>
       <FlatList
         data={secuencias}
-        renderItem={({ item }) => <RenderItem secuencia={item} />}
+        renderItem={({ item }) => <RenderItem secuencia={item} itemStyle={itemStyle} />}
         keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
 };
 
-const RenderItem: FC<{ secuencia: secuenciaType }> = ({ secuencia }) => {
+const RenderItem: FC<{ secuencia: secuenciaType; itemStyle?: StyleProp<ViewStyle> }> = ({
+  secuencia,
+  itemStyle,
+}) => {
   return (
     <View style={styles.itemContainer}>
-      <View style={[styles.itemCircle, { marginRight: 5, backgroundColor: '#3CB371' }]}>
+      <View style={[styles.itemCircle, { marginRight: 5, backgroundColor: '#3CB371' }, itemStyle]}>
         <Icon name="led-on" size={40} color="#fff" />
         <Text style={styles.itemLedText}>{secuencia.ledId}</Text>
       </View>
 
-      <View style={[styles.itemCircle, { backgroundColor: '#536ac7' }]}>
+      <View style={[styles.itemCircle, { backgroundColor: '#536ac7' }, itemStyle]}>
         <Icon name="timer-sand-complete" size={40} color="#fff" />
         <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
       </View>

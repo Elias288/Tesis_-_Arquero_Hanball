@@ -24,7 +24,6 @@ type propsType = {
 const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const { setVisibleDialogCreateRandom, visible, navigation } = props;
   const [randomSize, setRandomSize] = useState<number>(4);
-  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
   const CustomThumb = ({ value }: { value: number }) => {
     return <Text style={styles.CustomThumb}>{value}</Text>;
@@ -72,7 +71,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
 
   return (
     <Portal>
-      <Dialog visible={visible}>
+      <Dialog visible={visible} onDismiss={() => setVisibleDialogCreateRandom(false)}>
         <Dialog.Content>
           <View style={{ paddingTop: 20 }}>
             <Text style={styles.title}>Crear rutina aleatoria</Text>

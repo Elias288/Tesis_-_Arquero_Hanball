@@ -176,15 +176,17 @@ function useBLE(): BluetoothLowEnergyApi {
         }, 10000);
       } else if (state === 'PoweredOff') {
         // ******************************* si el bluetooth está a pagado *******************************
-        setBLEConnectedStatus(false);
-        setBLEPowerStatus(false);
-        setScanningLoading(false);
-
-        setBLEMsg('Bluetooth apagado');
-        setBLECode(BLUETOOTHOFF);
-        console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);
-        bleManager.stopDeviceScan();
-        suscription.remove();
+        if (BLECode !== BLUETOOTHOFF) {
+          setBLEConnectedStatus(false);
+          setBLEPowerStatus(false);
+          setScanningLoading(false);
+  
+          setBLEMsg('Bluetooth apagado');
+          setBLECode(BLUETOOTHOFF);
+          console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);
+          // bleManager.stopDeviceScan();
+          // suscription.remove();
+        }
       }
     }, true);
   };

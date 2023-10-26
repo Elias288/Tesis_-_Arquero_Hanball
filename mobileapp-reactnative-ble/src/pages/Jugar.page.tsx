@@ -99,7 +99,7 @@ const JugarPage = (props: propsType) => {
                 <Text style={styles.title}>Secuencia</Text>
                 <ViewSecuenciaComponent
                   secuencias={rutina.secuencia}
-                  style={styles.viewSecuenciasStyle}
+                  listStyle={styles.viewSecuenciasStyle}
                 />
               </View>
 
@@ -134,7 +134,7 @@ const JugarPage = (props: propsType) => {
                 <Text style={styles.title}>Secuencia</Text>
                 <ViewSecuenciaComponent
                   secuencias={rutina.secuencia}
-                  style={styles.viewSecuenciasStyle}
+                  listStyle={styles.viewSecuenciasStyle}
                 />
               </View>
 
