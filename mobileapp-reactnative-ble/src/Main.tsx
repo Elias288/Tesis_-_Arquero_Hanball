@@ -1,107 +1,94 @@
+import { StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
-import Constants from 'expo-constants';
+import { PaperProvider } from 'react-native-paper';
+import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 
-import useBLE from './components/useBLE';
-import { Button, PaperProvider, TextInput } from 'react-native-paper';
+import HomeTab, { HomeTabPages } from './navigation/HomeTab';
+import { useCustomBLE } from './contexts/BLEProvider';
+import HandleMSGs from './utils/HandleMSGs';
+import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
+import RutinasTab, { RutinaTabPages } from './navigation/RutinasTab';
 
 /************************************************* Main *************************************************/
-const Main = () => {
-  const {
-    requestPermissions,
-    scanAndConnectPeripherals,
-    disconnectFromDevice,
-    connectToDevice,
-    sendData,
-    BLEmsg,
-    espDevice,
-    connectedDevice,
-    espStatus,
-  } = useBLE();
+export type RootTabs = {
+  Home: NavigatorScreenParams<HomeTabPages>;
+  Jugadores: NavigatorScreenParams<ListaJugadoresTabPages>;
+  Rutinas: NavigatorScreenParams<RutinaTabPages>;
+};
 
-  const [message, setmessage] = useState<string>('');
+const Tab = createBottomTabNavigator<RootTabs>();
+
+const Main = () => {
+  const { initBle } = useCustomBLE();
 
   useEffect(() => {
-    if (espStatus) {
-      scanForDevices();
-    }
-  }, [espStatus]);
+    initBle();
+  }, []);
 
-  const scanForDevices = async () => {
-    const isPermissionsEnabled = await requestPermissions();
-    if (isPermissionsEnabled) {
-      scanAndConnectPeripherals();
+  const pageOptions = (routeName: string, focused: boolean) => {
+    let iconName = '';
+    switch (routeName) {
+      case 'Home':
+        iconName = focused ? 'home' : 'home-outline';
+        break;
+      case 'Jugadores':
+        iconName = focused ? 'account-group' : 'account-group-outline';
+        break;
+      case 'Rutinas':
+        iconName = focused ? 'clipboard-list' : 'clipboard-list-outline';
+        break;
     }
-  };
-
-  const connect = () => {
-    if (espDevice !== undefined) {
-      connectToDevice(espDevice);
-    }
-  };
-
-  const sendDataToEsp = () => {
-    if (espDevice) {
-      sendData(espDevice, message);
-    }
+    return <Icon name={iconName} size={30} color="#3CB371" />;
   };
 
   return (
-    <PaperProvider>
-      <View style={styles.container}>
-        <Text>Mobile App - React Native - BLE</Text>
+    <NavigationContainer>
+      <PaperProvider>
+        <HandleMSGs />
 
-        <Button onPress={() => scanForDevices()}>Scan</Button>
-
-        {connectedDevice ? <Button onPress={() => disconnectFromDevice()}>Disconnect</Button> : ''}
-        {!connectedDevice ?? <Button onPress={connect}>Conect</Button>}
-
-        <View style={{ alignItems: 'center' }}>
-          <Text>{connectedDevice !== null ? 'Conectado' : 'No conectado'}</Text>
-          <Text>{`${BLEmsg}`}</Text>
-        </View>
-
-        <TextInput
-          style={{ marginHorizontal: 20 }}
-          value={message}
-          onChangeText={(newMessage) => setmessage(newMessage)}
-        />
-        <Button onPress={() => sendDataToEsp()}>Send</Button>
-
-        {/* <ScrollView>
-          <Text>{JSON.stringify(espDevice, null, 4)}</Text>
-        </ScrollView> */}
-      </View>
-    </PaperProvider>
+        <Tab.Navigator
+          initialRouteName="Home"
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              return pageOptions(route.name, focused);
+            },
+          })}
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeTab}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name="Jugadores"
+            component={ListaJugadoresTab}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name="Rutinas"
+            component={RutinasTab}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Tab.Navigator>
+      </PaperProvider>
+    </NavigationContainer>
   );
 };
 
 /*********************************************** Styles ************************************************/
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: Constants.statusBarHeight + 20,
-    backgroundColor: '#dbdbdb',
-  },
-  ctaButton: {
-    backgroundColor: '#1aa70a',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
-    marginHorizontal: 20,
-    marginBottom: 5,
-    borderRadius: 8,
-  },
-  ctaButtonText: {
-    fontSize: 18,
+  header: {
     fontWeight: 'bold',
-    color: 'white',
-  },
-  flatlistContiner: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
+    fontSize: 20,
+    color: '#ffffff',
   },
 });
 
