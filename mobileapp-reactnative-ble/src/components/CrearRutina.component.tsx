@@ -11,6 +11,7 @@ import Constants from 'expo-constants';
 import { InicioTabPages } from '../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
+import { useCustomBLE } from '../contexts/BLEProvider';
 
 interface propsType {
   isVisible: boolean;
@@ -23,6 +24,7 @@ const CrearRutina = (props: propsType) => {
   const [title, setTitle] = useState('');
   const { pushRutina, rutinas } = useCustomLocalStorage();
   const [newRutina, setNewRutina] = useState<RutinaType>();
+  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
   const [isWarningModalVisible, setIsWarningModalVisible] = useState<boolean>(false);
   const [isGameModalVisible, setIsGameModalVisible] = useState<boolean>(false);
@@ -35,14 +37,17 @@ const CrearRutina = (props: propsType) => {
       return;
     }
 
-    //TODO: comprobar lista de secuencia > 4
-
+    //TODO: comprobar lista de secuencia > 4 y titulo
     setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia });
     pushRutina({ id: rutinas.length, title, secuencia: newSecuencia });
 
     setModalMessage('');
-    setIsGameModalVisible(true);
-    // closeModal();
+
+    if (espConnectedStatus && BLEPowerStatus) {
+      setIsGameModalVisible(true);
+    } else {
+      closeModal();
+    }
   };
 
   const gotoJugar = () => {
@@ -131,7 +136,7 @@ const CrearRutina = (props: propsType) => {
         hideModal={() => setIsGameModalVisible(false)}
         isAcceptCancel={true}
         onAceptar={gotoJugar}
-        onCancelar={() => closeModal()}
+        onCancelar={closeModal}
         containerStyle={{ zIndex: 1000 }}
       >
         <Text>Desea iniciar un juego con esta rutina?</Text>

@@ -1,5 +1,5 @@
 import { Slider } from '@react-native-assets/slider';
-import { CompositeNavigationProp } from '@react-navigation/native';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
@@ -7,22 +7,23 @@ import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import { InicioTabPages } from '../navigation/InicioTab';
 import { RootTabs } from '../Main';
 import { secuenciaType } from '../data/RutinasType';
-import { useCustomBLE } from '../contexts/BLEProvider';
 
 const CANTLEDS = 4;
 const MAXSECONDS = 5;
 
+type navigationType = CompositeNavigationProp<
+  NativeStackNavigationProp<InicioTabPages, 'InicioPage', undefined>,
+  NativeStackNavigationProp<RootTabs>
+>;
+
 type propsType = {
   visible: boolean;
   setVisibleDialogCreateRandom: (val: boolean) => void;
-  navigation?: CompositeNavigationProp<
-    NativeStackNavigationProp<InicioTabPages, 'InicioPage', undefined>,
-    NativeStackNavigationProp<RootTabs>
-  >;
 };
 
 const CrearRutinaAleatoriaComponent = (props: propsType) => {
-  const { setVisibleDialogCreateRandom, visible, navigation } = props;
+  const { setVisibleDialogCreateRandom, visible } = props;
+  const navigator = useNavigation<navigationType>();
   const [randomSize, setRandomSize] = useState<number>(4);
 
   const CustomThumb = ({ value }: { value: number }) => {
@@ -32,7 +33,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const gotoJugar = (secuencia: Array<secuenciaType>) => {
     const rutina = { id: 1, title: 'rutina random', secuencia };
 
-    navigation?.navigate('Jugar', { rutina });
+    navigator?.navigate('Jugar', { rutina });
   };
 
   const crearRutinaAleatoria = () => {
