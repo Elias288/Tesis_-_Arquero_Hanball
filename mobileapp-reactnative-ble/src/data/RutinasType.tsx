@@ -10,4 +10,5 @@ export type RutinaType = {
   title: string;
   secuencia: Array<secuenciaType>;
   jugador?: string;
+  date: Date
 };

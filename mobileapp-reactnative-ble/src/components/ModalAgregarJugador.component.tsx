@@ -27,7 +27,7 @@ const ModalAgregarJugador = ({ isVisible, hideModal }: propsType) => {
       return;
     }
 
-    pushJugador({ id: jugadores.length, name: name.trim() });
+    pushJugador({ id: jugadores.length, name: name.trim(), date: new Date() });
     closeModal();
   };
 

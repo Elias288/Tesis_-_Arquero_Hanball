@@ -38,8 +38,8 @@ const CrearRutina = (props: propsType) => {
     }
 
     //TODO: comprobar lista de secuencia > 4 y titulo
-    setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia });
-    pushRutina({ id: rutinas.length, title, secuencia: newSecuencia });
+    setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia, date: new Date() });
+    pushRutina({ id: rutinas.length, title, secuencia: newSecuencia, date: new Date() });
 
     setModalMessage('');
 

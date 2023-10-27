@@ -15,6 +15,9 @@ interface useLocalStorageType {
   rutinas: Array<RutinaType>;
   pushRutina: (newRutina: RutinaType) => void;
   popRutina: (rutinaId: number) => void;
+  rutinasRealizadas: Array<RutinaType>;
+  pushRutinaRealizada: (newRutina: RutinaType) => void;
+  popRutinaRealizada: (rutinaId: number) => void;
 }
 
 const LocalStorageContext = createContext<useLocalStorageType | undefined>(undefined);
@@ -22,10 +25,12 @@ const LocalStorageContext = createContext<useLocalStorageType | undefined>(undef
 const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [jugadores, setJugadores] = useState<Array<JugadorType>>([]);
   const [rutinas, setRutinas] = useState<Array<RutinaType>>([]);
+  const [rutinasRealizadas, setRutinasRealizadas] = useState<Array<RutinaType>>([]);
 
   useEffect(() => {
     findJugadores();
     findRutinas();
+    findAllRutinasRealizadas();
   }, []);
 
   // ****************************************** Jugadores ******************************************
@@ -75,6 +80,27 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinaList));
   };
 
+  // ************************************ Rutinas Realizadas ************************************
+  const findAllRutinasRealizadas = async () => {
+    try {
+      const value = await AsyncStorage.getItem('rutinasRealizadas');
+      if (value !== null) setRutinasRealizadas(JSON.parse(value));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const pushRutinaRealizada = async (newRutina: RutinaType) => {
+    setRutinas([...rutinas, newRutina]);
+    await AsyncStorage.setItem('rutinasRealizadas', JSON.stringify([...rutinas, newRutina]));
+  };
+
+  const popRutinaRealizada = async (popRutinaId: number) => {
+    const newRutinaList = rutinas.filter((j) => j.id !== popRutinaId);
+    setRutinas(newRutinaList);
+    await AsyncStorage.setItem('rutinasRealizadas', JSON.stringify(newRutinaList));
+  };
+
   return (
     <LocalStorageContext.Provider
       value={{
@@ -85,6 +111,9 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         rutinas,
         popRutina,
         pushRutina,
+        rutinasRealizadas,
+        popRutinaRealizada,
+        pushRutinaRealizada,
       }}
     >
       {children}

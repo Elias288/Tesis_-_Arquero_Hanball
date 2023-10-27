@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
-import { IconButton, Modal, Portal, Text } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
 import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
 
@@ -21,7 +21,7 @@ const JugadoresPage = (props: propsType) => {
     <View style={{ flex: 1 }}>
       <HeaderComponent title={'Lista de Jugadores'} showBackButton={true} />
 
-      <ListarJugadoresComponent navigation={navigation} />
+      <ListarJugadoresComponent />
 
       {/* Agregar jugador como modal */}
       <ModalAgregarJugador isVisible={visible} hideModal={hideModal} />

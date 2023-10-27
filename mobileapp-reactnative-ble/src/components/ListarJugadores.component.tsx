@@ -10,16 +10,21 @@ import { InicioTabPages } from '../navigation/InicioTab';
 import CustomModal from './CustomModal.component';
 
 const ItemHeigth = 80;
+export const sortType = {
+  alphabetic: 0,
+  newest: 1,
+  oldest: 2,
+};
 
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
   containerStyle?: StyleProp<ViewStyle>; // estilo personalizado del componente
-  navigation?: any; // permite que el componente navegue
+  sort?: number;
 }
 
 const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
-  const { isSimpleList, cantRenderItems, containerStyle, navigation } = props;
+  const { isSimpleList, cantRenderItems, containerStyle, sort } = props;
 
   const [listMode, setListMode] = useState<boolean>(false);
   const { jugadores: storedJugadores, popJugador } = useCustomLocalStorage();
@@ -28,6 +33,21 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedJugadorId, setSelectedJugadorId] = useState<number>(0);
 
+  const sortArray = (a: JugadorType, b: JugadorType): number => {
+    if (sort === undefined || sort === sortType.alphabetic) {
+      // Ordenar por nombre
+      return a.name.localeCompare(b.name);
+    } else if (sort === sortType.newest) {
+      // Ordenar por fecha el más nuevo
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    } else if (sort === sortType.oldest) {
+      // Ordenar por fecha el más viejo
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    } else {
+      return 0;
+    }
+  };
+
   useEffect(() => {
     // si mode no está definido lo define
     if (listMode !== isSimpleList) {
@@ -35,7 +55,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     }
 
     // carga todos los jugadores
-    setJugadoresList(storedJugadores);
+    setJugadoresList(storedJugadores.sort((a, b) => sortArray(a, b)));
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
@@ -159,11 +179,15 @@ const RenderSimpleItem = ({ jugador }: { jugador: JugadorType }) => {
 
       <View style={{ flex: 1 }}>
         <Text style={styles.itemTitle}>{jugador.name}</Text>
-        <Text style={styles.simpleItemSubText}>
-          * Info relevante del jugador (horas de entrenamiento, cantidad de rutinas, etc)
-        </Text>
       </View>
-      <Text style={styles.simpleItemSubText}>fecha</Text>
+      <Text style={styles.simpleItemSubText}>
+        {new Date(jugador.date).getDate() +
+          '/' +
+          new Date(jugador.date).getMonth() +
+          '/' +
+          new Date(jugador.date).getFullYear()}
+      </Text>
+      {/* <Text style={styles.simpleItemSubText}>{jugador.date.toString()}</Text> */}
     </View>
   );
 };

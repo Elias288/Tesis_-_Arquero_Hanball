@@ -122,15 +122,14 @@ const RenderItem = (props: RenderProps) => {
 
       {/******************************************* Options *******************************************/}
       <View style={{ flexDirection: 'row' }}>
-        {espConnectedStatus && BLEPowerStatus && (
-          <IconButton
-            icon={'play'}
-            containerColor="#3CB371"
-            iconColor="#fff"
-            size={30}
-            onPress={gotoJugar}
-          />
-        )}
+        <IconButton
+          icon={'play'}
+          containerColor="#3CB371"
+          iconColor="#fff"
+          size={30}
+          onPress={gotoJugar}
+          disabled={!espConnectedStatus || !BLEPowerStatus}
+        />
         <IconButton icon={'application-edit'} containerColor="#3CB371" iconColor="#fff" size={30} />
         <IconButton
           icon={'delete'}
