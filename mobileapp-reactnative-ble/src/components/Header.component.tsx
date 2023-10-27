@@ -4,7 +4,7 @@ import { ActivityIndicator, IconButton, Text } from 'react-native-paper';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 
 type headerProps = {
   showBackButton?: boolean;
@@ -12,7 +12,7 @@ type headerProps = {
 };
 
 const HeaderComponent = (props: headerProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
 
   const {
     requestPermissions,

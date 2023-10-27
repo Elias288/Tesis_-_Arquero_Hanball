@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import { RootTabs } from '../Main';
 import { secuenciaType } from '../data/RutinasType';
 import { useCustomBLE } from '../contexts/BLEProvider';
@@ -16,7 +16,7 @@ type propsType = {
   visible: boolean;
   setVisibleDialogCreateRandom: (val: boolean) => void;
   navigation?: CompositeNavigationProp<
-    NativeStackNavigationProp<HomeTabPages, 'HomePage', undefined>,
+    NativeStackNavigationProp<InicioTabPages, 'InicioPage', undefined>,
     NativeStackNavigationProp<RootTabs>
   >;
 };

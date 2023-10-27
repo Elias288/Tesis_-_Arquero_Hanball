@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
 import ViewSecuenciaComponent from './ViewSecuencia.component';
 import Constants from 'expo-constants';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 
@@ -18,7 +18,7 @@ interface propsType {
 }
 
 const CrearRutina = (props: propsType) => {
-  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
   const { isVisible: visible, hideModal } = props;
   const [title, setTitle] = useState('');
   const { pushRutina, rutinas } = useCustomLocalStorage();

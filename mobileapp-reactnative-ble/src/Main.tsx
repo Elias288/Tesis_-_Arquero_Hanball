@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 
-import HomeTab, { HomeTabPages } from './navigation/HomeTab';
+import InicioTab, { InicioTabPages } from './navigation/InicioTab';
 import { useCustomBLE } from './contexts/BLEProvider';
 import HandleMSGs from './utils/HandleMSGs';
 import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
@@ -13,7 +13,7 @@ import RutinasTab, { RutinaTabPages } from './navigation/RutinasTab';
 
 /************************************************* Main *************************************************/
 export type RootTabs = {
-  Home: NavigatorScreenParams<HomeTabPages>;
+  Inicio: NavigatorScreenParams<InicioTabPages>;
   Jugadores: NavigatorScreenParams<ListaJugadoresTabPages>;
   Rutinas: NavigatorScreenParams<RutinaTabPages>;
 };
@@ -30,7 +30,7 @@ const Main = () => {
   const pageOptions = (routeName: string, focused: boolean) => {
     let iconName = '';
     switch (routeName) {
-      case 'Home':
+      case 'Inicio':
         iconName = focused ? 'home' : 'home-outline';
         break;
       case 'Jugadores':
@@ -49,7 +49,7 @@ const Main = () => {
         <HandleMSGs />
 
         <Tab.Navigator
-          initialRouteName="Home"
+          initialRouteName="Inicio"
           screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
               return pageOptions(route.name, focused);
@@ -57,8 +57,8 @@ const Main = () => {
           })}
         >
           <Tab.Screen
-            name="Home"
-            component={HomeTab}
+            name="Inicio"
+            component={InicioTab}
             options={{
               headerShown: false,
             }}

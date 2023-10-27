@@ -7,7 +7,7 @@ import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import CustomModal from './CustomModal.component';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import { useCustomBLE } from '../contexts/BLEProvider';
 
 const ItemHeigth = 80;
@@ -104,7 +104,7 @@ interface RenderProps {
   deleteRutina: (id: number) => void;
 }
 const RenderItem = (props: RenderProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
   const { rutina, deleteRutina } = props;
 

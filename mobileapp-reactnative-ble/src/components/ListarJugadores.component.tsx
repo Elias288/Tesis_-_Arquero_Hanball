@@ -6,7 +6,7 @@ import { IconButton } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import CustomModal from './CustomModal.component';
 
 const ItemHeigth = 80;
@@ -106,7 +106,7 @@ interface RenderProps {
 }
 
 const RenderItem = ({ jugador, deleteJugador }: RenderProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
 
   const gotoHist_Jugadores = (nomJug: string) => {
     navigator.navigate('Hist_Jugadores', { name: nomJug });

@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import HeaderComponent from '../components/Header.component';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { secuenciaType } from '../data/RutinasType';
 import ViewSecuenciaResultadoComponent from '../components/ViewSecuenciaResultado.component';
 import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
 
-type propsType = NativeStackScreenProps<HomeTabPages, 'ViewResult'>;
+type propsType = NativeStackScreenProps<InicioTabPages, 'ViewResult'>;
 
 const ViewResultPage = (props: propsType) => {
   const { navigation, route } = props;
@@ -22,7 +22,7 @@ const ViewResultPage = (props: propsType) => {
 
   useEffect(() => {
     if (BLECode === BLUETOOTHNOTCONNECTED) {
-      navigation.navigate('HomePage');
+      navigation.navigate('InicioPage');
     }
   }, [BLECode]);
 

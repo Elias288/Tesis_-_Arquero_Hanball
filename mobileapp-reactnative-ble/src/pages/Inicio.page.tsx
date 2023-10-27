@@ -3,7 +3,7 @@ import React, { FC, ReactNode, useState } from 'react';
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { Button } from 'react-native-paper';
 
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import HeaderComponent from '../components/Header.component';
 import ListarJugadoresComponent from '../components/ListarJugadores.component';
 import { CompositeScreenProps } from '@react-navigation/native';
@@ -15,11 +15,11 @@ import CustomModal from '../components/CustomModal.component';
 import CrearRutina from '../components/CrearRutina.component';
 
 type propsType = CompositeScreenProps<
-  NativeStackScreenProps<HomeTabPages, 'HomePage'>,
+  NativeStackScreenProps<InicioTabPages, 'InicioPage'>,
   NativeStackScreenProps<RootTabs>
 >;
 
-const HomePage: FC<propsType> = ({ navigation, route }) => {
+const InicioPage: FC<propsType> = ({ navigation, route }) => {
   const [visibleDialogCreateRandom, setVisibleDialogCreateRandom] = useState<boolean>(false);
   const [visibleDialogCreate, setVisibleDialogCreate] = useState<boolean>(false);
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
@@ -230,4 +230,4 @@ const pageStyles = StyleSheet.create({
   scrollViewStyle: { padding: 13 },
 });
 
-export default HomePage;
+export default InicioPage;

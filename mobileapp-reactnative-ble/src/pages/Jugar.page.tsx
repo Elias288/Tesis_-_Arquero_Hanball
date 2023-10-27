@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import HeaderComponent from '../components/Header.component';
 import { ActivityIndicator, Button } from 'react-native-paper';
 import { useCustomBLE } from '../contexts/BLEProvider';
@@ -11,7 +11,7 @@ import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
 import ViewSecuenciaComponent from '../components/ViewSecuencia.component';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 
-type propsType = NativeStackScreenProps<HomeTabPages, 'Jugar'>;
+type propsType = NativeStackScreenProps<InicioTabPages, 'Jugar'>;
 
 type selectListJugadoresType = {
   key: string;
@@ -52,7 +52,7 @@ const JugarPage = (props: propsType) => {
     }
 
     if (BLECode === BLUETOOTHNOTCONNECTED) {
-      navigation.navigate('HomePage');
+      navigation.navigate('InicioPage');
     }
   }, [BLECode, isGameRunning]);
 

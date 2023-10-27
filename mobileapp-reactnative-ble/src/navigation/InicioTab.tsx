@@ -1,16 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import HomePage from '../pages/Home.page';
+import InicioPage from '../pages/Inicio.page';
 import JugarPage from '../pages/Jugar.page';
 import ViewResultPage from '../pages/ViewResult.page';
 import Hist_Jugadores from '../pages/Hist_Jugadores';
-import DemoCrearSecuenca from '../pages/CrearSecuencia';
 import RutinasPage from '../pages/Rutinas.page';
 import { RutinaType } from '../data/RutinasType';
 
-export type HomeTabPages = {
-  HomePage: undefined;
+export type InicioTabPages = {
+  InicioPage: undefined;
   Jugar: { rutina: RutinaType };
   ViewResult: { res: string };
   Agregar_Jug: undefined;
@@ -18,12 +17,12 @@ export type HomeTabPages = {
   RutinasPage: undefined;
 };
 
-const Stack = createNativeStackNavigator<HomeTabPages>();
+const Stack = createNativeStackNavigator<InicioTabPages>();
 
-const HomeTab = () => {
+const InicioTab = () => {
   return (
-    <Stack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="HomePage" component={HomePage} />
+    <Stack.Navigator initialRouteName="InicioPage" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="InicioPage" component={InicioPage} />
       <Stack.Screen name="Jugar" component={JugarPage} />
       <Stack.Screen name="ViewResult" component={ViewResultPage} />
       <Stack.Screen name="Hist_Jugadores" component={Hist_Jugadores} />
@@ -32,4 +31,4 @@ const HomeTab = () => {
   );
 };
 
-export default HomeTab;
+export default InicioTab;

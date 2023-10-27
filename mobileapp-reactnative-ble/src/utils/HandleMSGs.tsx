@@ -3,7 +3,7 @@ import { Portal, Snackbar } from 'react-native-paper';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
 import { useNavigation } from '@react-navigation/native';
-import { HomeTabPages } from '../navigation/HomeTab';
+import { InicioTabPages } from '../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export interface Funciones {
@@ -11,7 +11,7 @@ export interface Funciones {
 }
 
 const HandleMSGs = () => {
-  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
 
   const { receivedMSG, BLECode, BLEmsg, cleanBLECode, runGame } = useCustomBLE();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
