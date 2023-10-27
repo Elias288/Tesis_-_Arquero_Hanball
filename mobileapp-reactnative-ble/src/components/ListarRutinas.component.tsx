@@ -5,6 +5,10 @@ import { RutinaType } from '../data/RutinasType';
 import { IconButton } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import CustomModal from './CustomModal.component';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeTabPages } from '../navigation/HomeTab';
+import { useCustomBLE } from '../contexts/BLEProvider';
 
 const ItemHeigth = 80;
 
@@ -20,7 +24,6 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
   const { rutinas: storedRutinas, popRutina } = useCustomLocalStorage();
   const [selectedRutinaId, setSelectedRutinaId] = useState<number>(0);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedJugadorId, setSelectedJugadorId] = useState<number>(0);
   const [listMode, setListMode] = useState<boolean>(false);
   const [rutinaList, setRutinaList] = useState<Array<RutinaType>>([]);
 
@@ -46,7 +49,7 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
 
   const showDeleteModal = (rutinaId: number) => {
     setIsModalVisible(true);
-    setSelectedJugadorId(rutinaId);
+    setSelectedRutinaId(rutinaId);
   };
 
   if (rutinaList.length == 0) {
@@ -101,7 +104,13 @@ interface RenderProps {
   deleteRutina: (id: number) => void;
 }
 const RenderItem = (props: RenderProps) => {
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
+  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
   const { rutina, deleteRutina } = props;
+
+  const gotoJugar = () => {
+    navigator?.navigate('Jugar', { rutina });
+  };
 
   return (
     <View style={styles.completeItemContainer}>
@@ -113,6 +122,15 @@ const RenderItem = (props: RenderProps) => {
 
       {/******************************************* Options *******************************************/}
       <View style={{ flexDirection: 'row' }}>
+        {espConnectedStatus && BLEPowerStatus && (
+          <IconButton
+            icon={'play'}
+            containerColor="#3CB371"
+            iconColor="#fff"
+            size={30}
+            onPress={gotoJugar}
+          />
+        )}
         <IconButton icon={'application-edit'} containerColor="#3CB371" iconColor="#fff" size={30} />
         <IconButton
           icon={'delete'}

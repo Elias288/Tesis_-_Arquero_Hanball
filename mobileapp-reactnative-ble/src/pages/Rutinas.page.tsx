@@ -6,7 +6,7 @@ import { IconButton } from 'react-native-paper';
 
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import ListarRutinasComponent from '../components/ListarRutinas.component';
-import ModalAgregarRutina from '../components/ModalAgregarRutina.component';
+import CrearRutina from '../components/CrearRutina.component';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasPage'>;
 
@@ -20,7 +20,7 @@ const RutinasPage = (props: propsType) => {
 
       <ListarRutinasComponent navigation={navigation} />
 
-      <ModalAgregarRutina isVisible={visibleModal} hideModal={() => setVisibleModal(false)} />
+      <CrearRutina isVisible={visibleModal} hideModal={() => setVisibleModal(false)} />
 
       <View>
         <IconButton

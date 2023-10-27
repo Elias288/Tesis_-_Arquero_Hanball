@@ -5,21 +5,27 @@ import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import CustomModal from './CustomModal.component';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { secuenciaType } from '../data/RutinasType';
+import { RutinaType, secuenciaType } from '../data/RutinasType';
 import ViewSecuenciaComponent from './ViewSecuencia.component';
 import Constants from 'expo-constants';
+import { HomeTabPages } from '../navigation/HomeTab';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
 interface propsType {
   isVisible: boolean;
   hideModal: () => void;
 }
 
-const ModalAgregarRutina = (props: propsType) => {
+const CrearRutina = (props: propsType) => {
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabPages>>();
   const { isVisible: visible, hideModal } = props;
   const [title, setTitle] = useState('');
   const { pushRutina, rutinas } = useCustomLocalStorage();
+  const [newRutina, setNewRutina] = useState<RutinaType>();
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isWarningModalVisible, setIsWarningModalVisible] = useState<boolean>(false);
+  const [isGameModalVisible, setIsGameModalVisible] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>('');
   const [newSecuencia, setNewSecuencia] = useState<secuenciaType[]>([]);
 
@@ -29,8 +35,19 @@ const ModalAgregarRutina = (props: propsType) => {
       return;
     }
 
+    //TODO: comprobar lista de secuencia > 4
+
+    setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia });
     pushRutina({ id: rutinas.length, title, secuencia: newSecuencia });
+
+    setModalMessage('');
+    setIsGameModalVisible(true);
+    // closeModal();
+  };
+
+  const gotoJugar = () => {
     closeModal();
+    if (newRutina) navigator?.navigate('Jugar', { rutina: newRutina });
   };
 
   const closeModal = () => {
@@ -40,7 +57,7 @@ const ModalAgregarRutina = (props: propsType) => {
   };
 
   const showModal = (message: string) => {
-    setIsModalVisible(true);
+    setIsWarningModalVisible(true);
     setModalMessage(message);
   };
 
@@ -91,11 +108,13 @@ const ModalAgregarRutina = (props: propsType) => {
         )}
       </Portal>
 
+      {/* Warning */}
       <CustomModal
-        hideModal={() => setIsModalVisible(false)}
+        hideModal={() => setIsWarningModalVisible(false)}
         isAccept={true}
         onAceptar={() => {}}
-        isVisible={isModalVisible}
+        isVisible={isWarningModalVisible}
+        containerStyle={{ zIndex: 1000 }}
       >
         <View style={{ paddingBottom: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Alerta</Text>
@@ -104,6 +123,18 @@ const ModalAgregarRutina = (props: propsType) => {
         <View style={{ paddingBottom: 20 }}>
           <Text style={{ fontSize: 16 }}>{modalMessage}</Text>
         </View>
+      </CustomModal>
+
+      {/* Alerta Jugar */}
+      <CustomModal
+        isVisible={isGameModalVisible}
+        hideModal={() => setIsGameModalVisible(false)}
+        isAcceptCancel={true}
+        onAceptar={gotoJugar}
+        onCancelar={() => closeModal()}
+        containerStyle={{ zIndex: 1000 }}
+      >
+        <Text>Desea iniciar un juego con esta rutina?</Text>
       </CustomModal>
     </>
   );
@@ -253,4 +284,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModalAgregarRutina;
+export default CrearRutina;

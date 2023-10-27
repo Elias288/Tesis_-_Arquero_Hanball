@@ -8,16 +8,33 @@ interface ModalProps {
   children: ReactNode;
   // opcionales
   onAceptar?: () => void;
+  onCancelar?: () => void;
   isAccept?: boolean;
   isAcceptCancel?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 }
 const CustomModal = (props: ModalProps) => {
-  const { children, containerStyle, isVisible, isAccept, hideModal, onAceptar, isAcceptCancel } =
-    props;
+  const {
+    children,
+    containerStyle,
+    isVisible,
+    isAccept,
+    hideModal,
+    onAceptar,
+    onCancelar,
+    isAcceptCancel,
+  } = props;
 
   const acceptHandle = () => {
     if (onAceptar) onAceptar();
+    hideModal();
+  };
+
+  const cancelHandle = () => {
+    if (onCancelar) {
+      onCancelar()
+    }
+
     hideModal();
   };
 
@@ -31,7 +48,7 @@ const CustomModal = (props: ModalProps) => {
           {(isAccept || isAcceptCancel) && (
             <View style={styles.actions}>
               <Button onPress={acceptHandle}>Aceptar</Button>
-              {isAcceptCancel ? <Button onPress={hideModal}>Cancelar</Button> : null}
+              {isAcceptCancel ? <Button onPress={cancelHandle}>Cancelar</Button> : null}
             </View>
           )}
         </View>
