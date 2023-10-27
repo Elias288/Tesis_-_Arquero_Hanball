@@ -197,7 +197,7 @@ const InicioPage: FC<propsType> = ({ navigation, route }) => {
 
   return (
     <>
-      <HeaderComponent title={'BLE App'} />
+      <HeaderComponent title={'DEAH App'} />
       <ScrollView style={pageStyles.scrollViewStyle} nestedScrollEnabled>
         <IniciarRutina />
 

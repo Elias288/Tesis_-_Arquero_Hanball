@@ -83,9 +83,8 @@ const HeaderComponent = (props: headerProps) => {
 
   return (
     <View style={styles.container}>
-      {props.showBackButton ? <BackButton /> : <BleStatus />}
+      <View style={styles.action}>{props.showBackButton ? <BackButton /> : <BleStatus />}</View>
       <Text style={styles.textTitle}>{props.title}</Text>
-      <IconButton iconColor="#fff" icon={'cog'} size={30}></IconButton>
     </View>
   );
 };
@@ -99,7 +98,14 @@ const styles = StyleSheet.create({
     paddingTop: Constants.statusBarHeight,
     paddingHorizontal: 10,
   },
+  action: {
+    position: 'absolute',
+    zIndex: 10,
+    top: Constants.statusBarHeight,
+    left: 10,
+  },
   textTitle: {
+    flex: 1,
     padding: 10,
     color: 'white',
     textAlign: 'center',
