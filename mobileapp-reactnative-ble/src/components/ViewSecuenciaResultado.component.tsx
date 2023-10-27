@@ -1,17 +1,18 @@
 import { FlatList, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import React, { FC } from 'react';
-import { secuenciaType } from '../data/RutinasType';
+import { RutinaType, secuenciaType } from '../data/RutinasType';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 interface ViewSecuenciasResProps {
-  secuencias: Array<secuenciaType>;
+  rutina: RutinaType;
   style?: StyleProp<ViewStyle>;
 }
-const ViewSecuenciaResultadoComponent: FC<ViewSecuenciasResProps> = ({ secuencias, style }) => {
+const ViewSecuenciaResultadoComponent: FC<ViewSecuenciasResProps> = ({ rutina, style }) => {
   return (
     <View style={style}>
       <FlatList
-        data={secuencias}
+        data={rutina?.secuencia}
         renderItem={({ item }) => <RenderItem secuenciaRes={item} />}
         keyExtractor={(item) => item.id.toString()}
       />
@@ -25,10 +26,10 @@ const RenderItem: FC<{ secuenciaRes: secuenciaType }> = ({ secuenciaRes }) => {
       <View
         style={[
           ViewSecuenciaResultadoStyles.itemCircle,
-          { marginRight: 5, backgroundColor: '#3CB371' },
+          { marginRight: 5, backgroundColor: GlobalStyles.greenBackColor },
         ]}
       >
-        <Icon name="led-on" size={40} color="#fff" />
+        <Icon name="led-on" size={40} color={GlobalStyles.white} />
         <Text style={ViewSecuenciaResultadoStyles.itemLedText}>{secuenciaRes.ledId}</Text>
       </View>
 
@@ -38,14 +39,14 @@ const RenderItem: FC<{ secuenciaRes: secuenciaType }> = ({ secuenciaRes }) => {
           { marginRight: 5, backgroundColor: '#536ac7' },
         ]}
       >
-        <Icon name="timer-sand-complete" size={40} color="#fff" />
+        <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
         <Text style={ViewSecuenciaResultadoStyles.itemTimeText}>
           {secuenciaRes.time.toString()}s
         </Text>
       </View>
 
       <View style={[ViewSecuenciaResultadoStyles.itemCircle, { backgroundColor: '#536ac7' }]}>
-        <Icon name="timer-sand-complete" size={40} color="#fff" />
+        <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
         {secuenciaRes.resTime != undefined && secuenciaRes.resTime != '-' ? (
           <Text style={ViewSecuenciaResultadoStyles.itemTimeText}>
             {secuenciaRes.resTime?.toString()}s
@@ -59,7 +60,7 @@ const RenderItem: FC<{ secuenciaRes: secuenciaType }> = ({ secuenciaRes }) => {
 };
 const ViewSecuenciaResultadoStyles = StyleSheet.create({
   itemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: GlobalStyles.white,
     borderRadius: 15,
     padding: 5,
     marginBottom: 5,
@@ -75,13 +76,13 @@ const ViewSecuenciaResultadoStyles = StyleSheet.create({
     paddingVertical: 5,
   },
   itemLedText: {
-    color: '#3CB371',
+    color: GlobalStyles.greenBackColor,
     fontWeight: 'bold',
     fontSize: 20,
     position: 'absolute',
   },
   itemTimeText: {
-    color: '#fff',
+    color: GlobalStyles.white,
     fontWeight: 'bold',
     fontSize: 20,
   },

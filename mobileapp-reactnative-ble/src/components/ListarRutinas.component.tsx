@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
 import { useCustomBLE } from '../contexts/BLEProvider';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 const ItemHeigth = 80;
 
@@ -109,13 +110,13 @@ const RenderItem = (props: RenderProps) => {
   const { rutina, deleteRutina } = props;
 
   const gotoJugar = () => {
-    navigator?.navigate('Jugar', { rutina });
+    navigator?.navigate('Jugar', { rutina: JSON.stringify(rutina) });
   };
 
   return (
     <View style={styles.completeItemContainer}>
       <View>
-        <Icon name="circle" size={50} color="#3CB371" />
+        <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
       </View>
 
       <Text style={styles.itemTitle}>{rutina.title}</Text>
@@ -124,17 +125,22 @@ const RenderItem = (props: RenderProps) => {
       <View style={{ flexDirection: 'row' }}>
         <IconButton
           icon={'play'}
-          containerColor="#3CB371"
-          iconColor="#fff"
+          containerColor={GlobalStyles.greenBackColor}
+          iconColor={GlobalStyles.white}
           size={30}
           onPress={gotoJugar}
           disabled={!espConnectedStatus || !BLEPowerStatus}
         />
-        <IconButton icon={'application-edit'} containerColor="#3CB371" iconColor="#fff" size={30} />
+        <IconButton
+          icon={'application-edit'}
+          containerColor={GlobalStyles.greenBackColor}
+          iconColor={GlobalStyles.white}
+          size={30}
+        />
         <IconButton
           icon={'delete'}
-          containerColor="#3CB371"
-          iconColor="#fff"
+          containerColor={GlobalStyles.greenBackColor}
+          iconColor={GlobalStyles.white}
           size={30}
           onPress={() => deleteRutina(rutina.id)}
         />
@@ -147,7 +153,7 @@ const RenderSimpleItem = ({ title }: RutinaType) => {
   return (
     <View style={styles.simpleItemContainer}>
       <View>
-        <Icon name="circle" size={50} color="#3CB371" />
+        <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
       </View>
 
       <View style={{ flex: 1 }}>
@@ -164,7 +170,7 @@ const styles = StyleSheet.create({
     paddingTop: 13,
   },
   completeItemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: GlobalStyles.white,
     padding: 10,
     borderRadius: 5,
     flexDirection: 'row',

@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
 import CustomModal from './CustomModal.component';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 const ItemHeigth = 80;
 export const sortType = {
@@ -144,23 +145,23 @@ const RenderItem = ({ jugador, deleteJugador }: RenderProps) => {
       <View style={{ flexDirection: 'row' }}>
         <IconButton
           icon={'account-edit'}
-          containerColor="#3CB371"
-          iconColor="#fff"
+          containerColor={GlobalStyles.greenBackColor}
+          iconColor={GlobalStyles.white}
           size={30}
           mode="contained"
         />
         <IconButton
           icon={'clipboard-text-outline'}
-          containerColor="#3CB371"
-          iconColor="#fff"
+          containerColor={GlobalStyles.greenBackColor}
+          iconColor={GlobalStyles.white}
           size={30}
           onPress={() => gotoHist_Jugadores(jugador.name)}
           mode="contained"
         />
         <IconButton
           icon={'delete'}
-          containerColor="#3CB371"
-          iconColor="#fff"
+          containerColor={GlobalStyles.greenBackColor}
+          iconColor={GlobalStyles.white}
           size={30}
           onPress={() => deleteJugador(jugador.id)}
           mode="contained"
@@ -174,7 +175,7 @@ const RenderSimpleItem = ({ jugador }: { jugador: JugadorType }) => {
   return (
     <View style={styles.simpleItemContainer}>
       <View>
-        <Icon name="circle" size={50} color="#3CB371" />
+        <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
       </View>
 
       <View style={{ flex: 1 }}>
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
     paddingTop: 13,
   },
   completeItemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: GlobalStyles.white,
     padding: 10,
     borderRadius: 5,
     flexDirection: 'row',
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
   },
   jugadorName: { fontSize: 18 },
   jugadorImage: {
-    backgroundColor: '#3CB371',
+    backgroundColor: GlobalStyles.greenBackColor,
     borderRadius: 50,
     width: 50,
     height: 50,

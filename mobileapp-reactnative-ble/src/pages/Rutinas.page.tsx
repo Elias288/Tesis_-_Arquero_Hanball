@@ -7,6 +7,7 @@ import { IconButton } from 'react-native-paper';
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import ListarRutinasComponent from '../components/ListarRutinas.component';
 import CrearRutina from '../components/CrearRutina.component';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasPage'>;
 
@@ -15,7 +16,7 @@ const RutinasPage = (props: propsType) => {
   const [visibleModal, setVisibleModal] = useState(false);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: GlobalStyles.grayBackground }}>
       <HeaderComponent title={'Rutinas'} showBackButton={true} />
 
       <ListarRutinasComponent navigation={navigation} />
@@ -26,8 +27,8 @@ const RutinasPage = (props: propsType) => {
         <IconButton
           icon={'plus'}
           mode="contained"
-          containerColor="#e7d84f"
-          iconColor="#fff"
+          containerColor={GlobalStyles.yellowBackColor}
+          iconColor={GlobalStyles.white}
           size={40}
           style={{ position: 'absolute', right: 20, bottom: 20 }}
           onPress={() => setVisibleModal(true)}

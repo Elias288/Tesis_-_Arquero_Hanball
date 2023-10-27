@@ -3,6 +3,7 @@ import { Button, Modal, Portal, TextInput } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { useState } from 'react';
 import CustomModal from './CustomModal.component';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = {
   isVisible: boolean;
@@ -46,16 +47,19 @@ const ModalAgregarJugador = ({ isVisible, hideModal }: propsType) => {
       <Portal>
         <Modal visible={isVisible} onDismiss={hideModal}>
           <View style={styles.container}>
-            <Text style={styles.title}>Agregar Jugador</Text>
-
             <View style={{ flex: 1 }}>
-              <TextInput
-                label={'Nombre*'}
-                style={{ marginVertical: 10 }}
-                value={name}
-                onChangeText={setName}
-              />
+              <View style={{ backgroundColor: GlobalStyles.white, borderRadius: 20, padding: 5 }}>
+                <Text style={styles.title}>Agregar Jugador</Text>
+                <TextInput
+                  label={'Nombre*'}
+                  style={{ marginVertical: 10 }}
+                  value={name}
+                  onChangeText={setName}
+                />
+              </View>
             </View>
+
+            {/* Actions */}
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginVertical: 10 }}>
               <Button mode="contained" onPress={handleSubmit}>
                 Agregar
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'flex-start',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: GlobalStyles.grayBackground,
   },
   title: {
     fontWeight: 'bold',

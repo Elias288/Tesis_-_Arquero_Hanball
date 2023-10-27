@@ -12,6 +12,7 @@ import { InicioTabPages } from '../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useCustomBLE } from '../contexts/BLEProvider';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 interface propsType {
   isVisible: boolean;
@@ -52,7 +53,7 @@ const CrearRutina = (props: propsType) => {
 
   const gotoJugar = () => {
     closeModal();
-    if (newRutina) navigator?.navigate('Jugar', { rutina: newRutina });
+    if (newRutina) navigator?.navigate('Jugar', { rutina: JSON.stringify(newRutina) });
   };
 
   const closeModal = () => {
@@ -75,7 +76,7 @@ const CrearRutina = (props: propsType) => {
       <Portal>
         {visible && (
           <View style={styles.container}>
-            <View style={{ backgroundColor: '#fff', padding: 5, borderRadius: 10 }}>
+            <View style={{ backgroundColor: GlobalStyles.white, padding: 5, borderRadius: 10 }}>
               <Text style={styles.title}>Crear Rutina</Text>
               <TextInput
                 label={'Titulo de la Rutina*'}
@@ -206,13 +207,15 @@ const CrearSecuecia = (props: crearSecuanciaProps) => {
   };
 
   return (
-    <View style={{ borderTopWidth: 1, borderColor: '#000', marginTop: 20, paddingTop: 10 }}>
+    <View
+      style={{ borderTopWidth: 1, borderColor: GlobalStyles.black, marginTop: 20, paddingTop: 10 }}
+    >
       <Text style={styles.subTitle}>Añadir Secuencia</Text>
 
       <View style={{ flexDirection: 'row' }}>
         <View style={{ paddingVertical: 10, flex: 1, marginRight: 10 }}>
-          <View style={[styles.itemCircle, { backgroundColor: '#3CB371' }]}>
-            <Icon name="led-on" size={40} color="#fff" />
+          <View style={[styles.itemCircle, { backgroundColor: GlobalStyles.greenBackColor }]}>
+            <Icon name="led-on" size={40} color={GlobalStyles.white} />
             <Text style={styles.itemText}>Led</Text>
           </View>
           <SelectList
@@ -224,8 +227,8 @@ const CrearSecuecia = (props: crearSecuanciaProps) => {
         </View>
 
         <View style={{ paddingVertical: 10, flex: 1 }}>
-          <View style={[styles.itemCircle, { backgroundColor: '#3CB371' }]}>
-            <Icon name="timer-sand-complete" size={40} color="#fff" />
+          <View style={[styles.itemCircle, { backgroundColor: GlobalStyles.greenBackColor }]}>
+            <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
             <Text style={styles.itemText}>Time</Text>
           </View>
           <SelectList
@@ -240,8 +243,8 @@ const CrearSecuecia = (props: crearSecuanciaProps) => {
       {/* Actions */}
       <View>
         <Button
-          buttonColor="#e7d84f"
-          textColor="#746c26"
+          buttonColor={GlobalStyles.yellowBackColor}
+          textColor={GlobalStyles.yellowTextColor}
           onPress={añadirSecuencia}
           style={styles.buttonStyle}
         >
@@ -258,7 +261,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'flex-start',
     padding: 20,
-    backgroundColor: '#e7e7e7',
+    backgroundColor: GlobalStyles.grayBackground,
     position: 'absolute',
     top: Constants.statusBarHeight,
   },
@@ -278,13 +281,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   itemText: {
-    color: '#fff',
+    color: GlobalStyles.white,
     fontWeight: 'bold',
     fontSize: 20,
   },
   buttonStyle: {
     marginBottom: 10,
-    borderColor: '#746c26',
+    borderColor: GlobalStyles.yellowBorderColor,
     borderWidth: 1,
   },
 });

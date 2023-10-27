@@ -15,6 +15,7 @@ import CustomModal from '../components/CustomModal.component';
 import CrearRutina from '../components/CrearRutina.component';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RutinaType } from '../data/RutinasType';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = CompositeScreenProps<
   NativeStackScreenProps<InicioTabPages, 'InicioPage'>,
@@ -96,6 +97,7 @@ const CrearRutinas: FC = () => {
       />
 
       {/* Modal de crear rutina aleatoria */}
+      {/* TODO: testear */}
       <CrearRutinaAleatoriaComponent
         setVisibleDialogCreateRandom={setVisibleDialogCreateRandom}
         visible={visibleDialogCreateRandom}
@@ -272,12 +274,12 @@ const OptionButtons = (props: optionButtonType) => {
       mode="elevated"
       style={{
         marginBottom: 10,
-        borderColor: '#746c26',
+        borderColor: GlobalStyles.yellowBorderColor,
         borderWidth: 1,
       }}
       icon={icon}
-      buttonColor="#e7d84f"
-      textColor="#746c26"
+      buttonColor={GlobalStyles.yellowBackColor}
+      textColor={GlobalStyles.yellowTextColor}
       onPress={action}
     >
       {text}
@@ -290,7 +292,7 @@ const CustomCard = ({ children }: { children: ReactNode }) => {
   return <View style={cardStyles.cardContainer}>{children}</View>;
 };
 const cardStyles = StyleSheet.create({
-  cardContainer: { backgroundColor: '#fff', borderRadius: 10, padding: 10, marginBottom: 13 },
+  cardContainer: { backgroundColor: GlobalStyles.white, borderRadius: 10, padding: 10, marginBottom: 13 },
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',

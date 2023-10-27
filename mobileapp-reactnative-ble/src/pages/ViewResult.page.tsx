@@ -4,20 +4,28 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
 import HeaderComponent from '../components/Header.component';
 import { useCustomBLE } from '../contexts/BLEProvider';
-import { secuenciaType } from '../data/RutinasType';
 import ViewSecuenciaResultadoComponent from '../components/ViewSecuenciaResultado.component';
 import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 
 type propsType = NativeStackScreenProps<InicioTabPages, 'ViewResult'>;
 
 const ViewResultPage = (props: propsType) => {
   const { navigation, route } = props;
+  const { pushRutinaRealizada } = useCustomLocalStorage();
   const { res } = route.params;
   const { BLECode, selectedRutina, stringToSecuencia } = useCustomBLE();
-  const [resultadoGame, setResultadoGame] = useState<Array<secuenciaType>>([]);
 
   useEffect(() => {
-    setResultadoGame(stringToSecuencia(res));
+    const secuenciaResutlado = stringToSecuencia(res);
+    //TODO: verificar error con id repetida
+    if (selectedRutina?.secuencia) {
+      selectedRutina.secuencia.map((sec) => {
+        sec.resTime = secuenciaResutlado.find((result) => result.id === sec.id)?.resTime;
+      });
+
+      pushRutinaRealizada(selectedRutina);
+    }
   }, []);
 
   useEffect(() => {
@@ -47,7 +55,7 @@ const ViewResultPage = (props: propsType) => {
 
         <View>
           <Text style={styles.title}>Resultado:</Text>
-          <ViewSecuenciaResultadoComponent secuencias={resultadoGame} />
+          {selectedRutina && <ViewSecuenciaResultadoComponent rutina={selectedRutina} />}
         </View>
       </View>
     </>

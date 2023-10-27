@@ -2,6 +2,7 @@ import { FlatList, Text, View, StyleSheet, ViewStyle, StyleProp } from 'react-na
 import React, { FC } from 'react';
 import { secuenciaType } from '../data/RutinasType';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 interface ViewSecuenciasProps {
   secuencias: Array<secuenciaType>;
@@ -28,13 +29,21 @@ const RenderItem: FC<{ secuencia: secuenciaType; itemStyle?: StyleProp<ViewStyle
 }) => {
   return (
     <View style={styles.itemContainer}>
-      <View style={[styles.itemCircle, { marginRight: 5, backgroundColor: '#3CB371' }, itemStyle]}>
-        <Icon name="led-on" size={40} color="#fff" />
+      <View
+        style={[
+          styles.itemCircle,
+          { marginRight: 5, backgroundColor: GlobalStyles.greenBackColor },
+          itemStyle,
+        ]}
+      >
+        <Icon name="led-on" size={40} color={GlobalStyles.white} />
         <Text style={styles.itemLedText}>{secuencia.ledId}</Text>
       </View>
 
-      <View style={[styles.itemCircle, { backgroundColor: '#536ac7' }, itemStyle]}>
-        <Icon name="timer-sand-complete" size={40} color="#fff" />
+      <View
+        style={[styles.itemCircle, { backgroundColor: GlobalStyles.blueBackgroudn }, itemStyle]}
+      >
+        <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
         <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
       </View>
     </View>
@@ -43,7 +52,7 @@ const RenderItem: FC<{ secuencia: secuenciaType; itemStyle?: StyleProp<ViewStyle
 
 const styles = StyleSheet.create({
   itemContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: GlobalStyles.white,
     borderRadius: 15,
     padding: 5,
     marginBottom: 5,
@@ -60,13 +69,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   itemLedText: {
-    color: '#3CB371',
+    color: GlobalStyles.greenBackColor,
     fontWeight: 'bold',
     fontSize: 20,
     position: 'absolute',
   },
   itemTimeText: {
-    color: '#fff',
+    color: GlobalStyles.white,
     fontWeight: 'bold',
     fontSize: 20,
   },

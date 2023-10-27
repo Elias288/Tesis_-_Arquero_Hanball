@@ -14,6 +14,7 @@ import { TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
 import HeaderComponent from '../components/Header.component';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = NativeStackScreenProps<InicioTabPages, 'Hist_Jugadores'>;
 
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   },
   containerList: {
     flex: 5,
-    backgroundColor: '#ffffff',
+    backgroundColor: GlobalStyles.white,
     width: Dimensions.get('window').width - 40,
     height: 50,
     marginBottom: 15,
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginTop: 10,
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
+    backgroundColor: GlobalStyles.white,
   },
   container11: {
     flex: 4,

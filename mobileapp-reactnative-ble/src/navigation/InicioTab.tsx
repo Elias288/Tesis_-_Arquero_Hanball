@@ -6,11 +6,11 @@ import JugarPage from '../pages/Jugar.page';
 import ViewResultPage from '../pages/ViewResult.page';
 import Hist_Jugadores from '../pages/Hist_Jugadores';
 import RutinasPage from '../pages/Rutinas.page';
-import { RutinaType } from '../data/RutinasType';
+// import { RutinaType } from '../data/RutinasType';
 
 export type InicioTabPages = {
   InicioPage: undefined;
-  Jugar: { rutina: RutinaType };
+  Jugar: { rutina: string };
   ViewResult: { res: string };
   Agregar_Jug: undefined;
   Hist_Jugadores: { name: string };

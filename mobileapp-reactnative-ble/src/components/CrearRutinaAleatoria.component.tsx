@@ -6,7 +6,9 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import { InicioTabPages } from '../navigation/InicioTab';
 import { RootTabs } from '../Main';
-import { secuenciaType } from '../data/RutinasType';
+import { RutinaType, secuenciaType } from '../data/RutinasType';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 const CANTLEDS = 4;
 const MAXSECONDS = 5;
@@ -23,6 +25,7 @@ type propsType = {
 
 const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const { setVisibleDialogCreateRandom, visible } = props;
+  const { rutinas } = useCustomLocalStorage();
   const navigator = useNavigation<navigationType>();
   const [randomSize, setRandomSize] = useState<number>(4);
 
@@ -31,9 +34,13 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   };
 
   const gotoJugar = (secuencia: Array<secuenciaType>) => {
-    const rutina = { id: 1, title: 'rutina random', secuencia };
-
-    navigator?.navigate('Jugar', { rutina });
+    const rutina: RutinaType = {
+      id: rutinas.length,
+      title: 'rutina random',
+      secuencia,
+      date: new Date(),
+    };
+    navigator?.navigate('Jugar', { rutina: JSON.stringify(rutina) });
   };
 
   const crearRutinaAleatoria = () => {
@@ -110,7 +117,7 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: 'green',
     borderRadius: 50,
-    color: '#fff',
+    color: GlobalStyles.white,
     textAlign: 'center',
   },
 });

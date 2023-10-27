@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Button, Modal, Portal } from 'react-native-paper';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 interface ModalProps {
   isVisible: boolean;
@@ -59,7 +60,7 @@ const CustomModal = (props: ModalProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: GlobalStyles.white,
     borderRadius: 20,
     marginHorizontal: 20,
     padding: 20,

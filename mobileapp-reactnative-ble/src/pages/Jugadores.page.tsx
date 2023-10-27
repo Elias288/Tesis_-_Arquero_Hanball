@@ -6,6 +6,7 @@ import ListarJugadoresComponent from '../components/ListarJugadores.component';
 import { IconButton } from 'react-native-paper';
 import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
 import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;
 
@@ -18,7 +19,7 @@ const JugadoresPage = (props: propsType) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: GlobalStyles.grayBackground }}>
       <HeaderComponent title={'Lista de Jugadores'} showBackButton={true} />
 
       <ListarJugadoresComponent />
@@ -29,8 +30,8 @@ const JugadoresPage = (props: propsType) => {
       <IconButton
         icon={'plus'}
         mode="contained"
-        containerColor="#e7d84f"
-        iconColor="#fff"
+        containerColor={GlobalStyles.yellowBackColor}
+        iconColor={GlobalStyles.white}
         size={40}
         style={{ position: 'absolute', right: 20, bottom: 20 }}
         onPress={() => setVisible(true)}

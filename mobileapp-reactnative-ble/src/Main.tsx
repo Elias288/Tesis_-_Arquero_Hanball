@@ -1,7 +1,6 @@
-import { StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
 
@@ -10,6 +9,7 @@ import { useCustomBLE } from './contexts/BLEProvider';
 import HandleMSGs from './utils/HandleMSGs';
 import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
 import RutinasTab, { RutinaTabPages } from './navigation/RutinasTab';
+import GlobalStyles from './utils/EstilosGlobales';
 
 /************************************************* Main *************************************************/
 export type RootTabs = {
@@ -40,7 +40,7 @@ const Main = () => {
         iconName = focused ? 'clipboard-list' : 'clipboard-list-outline';
         break;
     }
-    return <Icon name={iconName} size={30} color="#3CB371" />;
+    return <Icon name={iconName} size={30} color={GlobalStyles.greenBackColor} />;
   };
 
   return (
@@ -82,14 +82,5 @@ const Main = () => {
     </NavigationContainer>
   );
 };
-
-/*********************************************** Styles ************************************************/
-const styles = StyleSheet.create({
-  header: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#ffffff',
-  },
-});
 
 export default Main;

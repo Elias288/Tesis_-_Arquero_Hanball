@@ -5,6 +5,7 @@ import { useCustomBLE } from '../contexts/BLEProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
+import GlobalStyles from '../utils/EstilosGlobales';
 
 type headerProps = {
   showBackButton?: boolean;
@@ -21,7 +22,7 @@ const HeaderComponent = (props: headerProps) => {
       <View style={styles.action}>
         <IconButton
           icon={'arrow-u-left-top-bold'}
-          iconColor="#fff"
+          iconColor={GlobalStyles.white}
           onPress={() => navigator.goBack()}
         />
       </View>
@@ -68,7 +69,7 @@ const BleStatus = () => {
           {isScanningLoading ? (
             // si está escaneando
             <View style={{ marginHorizontal: 15 }}>
-              <ActivityIndicator animating={true} color={'#fff'} />
+              <ActivityIndicator animating={true} color={GlobalStyles.white} />
             </View>
           ) : (
             // si no está escaneando
@@ -76,7 +77,7 @@ const BleStatus = () => {
               {espConnectedStatus ? (
                 // si está conectado
                 <IconButton
-                  iconColor="#fff"
+                  iconColor={GlobalStyles.white}
                   icon={'bluetooth-connect'}
                   onPress={() => disconnectFromDevice()}
                 />
@@ -84,7 +85,7 @@ const BleStatus = () => {
                 // si no está conectado
                 <IconButton
                   onPress={scanForDevices}
-                  iconColor="#fff"
+                  iconColor={GlobalStyles.white}
                   icon={'reload-alert'}
                   size={25}
                 />
@@ -94,7 +95,11 @@ const BleStatus = () => {
         </>
       ) : (
         // si el esp está apagado
-        <IconButton onPress={scanForDevices} iconColor={'#fff'} icon={'bluetooth-off'} />
+        <IconButton
+          onPress={scanForDevices}
+          iconColor={GlobalStyles.white}
+          icon={'bluetooth-off'}
+        />
       )}
     </View>
   );
