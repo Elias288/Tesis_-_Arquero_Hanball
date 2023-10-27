@@ -11,9 +11,39 @@ type headerProps = {
   title?: string;
 };
 
+const HEADERSIZE = 50;
+
 const HeaderComponent = (props: headerProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
 
+  const BackButton = () => {
+    return (
+      <View style={styles.action}>
+        <IconButton
+          icon={'arrow-u-left-top-bold'}
+          iconColor="#fff"
+          onPress={() => navigator.goBack()}
+        />
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <View /* style={styles.action} */>
+        {props.showBackButton ? <BackButton /> : <BleStatus />}
+      </View>
+
+      <View style={styles.titleContainer}>
+        <Text style={styles.textTitle}>{props.title}</Text>
+      </View>
+
+      <View style={{ width: 50, height: 50 }}></View>
+    </View>
+  );
+};
+
+const BleStatus = () => {
   const {
     requestPermissions,
     scanAndConnectPeripherals,
@@ -23,68 +53,49 @@ const HeaderComponent = (props: headerProps) => {
     disconnectFromDevice,
   } = useCustomBLE();
 
-  const BleStatus = () => {
-    const scanForDevices = async () => {
-      const isPermissionsEnabled = await requestPermissions();
-      if (isPermissionsEnabled) {
-        scanAndConnectPeripherals();
-      }
-    };
-
-    return (
-      <View>
-        {BLEPowerStatus ? (
-          // si el esp está encendido
-          <>
-            {isScanningLoading ? (
-              // si está escaneando
-              <View style={{ marginHorizontal: 15 }}>
-                <ActivityIndicator animating={true} color={'#fff'} />
-              </View>
-            ) : (
-              // si no está escaneando
-              <>
-                {espConnectedStatus ? (
-                  // si está conectado
-                  <IconButton
-                    iconColor="#fff"
-                    icon={'bluetooth-connect'}
-                    onPress={() => disconnectFromDevice()}
-                  />
-                ) : (
-                  // si no está conectado
-                  <IconButton
-                    onPress={scanForDevices}
-                    iconColor="#fff"
-                    icon={'reload-alert'}
-                    size={25}
-                  />
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          // si el esp está apagado
-          <IconButton onPress={scanForDevices} iconColor={'#fff'} icon={'bluetooth-off'} />
-        )}
-      </View>
-    );
-  };
-
-  const BackButton = () => {
-    return (
-      <IconButton
-        icon={'arrow-u-left-top-bold'}
-        iconColor="#fff"
-        onPress={() => navigator.goBack()}
-      />
-    );
+  const scanForDevices = async () => {
+    const isPermissionsEnabled = await requestPermissions();
+    if (isPermissionsEnabled) {
+      scanAndConnectPeripherals();
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.action}>{props.showBackButton ? <BackButton /> : <BleStatus />}</View>
-      <Text style={styles.textTitle}>{props.title}</Text>
+    <View style={styles.action}>
+      {BLEPowerStatus ? (
+        // si el esp está encendido
+        <>
+          {isScanningLoading ? (
+            // si está escaneando
+            <View style={{ marginHorizontal: 15 }}>
+              <ActivityIndicator animating={true} color={'#fff'} />
+            </View>
+          ) : (
+            // si no está escaneando
+            <>
+              {espConnectedStatus ? (
+                // si está conectado
+                <IconButton
+                  iconColor="#fff"
+                  icon={'bluetooth-connect'}
+                  onPress={() => disconnectFromDevice()}
+                />
+              ) : (
+                // si no está conectado
+                <IconButton
+                  onPress={scanForDevices}
+                  iconColor="#fff"
+                  icon={'reload-alert'}
+                  size={25}
+                />
+              )}
+            </>
+          )}
+        </>
+      ) : (
+        // si el esp está apagado
+        <IconButton onPress={scanForDevices} iconColor={'#fff'} icon={'bluetooth-off'} />
+      )}
     </View>
   );
 };
@@ -99,14 +110,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   action: {
-    position: 'absolute',
-    zIndex: 10,
-    top: Constants.statusBarHeight,
-    left: 10,
+    height: HEADERSIZE,
+    width: HEADERSIZE,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    height: HEADERSIZE,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textTitle: {
-    flex: 1,
-    padding: 10,
+    display: 'flex',
     color: 'white',
     textAlign: 'center',
     fontSize: 25,
