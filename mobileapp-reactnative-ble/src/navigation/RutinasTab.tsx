@@ -7,7 +7,7 @@ import { RutinaType } from '../data/RutinasType';
 export type RutinaTabPages = {
   RutinasPage: undefined;
   RutinasRealizadas: undefined;
-  ViewRutina: { selectedId?: number; rutina?: RutinaType };
+  ViewRutina: { rutinaId?: number; rutina?: string; isRutinaResultado: boolean };
 };
 
 const Stack = createNativeStackNavigator<RutinaTabPages>();

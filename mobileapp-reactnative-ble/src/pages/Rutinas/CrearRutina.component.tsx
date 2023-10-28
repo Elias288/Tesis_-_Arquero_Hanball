@@ -40,8 +40,8 @@ const CrearRutina = (props: propsType) => {
     }
 
     //TODO: comprobar lista de secuencia > 4 y titulo
-    setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia, date: new Date() });
-    pushRutina({ id: rutinas.length, title, secuencia: newSecuencia, date: new Date() });
+    setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia, createDate: new Date() });
+    pushRutina({ id: rutinas.length, title, secuencia: newSecuencia, createDate: new Date() });
 
     setModalMessage('');
 
@@ -242,7 +242,7 @@ const CrearSecuecia = (props: crearSecuanciaProps) => {
           buttonColor={GlobalStyles.yellowBackColor}
           textColor={GlobalStyles.yellowTextColor}
           onPress={añadirSecuencia}
-          style={styles.buttonStyle}
+          style={[GlobalStyles.buttonStyle, { marginBottom: 10 }]}
         >
           Añadir
         </Button>
@@ -280,11 +280,6 @@ const styles = StyleSheet.create({
     color: GlobalStyles.white,
     fontWeight: 'bold',
     fontSize: 20,
-  },
-  buttonStyle: {
-    marginBottom: 10,
-    borderColor: GlobalStyles.yellowBorderColor,
-    borderWidth: 1,
   },
 });
 

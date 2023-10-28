@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Hist_Jugadores from '../pages/Jugadores/Hist_Jugadores';
+import ViewJugadorComponent from '../pages/Jugadores/ViewJugador/ViewJugador.component';
 import JugadoresPage from '../pages/Jugadores/Jugadores.page';
 
 export type ListaJugadoresTabPages = {
   ListaJugadores: undefined;
-  Hist_Jugadores: { name: string };
+  ViewJugadores: { jugadorId: number };
 };
 
 const Stack = createNativeStackNavigator<ListaJugadoresTabPages>();
@@ -13,7 +13,7 @@ const ListaJugadoresTab = () => {
   return (
     <Stack.Navigator initialRouteName="ListaJugadores" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ListaJugadores" component={JugadoresPage} />
-      <Stack.Screen name="Hist_Jugadores" component={Hist_Jugadores} />
+      <Stack.Screen name="ViewJugadores" component={ViewJugadorComponent} />
     </Stack.Navigator>
   );
 };

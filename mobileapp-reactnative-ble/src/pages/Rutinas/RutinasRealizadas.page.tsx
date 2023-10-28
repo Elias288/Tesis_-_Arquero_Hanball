@@ -1,6 +1,6 @@
 import HeaderComponent from '../../components/Header.component';
 import { View, StyleSheet } from 'react-native';
-import ListarRutinasComponent from '../../components/ListarRutinas.component';
+import ListarRutinasComponent from '../../components/ListarRutinas/ListarRutinas.component';
 import { Button } from 'react-native-paper';
 
 import sortType from '../../utils/sortType';
@@ -26,7 +26,7 @@ const RutinasRealizadasPage = (props: propsType) => {
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
             textColor={GlobalStyles.yellowTextColor}
-            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 1 }}
+            style={[GlobalStyles.buttonStyle, { flex: 1 }]}
             onPress={goToRutinas}
           >
             Rutinas
@@ -35,7 +35,7 @@ const RutinasRealizadasPage = (props: propsType) => {
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
             textColor={GlobalStyles.yellowTextColor}
-            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 2 }}
+            style={[GlobalStyles.buttonStyle, { flex: 2 }]}
             disabled={true}
           >
             Ver Rutinas realizadas
@@ -46,7 +46,7 @@ const RutinasRealizadasPage = (props: propsType) => {
           <ListarRutinasComponent
             listRutinasRealizadas={true}
             simpleList={true}
-            sort={sortType.newestFirst}
+            sort={sortType.lastplayed}
           />
         </View>
       </View>

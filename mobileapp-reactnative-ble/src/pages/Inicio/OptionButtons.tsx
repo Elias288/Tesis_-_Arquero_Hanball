@@ -15,11 +15,7 @@ const OptionButtons = (props: optionButtonType) => {
   return (
     <Button
       mode="elevated"
-      style={{
-        marginBottom: 10,
-        borderColor: GlobalStyles.yellowBorderColor,
-        borderWidth: 1,
-      }}
+      style={[GlobalStyles.buttonStyle, { marginBottom: 10 }]}
       icon={icon}
       buttonColor={GlobalStyles.yellowBackColor}
       textColor={GlobalStyles.yellowTextColor}

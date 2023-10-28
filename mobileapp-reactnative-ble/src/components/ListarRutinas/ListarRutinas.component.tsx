@@ -1,26 +1,14 @@
 import React, { FC, useEffect, useState } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Text,
-  StyleProp,
-  ViewStyle,
-  TouchableOpacity,
-} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
-import { IconButton } from 'react-native-paper';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { View, FlatList, Text, StyleProp, ViewStyle, StyleSheet } from 'react-native';
 
-import GlobalStyles from '../utils/EstilosGlobales';
-import CustomModal, { customModalStyles } from './CustomModal.component';
-import sortType from '../utils/sortType';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import { RutinaType } from '../data/RutinasType';
-import { useCustomBLE } from '../contexts/BLEProvider';
-import { RutinaTabPages } from '../navigation/RutinasTab';
-import { RootTabs } from '../Main';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import CustomModal, { customModalStyles } from '../CustomModal.component';
+import sortType from '../../utils/sortType';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { RutinaType } from '../../data/RutinasType';
+import { RenderSimpleItem } from './RenderSimpleItem';
+import { RenderItem } from './RenderItem';
+import { RenderItemRutinaDeJugador } from '../../pages/Jugadores/ViewJugador/RenderItemRutinaDeJugador';
 
 const ItemHeigth = 80;
 
@@ -90,10 +78,15 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
       return a.title.localeCompare(b.title);
     } else if (sort === sortType.newestFirst) {
       // Ordenar por fecha el más nuevo
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      return new Date(b.createDate).getTime() - new Date(a.createDate).getTime();
     } else if (sort === sortType.oldestFirst) {
       // Ordenar por fecha el más viejo
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
+      return new Date(a.createDate).getTime() - new Date(b.createDate).getTime();
+    } else if (sort === sortType.lastplayed) {
+      // Ordenar por fecha el más viejo
+      if (a.playedDate && b.playedDate)
+        return new Date(a.playedDate).getTime() - new Date(b.playedDate).getTime();
+      return 0;
     } else {
       return 0;
     }
@@ -101,8 +94,8 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
 
   if (rutinaList.length == 0) {
     return (
-      <View style={styles.emptyRutinasBody}>
-        <Text style={styles.emptyRutinasText}>
+      <View style={styles.emptyListContainer}>
+        <Text style={styles.emptyListMessage}>
           Sin Rutinas {listRutinasRealizadas && 'Cargadas'}
         </Text>
       </View>
@@ -113,7 +106,11 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
     return (
       <>
         {rutinaList.map((item) => (
-          <RenderSimpleItem key={item.id.toString()} {...item} />
+          <RenderSimpleItem
+            key={item.id.toString()}
+            rutina={item}
+            isRutinaRealizada={listRutinasRealizadas || false}
+          />
         ))}
       </>
     );
@@ -140,93 +137,6 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
         <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar esta Rutina?</Text>
       </CustomModal>
     </View>
-  );
-};
-
-interface RenderProps {
-  rutina: RutinaType;
-  deleteRutina: (id: number) => void;
-}
-
-const RenderItem = (props: RenderProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
-  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
-  const { rutina, deleteRutina } = props;
-
-  const gotoJugar = () => {
-    navigator?.navigate('Inicio', { screen: 'Jugar', params: { rutina: JSON.stringify(rutina) } });
-  };
-
-  const goToViewRutina = () => {
-    navigator.navigate('Rutinas', { screen: 'ViewRutina', params: { rutina: rutina } });
-  };
-
-  return (
-    <View style={styles.completeItemContainer}>
-      <Text style={styles.itemTitle}>{rutina.title}</Text>
-
-      {/******************************************* Options *******************************************/}
-      <View style={{ flexDirection: 'row' }}>
-        <IconButton
-          icon={'play'}
-          containerColor={GlobalStyles.greenBackColor}
-          iconColor={GlobalStyles.white}
-          size={30}
-          onPress={gotoJugar}
-          disabled={!espConnectedStatus || !BLEPowerStatus}
-        />
-
-        <IconButton
-          icon={'eye'}
-          containerColor={GlobalStyles.greenBackColor}
-          iconColor={GlobalStyles.white}
-          size={30}
-          onPress={goToViewRutina}
-        />
-
-        <IconButton
-          icon={'delete'}
-          containerColor={GlobalStyles.greenBackColor}
-          iconColor={GlobalStyles.white}
-          size={30}
-          onPress={() => deleteRutina(rutina.id)}
-        />
-      </View>
-    </View>
-  );
-};
-
-const RenderSimpleItem = (rutina: RutinaType) => {
-  const navigator = useNavigation<NativeStackNavigationProp<RutinaTabPages>>();
-
-  const goToViewRutina = () => {
-    navigator.navigate('ViewRutina', { selectedId: rutina.id });
-  };
-
-  return (
-    <TouchableOpacity style={styles.simpleItemContainer} onPress={goToViewRutina}>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
-        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina.id}</Text>
-      </View>
-
-      <View style={{ flex: 1 }}>
-        <Text style={styles.itemTitle}>{rutina.title}</Text>
-      </View>
-      <Text style={styles.simpleItemSubText}>
-        {new Date(rutina.date).getDate() +
-          '/' +
-          new Date(rutina.date).getMonth() +
-          '/' +
-          new Date(rutina.date).getFullYear() +
-          ': ' +
-          new Date(rutina.date).getHours() +
-          ':' +
-          new Date(rutina.date).getMinutes() +
-          ':' +
-          new Date(rutina.date).getSeconds()}
-      </Text>
-    </TouchableOpacity>
   );
 };
 
@@ -259,12 +169,12 @@ const styles = StyleSheet.create({
   itemIcon: {
     marginHorizontal: 5,
   },
-  emptyRutinasBody: {
+  emptyListContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyRutinasText: {
+  emptyListMessage: {
     color: GlobalStyles.grayText,
     fontSize: 30,
     fontWeight: '500',

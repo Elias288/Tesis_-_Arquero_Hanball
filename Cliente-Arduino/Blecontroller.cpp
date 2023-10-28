@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #include "esp32-hal.h"
 #include "Blecontroller.h"
 #include "Game.h"

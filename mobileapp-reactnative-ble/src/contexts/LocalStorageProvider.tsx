@@ -3,8 +3,9 @@
  * rutinas guardadas
  */
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { JugadorType } from '../data/JugadoresType';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { JugadorType } from '../data/JugadoresType';
 import { RutinaType } from '../data/RutinasType';
 
 interface useLocalStorageType {
@@ -19,6 +20,7 @@ interface useLocalStorageType {
   pushRutinaRealizada: (newRutina: RutinaType) => void;
   popRutinaRealizada: (rutinaId: number) => void;
   clearRutinasRealizadas: () => void;
+  getRutinasJugadasDeJugador: (jugadorId: number) => Array<RutinaType>;
 }
 
 const LocalStorageContext = createContext<useLocalStorageType | undefined>(undefined);
@@ -111,6 +113,12 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('rutinasRealizadas', '[]');
   };
 
+  const getRutinasJugadasDeJugador = (jugadorId: number) => {
+    return rutinasRealizadas.filter((rutina) => {
+      return rutina.jugadorID == jugadorId;
+    });
+  };
+
   return (
     <LocalStorageContext.Provider
       value={{
@@ -125,6 +133,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         popRutinaRealizada,
         pushRutinaRealizada,
         clearRutinasRealizadas,
+        getRutinasJugadasDeJugador,
       }}
     >
       {children}

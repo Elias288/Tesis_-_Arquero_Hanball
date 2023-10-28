@@ -36,9 +36,9 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
   const gotoJugar = (secuencia: Array<secuenciaType>) => {
     const rutina: RutinaType = {
       id: rutinas.length,
-      title: 'rutina random',
+      title: 'rutina random ' + rutinas.length,
       secuencia,
-      date: new Date(),
+      createDate: new Date(),
     };
     navigator?.navigate('Jugar', { rutina: JSON.stringify(rutina) });
   };

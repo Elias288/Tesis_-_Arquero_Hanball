@@ -11,7 +11,7 @@ import GlobalStyles from '../../utils/EstilosGlobales';
 import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
 import { useCustomBLE } from '../../contexts/BLEProvider';
 import { JugadorType } from '../../data/JugadoresType';
-import { BLUETOOTHNOTCONNECTED } from '../../utils/BleCodes';
+import { BLUETOOTHDISCONNECTED, BLUETOOTHNOTCONNECTED, BLUETOOTHOFF } from '../../utils/BleCodes';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { RutinaType } from '../../data/RutinasType';
 
@@ -52,11 +52,17 @@ const JugarPage = (props: propsType) => {
   }, []);
 
   useEffect(() => {
+    console.log(BLECode);
+
     if (!isGameRunning) {
       setLoading(false);
     }
 
-    if (BLECode === BLUETOOTHNOTCONNECTED) {
+    if (
+      BLECode === BLUETOOTHNOTCONNECTED ||
+      BLECode === BLUETOOTHOFF ||
+      BLECode === BLUETOOTHDISCONNECTED
+    ) {
       navigation.navigate('InicioPage');
     }
   }, [BLECode, isGameRunning]);
@@ -88,7 +94,7 @@ const JugarPage = (props: propsType) => {
 
     runGame(true);
     if (paramRutina) {
-      selectRutina({ ...paramRutina, jugador: selectedJugador.name });
+      selectRutina({ ...paramRutina, jugadorID: selectedJugador.id });
     }
     setLoading(true);
     sendData(connectedDevice, formatedRutina);
@@ -125,7 +131,7 @@ const JugarPage = (props: propsType) => {
           onPress={startGame}
           textColor={GlobalStyles.yellowTextColor}
           buttonColor="#e7d84f"
-          style={{ borderColor: GlobalStyles.yellowBorderColor, borderWidth: 1 }}
+          style={GlobalStyles.buttonStyle}
         >
           Iniciar Rutina
         </Button>

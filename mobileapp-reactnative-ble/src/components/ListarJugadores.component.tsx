@@ -1,15 +1,25 @@
 import React, { FC, useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  StyleProp,
+  ViewStyle,
+  TouchableOpacity,
+} from 'react-native';
 import { JugadorType } from '../data/JugadoresType';
 import { IconButton } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { InicioTabPages } from '../navigation/InicioTab';
-import CustomModal, { customModalStyles } from './CustomModal.component';
+
 import GlobalStyles from '../utils/EstilosGlobales';
 import sortType from '../utils/sortType';
+import CustomModal, { customModalStyles } from './CustomModal.component';
+import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
+import { RootTabs } from '../Main';
+import formateDate from '../utils/formateDate';
 
 const ItemHeigth = 80;
 
@@ -17,11 +27,13 @@ interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
   containerStyle?: StyleProp<ViewStyle>; // estilo personalizado del componente
+  navigation?: NativeStackNavigationProp<RootTabs>;
   sort?: number;
 }
 
 const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
-  const { isSimpleList, cantRenderItems, containerStyle, sort } = props;
+  const { isSimpleList, cantRenderItems, containerStyle, sort, navigation } = props;
+  const navigator = useNavigation<NativeStackNavigationProp<ListaJugadoresTabPages>>();
 
   const [listMode, setListMode] = useState<boolean>(false);
   const { jugadores: storedJugadores, popJugador } = useCustomLocalStorage();
@@ -70,10 +82,19 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     setSelectedJugadorId(jugadorId);
   };
 
+  const gotoViewJugadores = (jugadorId: number) => {
+    if (navigation) {
+      navigation.navigate('Jugadores', { screen: 'ViewJugadores', params: { jugadorId } });
+      return;
+    }
+
+    navigator.navigate('ViewJugadores', { jugadorId });
+  };
+
   if (jugadoresList.length == 0) {
     return (
-      <View style={styles.emptyJugadoresBody}>
-        <Text style={styles.emptyJugadoresText}>Sin jugadores</Text>
+      <View style={styles.emptyListContainer}>
+        <Text style={styles.emptyListMessage}>Sin jugadores</Text>
       </View>
     );
   }
@@ -82,7 +103,11 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     return (
       <>
         {jugadoresList.map((jugador) => (
-          <RenderSimpleItem key={jugador.id.toString()} jugador={jugador} />
+          <RenderSimpleItem
+            key={jugador.id.toString()}
+            jugador={jugador}
+            gotoViewJugadores={gotoViewJugadores}
+          />
         ))}
       </>
     );
@@ -90,6 +115,19 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
 
   return (
     <View style={[styles.container, containerStyle]}>
+      <FlatList
+        data={jugadoresList}
+        renderItem={({ item: jugador }) => (
+          <RenderItem
+            jugador={jugador}
+            deleteJugador={() => showDeleteModal(jugador.id)}
+            gotoViewJugadores={gotoViewJugadores}
+          />
+        )}
+        keyExtractor={(jugador) => jugador.id.toString()}
+        ListFooterComponent={<View style={{ height: ItemHeigth - 30 }}></View>} // agrega un espacio en blanco al final
+      />
+
       <CustomModal
         hideModal={() => setIsModalVisible(false)}
         onAceptar={deleteJugador}
@@ -99,55 +137,29 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
         <Text style={customModalStyles.modalTitle}>Borrar Jugador</Text>
         <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar este jugador?</Text>
       </CustomModal>
-
-      <FlatList
-        data={jugadoresList}
-        renderItem={({ item: jugador }) => (
-          <RenderItem jugador={jugador} deleteJugador={() => showDeleteModal(jugador.id)} />
-        )}
-        keyExtractor={(jugador) => jugador.id.toString()}
-        ListFooterComponent={<View style={{ height: ItemHeigth - 30 }}></View>} // agrega un espacio en blanco al final
-      />
     </View>
   );
 };
 
 interface RenderProps {
   jugador: JugadorType;
+  gotoViewJugadores: (jugadorId: number) => void;
   deleteJugador: (id: number) => void;
 }
 
-const RenderItem = ({ jugador, deleteJugador }: RenderProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
-
-  const gotoHist_Jugadores = (nomJug: string) => {
-    navigator.navigate('Hist_Jugadores', { name: nomJug });
-  };
-
+const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: RenderProps) => {
   return (
     <View style={styles.completeItemContainer}>
-      <View style={styles.jugadorImage}></View>
-
-      <View style={{ flex: 1, alignItems: 'center' }}>
-        <Text style={styles.jugadorName}>{jugador.name}</Text>
-      </View>
+      <Text style={{ flex: 1, fontSize: 18 }}>{jugador.name}</Text>
 
       {/******************************************* Options *******************************************/}
       <View style={{ flexDirection: 'row' }}>
         <IconButton
-          icon={'account-edit'}
+          icon={'eye'}
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          mode="contained"
-          onPress={() => alert('no implementado')}
-        />
-        <IconButton
-          icon={'clipboard-text-outline'}
-          containerColor={GlobalStyles.greenBackColor}
-          iconColor={GlobalStyles.white}
-          size={30}
-          onPress={() => gotoHist_Jugadores(jugador.name)}
+          onPress={() => gotoViewJugadores(jugador.id)}
           mode="contained"
         />
         <IconButton
@@ -163,25 +175,24 @@ const RenderItem = ({ jugador, deleteJugador }: RenderProps) => {
   );
 };
 
-const RenderSimpleItem = ({ jugador }: { jugador: JugadorType }) => {
-  return (
-    <View style={styles.simpleItemContainer}>
-      <View>
-        <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
-      </View>
+const RenderSimpleItem = ({
+  jugador,
+  gotoViewJugadores,
+}: {
+  jugador: JugadorType;
+  gotoViewJugadores: (jugadorId: number) => void;
+}) => {
+  const goToViewJugador = () => {
+    gotoViewJugadores(jugador.id);
+  };
 
+  return (
+    <TouchableOpacity style={styles.simpleItemContainer} onPress={goToViewJugador}>
       <View style={{ flex: 1 }}>
         <Text style={styles.itemTitle}>{jugador.name}</Text>
       </View>
-      <Text style={styles.simpleItemSubText}>
-        {new Date(jugador.date).getDate() +
-          '/' +
-          new Date(jugador.date).getMonth() +
-          '/' +
-          new Date(jugador.date).getFullYear()}
-      </Text>
-      {/* <Text style={styles.simpleItemSubText}>{jugador.date.toString()}</Text> */}
-    </View>
+      <Text style={styles.simpleItemSubText}>{formateDate(new Date(jugador.date), false)}</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -192,17 +203,16 @@ const styles = StyleSheet.create({
   },
   completeItemContainer: {
     backgroundColor: GlobalStyles.white,
-    padding: 10,
+    paddingHorizontal: 10,
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    height: ItemHeigth,
     marginHorizontal: 25,
     marginBottom: 13,
   },
   simpleItemContainer: {
-    backgroundColor: '#f5f5f5',
-    padding: 5,
+    backgroundColor: GlobalStyles.grayBackground,
+    padding: 10,
     borderRadius: 5,
     flexDirection: 'row',
     marginBottom: 13,
@@ -215,19 +225,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 1,
   },
-  jugadorName: { fontSize: 18 },
-  jugadorImage: {
-    backgroundColor: GlobalStyles.greenBackColor,
-    borderRadius: 50,
-    width: 50,
-    height: 50,
-  },
-  emptyJugadoresBody: {
+  emptyListContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyJugadoresText: {
+  emptyListMessage: {
     color: GlobalStyles.grayText,
     fontSize: 30,
     fontWeight: '500',

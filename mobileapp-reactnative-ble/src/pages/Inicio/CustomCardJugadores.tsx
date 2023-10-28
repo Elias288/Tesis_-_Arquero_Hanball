@@ -8,8 +8,8 @@ import sortType from '../../utils/sortType';
 import ModalAgregarJugador from '../../components/ModalAgregarJugador.component';
 import ListarJugadoresComponent from '../../components/ListarJugadores.component';
 import CustomCard, { cardStyles } from './CustomCard';
-import { RootTabs } from '../../Main';
 import OptionButtons from './OptionButtons';
+import { RootTabs } from '../../Main';
 
 const CustomCardJugadores: FC = () => {
   const [isVisibleAgregarJugador, setVisibleAgregarJugador] = useState(false);
@@ -40,6 +40,7 @@ const CustomCardJugadores: FC = () => {
           cantRenderItems={2}
           isSimpleList={true}
           sort={sortType.newestFirst}
+          navigation={navigator}
         />
       </View>
 

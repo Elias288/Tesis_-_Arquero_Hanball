@@ -11,29 +11,44 @@ import { RutinaType } from '../../data/RutinasType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { Button, IconButton } from 'react-native-paper';
 import { useCustomBLE } from '../../contexts/BLEProvider';
+import { JugadorType } from '../../data/JugadoresType';
+import formateDate from '../../utils/formateDate';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutina'>;
 
 const ViewRutina = (props: propsType) => {
   const { navigation, route } = props;
-  const { selectedId, rutina } = route.params;
+  const { rutinaId, rutina, isRutinaResultado } = route.params;
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
+  const { popRutinaRealizada, rutinasRealizadas, popRutina, jugadores } = useCustomLocalStorage();
 
-  const { popRutinaRealizada, rutinasRealizadas, popRutina } = useCustomLocalStorage();
   const [selectedRutina, setSelectedRutina] = useState<RutinaType>();
+  const [jugadorDeRutina, setJugadorDeRutina] = useState<JugadorType>();
 
   const [visibleModal, setVisibleModal] = useState(false);
 
   useEffect(() => {
     if (rutina) {
-      setSelectedRutina(rutina);
-    } else if (selectedId) {
-      setSelectedRutina(rutinasRealizadas.find((rutina) => rutina.id === selectedId));
+      const recibedRutina = JSON.parse(rutina);
+      setSelectedRutina(recibedRutina);
+
+      if (isRutinaResultado) {
+        const jugadorById = jugadores.find((jugador) => jugador.id === recibedRutina.jugadorID);
+        setJugadorDeRutina(jugadorById);
+      }
+    } else if (rutinaId) {
+      const rutinaById = rutinasRealizadas.find((rutina) => rutina.id === rutinaId);
+      setSelectedRutina(rutinaById);
+
+      if (isRutinaResultado) {
+        const jugadorById = jugadores.find((jugador) => jugador.id === rutinaById?.jugadorID);
+        setJugadorDeRutina(jugadorById);
+      }
     }
   }, []);
 
   const deleteRutina = () => {
-    if (selectedId && selectedRutina) {
+    if (rutinaId && selectedRutina) {
       popRutinaRealizada(selectedRutina.id);
     }
 
@@ -45,7 +60,7 @@ const ViewRutina = (props: propsType) => {
   };
 
   const goBack = () => {
-    if (selectedId) navigation.navigate('RutinasRealizadas');
+    if (rutinaId) navigation.navigate('RutinasRealizadas');
     if (rutina) navigation.navigate('RutinasPage');
   };
 
@@ -59,10 +74,26 @@ const ViewRutina = (props: propsType) => {
             <Text style={styles.title}>{selectedRutina?.title}</Text>
           </View>
 
-          {!rutina && (
+          {isRutinaResultado && (
+            <>
+              <View style={{ flex: 1 }}>
+                <Text>Jugador:</Text>
+                <Text style={styles.jugadorName}>{jugadorDeRutina?.name}</Text>
+              </View>
+            </>
+          )}
+        </View>
+        <View style={styles.infoContainer}>
+          {selectedRutina?.createDate && (
             <View style={{ flex: 1 }}>
-              <Text>Jugador:</Text>
-              <Text style={styles.jugadorName}>{selectedRutina?.jugador}</Text>
+              <Text>Fecha de creación:</Text>
+              <Text>{formateDate(new Date(selectedRutina?.createDate), true)}</Text>
+            </View>
+          )}
+          {selectedRutina?.playedDate && (
+            <View style={{ flex: 1 }}>
+              <Text>Fecha jugada:</Text>
+              <Text>{formateDate(new Date(selectedRutina?.playedDate), true)}</Text>
             </View>
           )}
         </View>
@@ -70,14 +101,14 @@ const ViewRutina = (props: propsType) => {
         {selectedRutina?.secuencia && (
           <ListarSecuenciaComponent
             secuencias={selectedRutina.secuencia}
-            viewResult={!rutina}
+            viewResult={isRutinaResultado}
             listStyle={{ flex: 1, marginBottom: 10 }}
           />
         )}
 
         {/* Actions */}
         <View style={styles.action}>
-          {espConnectedStatus && BLEPowerStatus && (
+          {espConnectedStatus && BLEPowerStatus && !isRutinaResultado && (
             <View style={{ marginHorizontal: 10 }}>
               <IconButton
                 icon={'play'}
@@ -88,6 +119,13 @@ const ViewRutina = (props: propsType) => {
               />
             </View>
           )}
+          <Button
+            mode="outlined"
+            onPress={() => setVisibleModal(true)}
+            style={{ justifyContent: 'center', alignItems: 'center' }}
+          >
+            Borrar
+          </Button>
 
           <Button
             mode="outlined"
@@ -95,13 +133,6 @@ const ViewRutina = (props: propsType) => {
             style={{ justifyContent: 'center', alignItems: 'center' }}
           >
             Volver
-          </Button>
-          <Button
-            mode="outlined"
-            onPress={() => setVisibleModal(true)}
-            style={{ justifyContent: 'center', alignItems: 'center' }}
-          >
-            Borrar
           </Button>
         </View>
       </View>

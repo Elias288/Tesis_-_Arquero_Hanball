@@ -5,7 +5,7 @@ import HeaderComponent from '../../components/Header.component';
 import { Button, IconButton } from 'react-native-paper';
 
 import { RutinaTabPages } from '../../navigation/RutinasTab';
-import ListarRutinasComponent from '../../components/ListarRutinas.component';
+import ListarRutinasComponent from '../../components/ListarRutinas/ListarRutinas.component';
 import CrearRutina from './CrearRutina.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 
@@ -28,7 +28,7 @@ const RutinasPage = (props: propsType) => {
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
             textColor={GlobalStyles.yellowTextColor}
-            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 1 }}
+            style={[GlobalStyles.buttonStyle, { flex: 1 }]}
             disabled={true}
           >
             Ver Rutinas
@@ -38,7 +38,7 @@ const RutinasPage = (props: propsType) => {
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
             textColor={GlobalStyles.yellowTextColor}
-            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 2 }}
+            style={[GlobalStyles.buttonStyle, { flex: 2 }]}
             onPress={goToRutinasRealizadas}
           >
             Ver Rutinas realizadas

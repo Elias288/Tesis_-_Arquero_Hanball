@@ -42,7 +42,7 @@ const ModalJugar = (props: ModalJugarProps) => {
               {/* Info jugador */}
               <View style={{ flex: 1, paddingHorizontal: 10, alignItems: 'center' }}>
                 <Text style={ModalJugarStyles.title}>Jugador: </Text>
-                <Text style={ModalJugarStyles.jugadorName}>{selectedJugadorName}</Text>
+                <Text style={GlobalStyles.jugadorName}>{selectedJugadorName}</Text>
               </View>
             </View>
           </View>
@@ -72,13 +72,6 @@ const ModalJugarStyles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  jugadorName: {
-    fontSize: 20,
-    backgroundColor: '#e7d84f',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
   },
   viewSecuenciasStyle: {
     flex: 1,

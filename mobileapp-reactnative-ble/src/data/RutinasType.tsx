@@ -9,6 +9,7 @@ export type RutinaType = {
   id: number;
   title: string;
   secuencia: Array<secuenciaType>;
-  jugador?: string;
-  date: Date
+  jugadorID?: number;
+  createDate: Date;
+  playedDate?: Date;
 };

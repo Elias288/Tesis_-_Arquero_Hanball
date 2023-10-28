@@ -48,7 +48,7 @@ const HandleMSGs = () => {
     if (BLECode !== BLUETOOTHCONNECTED && BLECode !== BLUETOOTHNOTSTATUS) {
       setVisibleSnackbar(true);
       SetsnackbarMsg(`${BLECode}: ${BLEmsg}`);
-      cleanBLECode();
+      // cleanBLECode();
     }
   }, [BLECode, receivedMSG]);
 
@@ -66,7 +66,7 @@ const HandleMSGs = () => {
 
         navigator?.navigate('Rutinas', {
           screen: 'ViewRutina',
-          params: { rutina: selectedRutina },
+          params: { rutina: JSON.stringify(selectedRutina), isRutinaResultado: true },
         });
       }
     },
