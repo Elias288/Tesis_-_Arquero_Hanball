@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   emptyJugadoresText: {
-    color: '#aaaaaa',
+    color: GlobalStyles.grayText,
     fontSize: 30,
     fontWeight: '500',
   },

@@ -9,14 +9,17 @@ import ListarSecuenciaComponent from '../../components/ListarSecuencia.component
 import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
 import { RutinaType } from '../../data/RutinasType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { Button } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
+import { useCustomBLE } from '../../contexts/BLEProvider';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutina'>;
 
 const ViewRutina = (props: propsType) => {
   const { navigation, route } = props;
   const { selectedId, rutina } = route.params;
-  const { popRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
+  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
+
+  const { popRutinaRealizada, rutinasRealizadas, popRutina } = useCustomLocalStorage();
   const [selectedRutina, setSelectedRutina] = useState<RutinaType>();
 
   const [visibleModal, setVisibleModal] = useState(false);
@@ -29,49 +32,75 @@ const ViewRutina = (props: propsType) => {
     }
   }, []);
 
-  const deleteRutinaRealizada = () => {
-    if (selectedRutina) {
+  const deleteRutina = () => {
+    if (selectedId && selectedRutina) {
       popRutinaRealizada(selectedRutina.id);
-      navigation.goBack();
     }
+
+    if (rutina && selectedRutina) {
+      popRutina(selectedRutina.id);
+    }
+
+    navigation.goBack();
   };
 
-  const goToRutinasCargadas = () => {
-    navigation.navigate('RutinasRealizadas');
+  const goBack = () => {
+    if (selectedId) navigation.navigate('RutinasRealizadas');
+    if (rutina) navigation.navigate('RutinasPage');
   };
 
   return (
     <>
-      <HeaderComponent title="Ver Rutina" showBackButton={true} />
+      <HeaderComponent title="Ver Rutina" showBackButton={false} />
       <View style={styles.container}>
-        {/* <Text>{JSON.stringify(rutinaSeleccionada, null, 4)}</Text> */}
-
         <View style={styles.infoContainer}>
           <View style={{ flex: 1 }}>
             <Text>Rutina:</Text>
             <Text style={styles.title}>{selectedRutina?.title}</Text>
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Text>Jugador:</Text>
-            <Text style={styles.jugadorName}>{selectedRutina?.jugador}</Text>
-          </View>
+          {!rutina && (
+            <View style={{ flex: 1 }}>
+              <Text>Jugador:</Text>
+              <Text style={styles.jugadorName}>{selectedRutina?.jugador}</Text>
+            </View>
+          )}
         </View>
 
         {selectedRutina?.secuencia && (
           <ListarSecuenciaComponent
             secuencias={selectedRutina.secuencia}
-            viewResult={true}
+            viewResult={!rutina}
             listStyle={{ flex: 1, marginBottom: 10 }}
           />
         )}
 
         {/* Actions */}
         <View style={styles.action}>
-          <Button mode="outlined" onPress={goToRutinasCargadas}>
-            Salir
+          {espConnectedStatus && BLEPowerStatus && (
+            <View style={{ marginHorizontal: 10 }}>
+              <IconButton
+                icon={'play'}
+                containerColor={GlobalStyles.greenBackColor}
+                iconColor={GlobalStyles.white}
+                size={30}
+                onPress={() => alert('go to play')}
+              />
+            </View>
+          )}
+
+          <Button
+            mode="outlined"
+            onPress={goBack}
+            style={{ justifyContent: 'center', alignItems: 'center' }}
+          >
+            Volver
           </Button>
-          <Button mode="outlined" onPress={() => setVisibleModal(true)}>
+          <Button
+            mode="outlined"
+            onPress={() => setVisibleModal(true)}
+            style={{ justifyContent: 'center', alignItems: 'center' }}
+          >
             Borrar
           </Button>
         </View>
@@ -81,7 +110,7 @@ const ViewRutina = (props: propsType) => {
         hideModal={() => setVisibleModal(false)}
         isVisible={visibleModal}
         isAcceptCancel={true}
-        onAceptar={deleteRutinaRealizada}
+        onAceptar={deleteRutina}
       >
         <Text style={customModalStyles.modalTitle}>Borrar Rutina</Text>
         <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar esta Rutina?</Text>

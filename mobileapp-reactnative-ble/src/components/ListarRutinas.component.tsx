@@ -18,9 +18,9 @@ import CustomModal, { customModalStyles } from './CustomModal.component';
 import sortType from '../utils/sortType';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RutinaType } from '../data/RutinasType';
-import { InicioTabPages } from '../navigation/InicioTab';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { RutinaTabPages } from '../navigation/RutinasTab';
+import { RootTabs } from '../Main';
 
 const ItemHeigth = 80;
 
@@ -149,21 +149,20 @@ interface RenderProps {
 }
 
 const RenderItem = (props: RenderProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
   const { rutina, deleteRutina } = props;
 
   const gotoJugar = () => {
-    navigator?.navigate('Jugar', { rutina: JSON.stringify(rutina) });
+    navigator?.navigate('Inicio', { screen: 'Jugar', params: { rutina: JSON.stringify(rutina) } });
+  };
+
+  const goToViewRutina = () => {
+    navigator.navigate('Rutinas', { screen: 'ViewRutina', params: { rutina: rutina } });
   };
 
   return (
     <View style={styles.completeItemContainer}>
-      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
-        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina.id}</Text>
-      </View>
-
       <Text style={styles.itemTitle}>{rutina.title}</Text>
 
       {/******************************************* Options *******************************************/}
@@ -176,13 +175,15 @@ const RenderItem = (props: RenderProps) => {
           onPress={gotoJugar}
           disabled={!espConnectedStatus || !BLEPowerStatus}
         />
+
         <IconButton
-          icon={'application-edit'}
+          icon={'eye'}
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => alert('no implementado')}
+          onPress={goToViewRutina}
         />
+
         <IconButton
           icon={'delete'}
           containerColor={GlobalStyles.greenBackColor}
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
   itemTitle: {
     flex: 4,
     fontSize: 18,
-    marginLeft: 1,
+    marginHorizontal: 20,
   },
   itemIcon: {
     marginHorizontal: 5,
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   emptyRutinasText: {
-    color: '#aaaaaa',
+    color: GlobalStyles.grayText,
     fontSize: 30,
     fontWeight: '500',
   },
