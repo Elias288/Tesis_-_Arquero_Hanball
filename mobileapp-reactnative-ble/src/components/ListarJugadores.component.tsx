@@ -9,14 +9,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
 import CustomModal from './CustomModal.component';
 import GlobalStyles from '../utils/EstilosGlobales';
+import sortType from '../utils/sortType';
 
 const ItemHeigth = 80;
-export const sortType = {
-  alphabetic: 0,
-  newest: 1,
-  oldest: 2,
-};
-
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
@@ -38,10 +33,10 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     if (sort === undefined || sort === sortType.alphabetic) {
       // Ordenar por nombre
       return a.name.localeCompare(b.name);
-    } else if (sort === sortType.newest) {
+    } else if (sort === sortType.newestFirst) {
       // Ordenar por fecha el más nuevo
       return new Date(b.date).getTime() - new Date(a.date).getTime();
-    } else if (sort === sortType.oldest) {
+    } else if (sort === sortType.oldestFirst) {
       // Ordenar por fecha el más viejo
       return new Date(a.date).getTime() - new Date(b.date).getTime();
     } else {
@@ -60,7 +55,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
-      setJugadoresList(storedJugadores.slice(0, cantRenderItems));
+      setJugadoresList(storedJugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b)));
     }
   }, [storedJugadores]);
 
@@ -149,6 +144,7 @@ const RenderItem = ({ jugador, deleteJugador }: RenderProps) => {
           iconColor={GlobalStyles.white}
           size={30}
           mode="contained"
+          onPress={() => alert('no implementado')}
         />
         <IconButton
           icon={'clipboard-text-outline'}

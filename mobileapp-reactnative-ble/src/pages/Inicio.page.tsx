@@ -5,7 +5,8 @@ import { Button } from 'react-native-paper';
 
 import { InicioTabPages } from '../navigation/InicioTab';
 import HeaderComponent from '../components/Header.component';
-import ListarJugadoresComponent, { sortType } from '../components/ListarJugadores.component';
+
+import sortType from '../utils/sortType';
 import { CompositeScreenProps, useNavigation } from '@react-navigation/native';
 import { RootTabs } from '../Main';
 import CrearRutinaAleatoriaComponent from '../components/CrearRutinaAleatoria.component';
@@ -16,6 +17,7 @@ import CrearRutina from '../components/CrearRutina.component';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RutinaType } from '../data/RutinasType';
 import GlobalStyles from '../utils/EstilosGlobales';
+import ListarJugadoresComponent from '../components/ListarJugadores.component';
 
 type propsType = CompositeScreenProps<
   NativeStackScreenProps<InicioTabPages, 'InicioPage'>,
@@ -147,7 +149,11 @@ const Jugadores: FC = () => {
 
       <View style={{ paddingTop: 15 }}>
         <Text>Últimos jugadores agregados</Text>
-        <ListarJugadoresComponent cantRenderItems={2} isSimpleList={true} sort={sortType.newest} />
+        <ListarJugadoresComponent
+          cantRenderItems={2}
+          isSimpleList={true}
+          sort={sortType.newestFirst}
+        />
       </View>
 
       <Button textColor="#000" onPress={gotAgregarJugador}>
@@ -158,53 +164,71 @@ const Jugadores: FC = () => {
 };
 
 /***************************************** Historial de Rutinas *****************************************/
-//TODO: testear
 const HistorialRutinas: FC = () => {
   const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
-  const { rutinasRealizadas } = useCustomLocalStorage();
-  const [rutinasRealizadasEnLaSemana, setRutinasRealizadasEnLaSemana] = useState<Array<RutinaType>>(
-    []
-  );
-  const [duracionEntrenamientosSemana, setDuracionEntrenamientosSemana] = useState<number>(0);
 
-  useEffect(() => {
-    obtenerRutinasRealizadasEnSemana();
-    obtenerDuracionRutinasRealizadasEnSemana();
-  }, [rutinasRealizadas]);
-
-  const obtenerRutinasRealizadasEnSemana = () => {
-    const fechaActual = new Date();
-    const diaDeLaSemana = fechaActual.getDay();
-    // Calcular la fecha del primer día de la semana actual (domingo)
-    const primerDiaDeLaSemana = new Date(fechaActual);
-    primerDiaDeLaSemana.setDate(fechaActual.getDate() - diaDeLaSemana);
-
-    // Calcular la fecha del último día de la semana actual (sábado)
-    const ultimoDiaDeLaSemana = new Date(fechaActual);
-    ultimoDiaDeLaSemana.setDate(fechaActual.getDate() + (6 - diaDeLaSemana));
-
-    setRutinasRealizadasEnLaSemana(
-      rutinasRealizadas.filter((item: RutinaType) => {
-        return item.date >= primerDiaDeLaSemana && item.date <= ultimoDiaDeLaSemana;
-      })
-    );
+  const gotRutinasCargadas = () => {
+    navigator.navigate('Rutinas', { screen: 'RutinasRealizadas' });
   };
-
-  const obtenerDuracionRutinasRealizadasEnSemana = () => {
-    if (rutinasRealizadasEnLaSemana) {
-      setDuracionEntrenamientosSemana(
-        rutinasRealizadasEnLaSemana.reduce((acumulador, rutina) => {
-          const tiempoRutina = rutina.secuencia.reduce(
-            (acumuladorSecuencias, secuencia) => acumuladorSecuencias + secuencia.time,
-            0
-          );
-          return acumulador + tiempoRutina;
-        }, 0) / 60
-      );
-    }
-  };
-
   const ContadorCard = () => {
+    const { rutinasRealizadas } = useCustomLocalStorage();
+    const [rutinasRealizadasEnLaSemana, setRutinasRealizadasEnLaSemana] = useState<
+      Array<RutinaType>
+    >([]);
+    const [minutosEnEntrenamientosSemana, setMinutosEnEntrenamientosSemana] =
+      useState<string>('00:00');
+
+    useEffect(() => {
+      const rutinasEnSemana = obtenerRutinasRealizadasEnSemana();
+      obtenerDuracionRutinasRealizadasEnSemana(rutinasEnSemana);
+    }, [rutinasRealizadas]);
+
+    const obtenerRutinasRealizadasEnSemana = (): Array<RutinaType> => {
+      // Calcula el periodo de la semana y obtiene la lista de rutinas realizadas en ese periodo
+
+      const fechaActual = new Date();
+      const diaDeLaSemana = fechaActual.getDay();
+      // Calcular la fecha del primer día de la semana actual (domingo)
+      const primerDiaDeLaSemana = new Date(fechaActual);
+      primerDiaDeLaSemana.setDate(fechaActual.getDate() - diaDeLaSemana);
+
+      // Calcular la fecha del último día de la semana actual (sábado)
+      const ultimoDiaDeLaSemana = new Date(fechaActual);
+      ultimoDiaDeLaSemana.setDate(fechaActual.getDate() + (6 - diaDeLaSemana));
+
+      // filtra las rutinas realizadas en el periodo calculado
+      const rutinasEnSemana = rutinasRealizadas.filter((item: RutinaType) => {
+        return (
+          new Date(item.date) >= primerDiaDeLaSemana && new Date(item.date) <= ultimoDiaDeLaSemana
+        );
+      });
+
+      setRutinasRealizadasEnLaSemana(rutinasEnSemana);
+      return rutinasEnSemana;
+    };
+
+    const obtenerDuracionRutinasRealizadasEnSemana = (rutinasEnSemana: Array<RutinaType>) => {
+      // obtiene la suma de los tiempos
+      const segundosEnRutinas = rutinasEnSemana.reduce((acumulador, rutina) => {
+        const segundosEnRutina = rutina.secuencia.reduce(
+          (acumuladorSecuencias, secuencia) => acumuladorSecuencias + secuencia.time,
+          0
+        );
+
+        return acumulador + segundosEnRutina;
+      }, 0);
+
+      // formatea la duración en segundos a minutos (00:00)
+      const minutosEnSemana =
+        Math.floor(segundosEnRutinas / 60)
+          .toString()
+          .padStart(2, '0') +
+        ':' +
+        (segundosEnRutinas % 60);
+
+      setMinutosEnEntrenamientosSemana(minutosEnSemana);
+    };
+
     return (
       <View style={historialStyles.container}>
         <View style={{ flex: 1 }}>
@@ -224,7 +248,7 @@ const HistorialRutinas: FC = () => {
             }}
           >
             <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>
-              {duracionEntrenamientosSemana}
+              {minutosEnEntrenamientosSemana}
             </Text>
             <Text>m</Text>
           </View>
@@ -233,16 +257,15 @@ const HistorialRutinas: FC = () => {
       </View>
     );
   };
-  const gotRutinasCargadas = () => {
-    navigator.navigate('Rutinas', { screen: 'RutinasCargadas' });
-  };
 
   return (
     <CustomCard>
       <Text style={cardStyles.cardTitle}>Historial de Rutinas</Text>
+
       <ContadorCard />
+
       <Button textColor="#000" onPress={gotRutinasCargadas}>
-        Ver más
+        Ver Rutinas Realizadas
       </Button>
     </CustomCard>
   );
@@ -254,6 +277,7 @@ const historialStyles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     padding: 3,
+    marginBottom: 10,
   },
 });
 
