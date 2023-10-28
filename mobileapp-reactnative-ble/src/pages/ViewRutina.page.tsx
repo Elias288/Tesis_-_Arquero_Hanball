@@ -36,7 +36,7 @@ const ViewRutina = (props: propsType) => {
   };
 
   const goToRutinasCargadas = () => {
-    navigation.navigate('RutinasCargadas');
+    navigation.navigate('RutinasRealizadas');
   };
 
   return (

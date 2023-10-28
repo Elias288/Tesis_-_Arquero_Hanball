@@ -6,10 +6,11 @@ import GlobalStyles from '../utils/EstilosGlobales';
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import sortType from '../utils/sortType';
 
-type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasCargadas'>;
+type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasRealizadas'>;
 
-const RutinasCargadasPage = (props: propsType) => {
+const RutinasRealizadasPage = (props: propsType) => {
   const { navigation, route } = props;
   const { clearRutinasRealizadas } = useCustomLocalStorage();
 
@@ -19,7 +20,7 @@ const RutinasCargadasPage = (props: propsType) => {
 
   return (
     <>
-      <HeaderComponent title="Rutinas Cargadas" showBackButton={true} />
+      <HeaderComponent title="Rutinas Realizadas" showBackButton={true} />
       <View style={{ flex: 1, padding: 20 }}>
         <View style={styles.action}>
           <Button
@@ -35,12 +36,12 @@ const RutinasCargadasPage = (props: propsType) => {
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
             textColor={GlobalStyles.yellowTextColor}
-            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 1 }}
+            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 2 }}
             disabled={true}
           >
-            Rutinas cargadas
+            Ver Rutinas realizadas
           </Button>
-          <Button
+          {/* <Button
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
             textColor={GlobalStyles.yellowTextColor}
@@ -48,11 +49,15 @@ const RutinasCargadasPage = (props: propsType) => {
             onPress={clearRutinasRealizadas}
           >
             limpiar
-          </Button>
+          </Button> */}
         </View>
 
         <View style={{ flex: 1 }}>
-          <ListarRutinasComponent listRutinasRealizadas={true} simpleList={true} />
+          <ListarRutinasComponent
+            listRutinasRealizadas={true}
+            simpleList={true}
+            sort={sortType.newestFirst}
+          />
         </View>
       </View>
     </>
@@ -69,4 +74,4 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
-export default RutinasCargadasPage;
+export default RutinasRealizadasPage;

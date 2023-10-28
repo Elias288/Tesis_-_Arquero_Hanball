@@ -16,12 +16,12 @@ const RutinasPage = (props: propsType) => {
   const [visibleModal, setVisibleModal] = useState(false);
 
   const goToRutinasCargadas = () => {
-    navigation.navigate('RutinasCargadas');
+    navigation.navigate('RutinasRealizadas');
   };
 
   return (
     <>
-      <HeaderComponent title={'Rutinas'} showBackButton={true} />
+      <HeaderComponent title={'Rutinas'} showBackButton={false} />
       <View style={styles.container}>
         <View style={styles.action}>
           <Button
@@ -40,7 +40,7 @@ const RutinasPage = (props: propsType) => {
             style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 2 }}
             onPress={goToRutinasCargadas}
           >
-            Ver Rutinas cargadas
+            Ver Rutinas realizadas
           </Button>
         </View>
 

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
-import ListarJugadoresComponent from '../components/ListarJugadores.component';
 import { IconButton } from 'react-native-paper';
 import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
 import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
 import GlobalStyles from '../utils/EstilosGlobales';
+import ListarJugadoresComponent from '../components/ListarJugadores.component';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;
 
