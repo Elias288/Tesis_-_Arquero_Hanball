@@ -8,25 +8,64 @@ interface ViewSecuenciasProps {
   secuencias: Array<secuenciaType>;
   listStyle?: StyleProp<ViewStyle>;
   itemStyle?: StyleProp<ViewStyle>;
+  viewResult?: boolean;
 }
 
-const ViewSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuenciasProps) => {
-  const { secuencias, listStyle, itemStyle } = props;
+const ListarSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuenciasProps) => {
+  const { secuencias, listStyle, itemStyle, viewResult } = props;
+
   return (
     <View style={listStyle}>
       <FlatList
         data={secuencias}
-        renderItem={({ item }) => <RenderItem secuencia={item} itemStyle={itemStyle} />}
+        renderItem={({ item }) => (
+          <RenderItem secuencia={item} itemStyle={itemStyle} viewResult={viewResult} />
+        )}
         keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
 };
 
-const RenderItem: FC<{ secuencia: secuenciaType; itemStyle?: StyleProp<ViewStyle> }> = ({
-  secuencia,
-  itemStyle,
-}) => {
+type renderItempProps = {
+  secuencia: secuenciaType;
+  itemStyle?: StyleProp<ViewStyle>;
+  viewResult?: boolean;
+};
+
+const RenderItem: FC<renderItempProps> = (props) => {
+  const { secuencia, itemStyle, viewResult } = props;
+
+  if (viewResult) {
+    return (
+      <View style={styles.itemContainer}>
+        <View
+          style={[
+            styles.itemCircle,
+            { marginRight: 5, backgroundColor: GlobalStyles.greenBackColor },
+          ]}
+        >
+          <Icon name="led-on" size={40} color={GlobalStyles.white} />
+          <Text style={styles.itemLedText}>{secuencia.ledId}</Text>
+        </View>
+
+        <View style={[styles.itemCircle, { marginRight: 5, backgroundColor: '#536ac7' }]}>
+          <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
+          <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
+        </View>
+
+        <View style={[styles.itemCircle, { backgroundColor: '#536ac7' }]}>
+          <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
+          {secuencia.resTime != undefined && secuencia.resTime != '-' ? (
+            <Text style={styles.itemTimeText}>{secuencia.resTime?.toString()}s</Text>
+          ) : (
+            <Text style={styles.itemTimeText}>Null</Text>
+          )}
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.itemContainer}>
       <View
@@ -81,4 +120,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewSecuenciaComponent;
+export default ListarSecuenciaComponent;

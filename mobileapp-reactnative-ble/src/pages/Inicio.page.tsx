@@ -114,9 +114,7 @@ const CrearRutinas: FC = () => {
           >
             Bluetooth no está conectado
           </Text>
-          <Text style={{ marginBottom: 20 }}>
-            Enciendaló para poder generar una rutina aleatoria
-          </Text>
+          <Text style={{ marginBottom: 20 }}>Enciendaló para poder generar una rutina</Text>
         </View>
       </CustomModal>
     </CustomCard>
@@ -235,16 +233,15 @@ const HistorialRutinas: FC = () => {
       </View>
     );
   };
-  const gotRutinas = () => {
-    navigator.navigate('Rutinas', { screen: 'RutinasPage' });
+  const gotRutinasCargadas = () => {
+    navigator.navigate('Rutinas', { screen: 'RutinasCargadas' });
   };
 
   return (
     <CustomCard>
       <Text style={cardStyles.cardTitle}>Historial de Rutinas</Text>
       <ContadorCard />
-      {/* TODO: agregar lista de rutinas realizadas */}
-      <Button textColor="#000" onPress={gotRutinas}>
+      <Button textColor="#000" onPress={gotRutinasCargadas}>
         Ver más
       </Button>
     </CustomCard>
@@ -292,7 +289,12 @@ const CustomCard = ({ children }: { children: ReactNode }) => {
   return <View style={cardStyles.cardContainer}>{children}</View>;
 };
 const cardStyles = StyleSheet.create({
-  cardContainer: { backgroundColor: GlobalStyles.white, borderRadius: 10, padding: 10, marginBottom: 13 },
+  cardContainer: {
+    backgroundColor: GlobalStyles.white,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 13,
+  },
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',

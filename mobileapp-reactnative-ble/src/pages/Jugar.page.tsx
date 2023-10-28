@@ -8,7 +8,7 @@ import { useCustomBLE } from '../contexts/BLEProvider';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { JugadorType } from '../data/JugadoresType';
 import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
-import ViewSecuenciaComponent from '../components/ViewSecuencia.component';
+import ListarSecuenciaComponent from '../components/ListarSecuencia.component';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RutinaType } from '../data/RutinasType';
 import GlobalStyles from '../utils/EstilosGlobales';
@@ -86,9 +86,12 @@ const JugarPage = (props: propsType) => {
     }
 
     runGame(true);
-    if (paramRutina) selectRutina({ ...paramRutina, jugador: selectedJugador.name });
+    if (paramRutina) {
+
+      selectRutina({ ...paramRutina, jugador: selectedJugador.name });
+    }
     setLoading(true);
-    // sendData(connectedDevice, formatedRutina);
+    sendData(connectedDevice, formatedRutina);
   };
 
   return (
@@ -99,7 +102,7 @@ const JugarPage = (props: propsType) => {
           {/* Lista de secuencia */}
           <View style={{ marginRight: 10 }}>
             <Text style={styles.title}>Secuencia</Text>
-            <ViewSecuenciaComponent
+            <ListarSecuenciaComponent
               secuencias={paramRutina.secuencia}
               listStyle={styles.viewSecuenciasStyle}
             />

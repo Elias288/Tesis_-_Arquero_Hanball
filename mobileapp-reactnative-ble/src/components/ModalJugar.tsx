@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { ActivityIndicator, Modal, Portal } from 'react-native-paper';
-import ViewSecuenciaComponent from './ViewSecuencia.component';
+import ListarSecuenciaComponent from './ListarSecuencia.component';
 import { secuenciaType } from '../data/RutinasType';
 import GlobalStyles from '../utils/EstilosGlobales';
 
@@ -31,7 +31,7 @@ const ModalJugar = (props: ModalJugarProps) => {
               {/* Lista de secuencia */}
               <View style={{ flex: 1 }}>
                 <Text style={ModalJugarStyles.title}>Secuencia</Text>
-                <ViewSecuenciaComponent
+                <ListarSecuenciaComponent
                   secuencias={secuencia}
                   listStyle={ModalJugarStyles.viewSecuenciasStyle}
                 />

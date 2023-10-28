@@ -18,6 +18,7 @@ interface useLocalStorageType {
   rutinasRealizadas: Array<RutinaType>;
   pushRutinaRealizada: (newRutina: RutinaType) => void;
   popRutinaRealizada: (rutinaId: number) => void;
+  clearRutinasRealizadas: () => void;
 }
 
 const LocalStorageContext = createContext<useLocalStorageType | undefined>(undefined);
@@ -56,6 +57,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const clearJugadoresDB = async () => {
     console.log('db clear');
+    setJugadores([]);
     await AsyncStorage.setItem('jugadores', JSON.stringify([]));
   };
 
@@ -91,14 +93,22 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const pushRutinaRealizada = async (newRutina: RutinaType) => {
-    setRutinas([...rutinas, newRutina]);
-    await AsyncStorage.setItem('rutinasRealizadas', JSON.stringify([...rutinas, newRutina]));
+    setRutinasRealizadas([...rutinasRealizadas, newRutina]);
+    await AsyncStorage.setItem(
+      'rutinasRealizadas',
+      JSON.stringify([...rutinasRealizadas, newRutina])
+    );
   };
 
   const popRutinaRealizada = async (popRutinaId: number) => {
-    const newRutinaList = rutinas.filter((j) => j.id !== popRutinaId);
-    setRutinas(newRutinaList);
+    const newRutinaList = rutinasRealizadas.filter((j) => j.id !== popRutinaId);
+    setRutinasRealizadas(newRutinaList);
     await AsyncStorage.setItem('rutinasRealizadas', JSON.stringify(newRutinaList));
+  };
+
+  const clearRutinasRealizadas = async () => {
+    setRutinasRealizadas([]);
+    await AsyncStorage.setItem('rutinasRealizadas', '[]');
   };
 
   return (
@@ -114,6 +124,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         rutinasRealizadas,
         popRutinaRealizada,
         pushRutinaRealizada,
+        clearRutinasRealizadas,
       }}
     >
       {children}

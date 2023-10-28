@@ -73,6 +73,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
       rutina.push(newSecuencia);
     }
 
+    setRandomSize(4);
     setVisibleDialogCreateRandom(false);
     gotoJugar(rutina);
   };

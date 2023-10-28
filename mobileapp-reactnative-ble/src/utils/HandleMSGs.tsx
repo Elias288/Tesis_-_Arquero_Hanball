@@ -2,18 +2,29 @@ import { useEffect, useState } from 'react';
 import { Portal, Snackbar } from 'react-native-paper';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
-import { useNavigation } from '@react-navigation/native';
-import { InicioTabPages } from '../navigation/InicioTab';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RutinaTabPages } from '../navigation/RutinasTab';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import { RootTabs } from '../Main';
+import { RutinaType } from '../data/RutinasType';
 
 export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
 }
 
 const HandleMSGs = () => {
-  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
+  const navigator =
+    useNavigation<
+      CompositeNavigationProp<
+        NativeStackNavigationProp<RutinaTabPages>,
+        NativeStackNavigationProp<RootTabs>
+      >
+    >();
 
-  const { receivedMSG, BLECode, BLEmsg, cleanBLECode, runGame } = useCustomBLE();
+  const { receivedMSG, BLECode, BLEmsg, cleanBLECode, runGame, stringToSecuencia, selectedRutina } =
+    useCustomBLE();
+  const { pushRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
 
@@ -43,8 +54,21 @@ const HandleMSGs = () => {
 
   const handleFunctions: Funciones = {
     // resultado del juego
-    res: (dato) => {
-      navigator.navigate('ViewResult', { res: dato });
+    res: (secuenciaStringRecibida) => {
+      const secuenciaRecibida = stringToSecuencia(secuenciaStringRecibida);
+
+      if (selectedRutina) {
+        selectedRutina.secuencia.map((sec) => {
+          sec.resTime = secuenciaRecibida.find((result) => result.id === sec.id)?.resTime;
+        });
+
+        pushRutinaRealizada({ ...selectedRutina, id: rutinasRealizadas.length + 1 });
+
+        navigator?.navigate('Rutinas', {
+          screen: 'ViewRutina',
+          params: { rutina: selectedRutina },
+        });
+      }
     },
 
     // mensajes desde desde el servidor BLE

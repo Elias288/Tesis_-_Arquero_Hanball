@@ -1,8 +1,8 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../components/Header.component';
-import { IconButton } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import ListarRutinasComponent from '../components/ListarRutinas.component';
@@ -15,15 +15,41 @@ const RutinasPage = (props: propsType) => {
   const { navigation, route } = props;
   const [visibleModal, setVisibleModal] = useState(false);
 
+  const goToRutinasCargadas = () => {
+    navigation.navigate('RutinasCargadas');
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: GlobalStyles.grayBackground }}>
+    <>
       <HeaderComponent title={'Rutinas'} showBackButton={true} />
+      <View style={styles.container}>
+        <View style={styles.action}>
+          <Button
+            mode="outlined"
+            buttonColor={GlobalStyles.yellowBackColor}
+            textColor={GlobalStyles.yellowTextColor}
+            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 1 }}
+            disabled={true}
+          >
+            Ver Rutinas
+          </Button>
+          <Button
+            mode="outlined"
+            buttonColor={GlobalStyles.yellowBackColor}
+            textColor={GlobalStyles.yellowTextColor}
+            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 2 }}
+            onPress={goToRutinasCargadas}
+          >
+            Ver Rutinas cargadas
+          </Button>
+        </View>
 
-      <ListarRutinasComponent navigation={navigation} />
+        <View style={{ flex: 1 }}>
+          <ListarRutinasComponent />
+        </View>
 
-      <CrearRutina isVisible={visibleModal} hideModal={() => setVisibleModal(false)} />
+        <CrearRutina isVisible={visibleModal} hideModal={() => setVisibleModal(false)} />
 
-      <View>
         <IconButton
           icon={'plus'}
           mode="contained"
@@ -34,8 +60,19 @@ const RutinasPage = (props: propsType) => {
           onPress={() => setVisibleModal(true)}
         />
       </View>
-    </View>
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: GlobalStyles.grayBackground, padding: 20 },
+  action: {
+    backgroundColor: GlobalStyles.white,
+    marginBottom: 10,
+    borderRadius: 20,
+    padding: 10,
+    flexDirection: 'row',
+  },
+});
 
 export default RutinasPage;

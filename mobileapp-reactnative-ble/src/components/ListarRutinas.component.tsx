@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RutinaType } from '../data/RutinasType';
-import { IconButton } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import CustomModal from './CustomModal.component';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import GlobalStyles from '../utils/EstilosGlobales';
+import { RutinaTabPages } from '../navigation/RutinasTab';
 
 const ItemHeigth = 80;
 
@@ -17,12 +18,17 @@ interface ListarRutinasProps {
   simpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
   containerStyle?: StyleProp<ViewStyle>; // estilo personalizado del componente
-  navigation?: any; // permite que el componente navegue
+  listRutinasRealizadas?: boolean; // permite que el componente navegue
 }
 
 const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
-  const { simpleList, cantRenderItems, containerStyle, navigation } = props;
-  const { rutinas: storedRutinas, popRutina } = useCustomLocalStorage();
+  const { simpleList, cantRenderItems, containerStyle, listRutinasRealizadas } = props;
+  const {
+    rutinas: storedRutinas,
+    rutinasRealizadas: storedRutinasRealizadas,
+    popRutina,
+    popRutinaRealizada,
+  } = useCustomLocalStorage();
   const [selectedRutinaId, setSelectedRutinaId] = useState<number>(0);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [listMode, setListMode] = useState<boolean>(false);
@@ -33,18 +39,27 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
     if (listMode !== simpleList) {
       setListMode(simpleList || false);
     }
-
-    // carga todos los jugadores
-    setRutinaList(storedRutinas);
-
-    // si cantRenderItems está definido
-    if (cantRenderItems) {
-      setRutinaList(storedRutinas.slice(0, cantRenderItems));
+    // carga todas las rutinas
+    if (listRutinasRealizadas) {
+      // si cantRenderItems está definido
+      if (cantRenderItems) {
+        setRutinaList(storedRutinasRealizadas.slice(0, cantRenderItems));
+      } else {
+        setRutinaList(storedRutinasRealizadas);
+      }
+    } else {
+      if (cantRenderItems) {
+        setRutinaList(storedRutinas.slice(0, cantRenderItems));
+      } else {
+        setRutinaList(storedRutinas);
+      }
     }
-  }, [storedRutinas]);
+  }, [storedRutinas, storedRutinasRealizadas]);
 
   const deleteRutina = () => {
-    popRutina(selectedRutinaId);
+    if (listRutinasRealizadas) {
+      popRutinaRealizada(selectedRutinaId);
+    } else popRutina(selectedRutinaId);
     setIsModalVisible(false);
   };
 
@@ -56,7 +71,9 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
   if (rutinaList.length == 0) {
     return (
       <View style={styles.emptyRutinasBody}>
-        <Text style={styles.emptyRutinasText}>Sin Rutinas</Text>
+        <Text style={styles.emptyRutinasText}>
+          Sin Rutinas {listRutinasRealizadas && 'Cargadas'}
+        </Text>
       </View>
     );
   }
@@ -115,8 +132,9 @@ const RenderItem = (props: RenderProps) => {
 
   return (
     <View style={styles.completeItemContainer}>
-      <View>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
+        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina.id}</Text>
       </View>
 
       <Text style={styles.itemTitle}>{rutina.title}</Text>
@@ -149,17 +167,43 @@ const RenderItem = (props: RenderProps) => {
   );
 };
 
-const RenderSimpleItem = ({ title }: RutinaType) => {
+const RenderSimpleItem = (rutina: RutinaType) => {
+  const navigator = useNavigation<NativeStackNavigationProp<RutinaTabPages>>();
+
+  const goToViewRutina = () => {
+    navigator.navigate('ViewRutina', { selectedId: rutina.id });
+  };
+
   return (
     <View style={styles.simpleItemContainer}>
-      <View>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
+        <Button
+          style={{ position: 'absolute' }}
+          textColor={GlobalStyles.white}
+          onPress={goToViewRutina}
+        >
+          {rutina.id}
+        </Button>
+        {/* <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina.id}</Text> */}
       </View>
 
       <View style={{ flex: 1 }}>
-        <Text style={styles.itemTitle}>{title}</Text>
+        <Text style={styles.itemTitle}>{rutina.title}</Text>
       </View>
-      <Text style={styles.simpleItemSubText}>fecha</Text>
+      <Text style={styles.simpleItemSubText}>
+        {new Date(rutina.date).getDate() +
+          '/' +
+          new Date(rutina.date).getMonth() +
+          '/' +
+          new Date(rutina.date).getFullYear() +
+          ': ' +
+          new Date(rutina.date).getHours() +
+          ':' +
+          new Date(rutina.date).getMinutes() +
+          ':' +
+          new Date(rutina.date).getSeconds()}
+      </Text>
     </View>
   );
 };
@@ -167,20 +211,16 @@ const RenderSimpleItem = ({ title }: RutinaType) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 13,
   },
   completeItemContainer: {
     backgroundColor: GlobalStyles.white,
-    padding: 10,
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    height: ItemHeigth,
-    marginHorizontal: 25,
     marginBottom: 13,
   },
   simpleItemContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: GlobalStyles.white,
     padding: 5,
     borderRadius: 5,
     flexDirection: 'row',

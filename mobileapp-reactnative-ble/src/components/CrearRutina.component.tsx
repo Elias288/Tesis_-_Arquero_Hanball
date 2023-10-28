@@ -6,7 +6,7 @@ import CustomModal from './CustomModal.component';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
-import ViewSecuenciaComponent from './ViewSecuencia.component';
+import ListarSecuenciaComponent from './ListarSecuencia.component';
 import Constants from 'expo-constants';
 import { InicioTabPages } from '../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -89,7 +89,7 @@ const CrearRutina = (props: propsType) => {
             </View>
 
             {/* //TODO: convertir los componentes en swipes para poder eliminarlos */}
-            <ViewSecuenciaComponent
+            <ListarSecuenciaComponent
               secuencias={newSecuencia}
               itemStyle={{ flex: 1 }}
               listStyle={{ borderTopWidth: 1, paddingTop: 10, marginTop: 20, flex: 1 }}
