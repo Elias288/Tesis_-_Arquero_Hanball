@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Button, Modal, Portal } from 'react-native-paper';
+
 import GlobalStyles from '../utils/EstilosGlobales';
 
 interface ModalProps {
@@ -14,6 +15,7 @@ interface ModalProps {
   isAcceptCancel?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 }
+
 const CustomModal = (props: ModalProps) => {
   const {
     children,
@@ -33,7 +35,7 @@ const CustomModal = (props: ModalProps) => {
 
   const cancelHandle = () => {
     if (onCancelar) {
-      onCancelar()
+      onCancelar();
     }
 
     hideModal();
@@ -42,12 +44,12 @@ const CustomModal = (props: ModalProps) => {
   return (
     <Portal>
       <Modal visible={isVisible} onDismiss={hideModal}>
-        <View style={[containerStyle, styles.container]}>
+        <View style={[containerStyle, customModalStyles.container]}>
           {children}
 
           {/* Actions */}
           {(isAccept || isAcceptCancel) && (
-            <View style={styles.actions}>
+            <View style={customModalStyles.actions}>
               <Button onPress={acceptHandle}>Aceptar</Button>
               {isAcceptCancel ? <Button onPress={cancelHandle}>Cancelar</Button> : null}
             </View>
@@ -58,7 +60,7 @@ const CustomModal = (props: ModalProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+export const customModalStyles = StyleSheet.create({
   container: {
     backgroundColor: GlobalStyles.white,
     borderRadius: 20,
@@ -72,5 +74,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     paddingTop: 10,
   },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  modalMessage: {
+    marginBottom: 20
+  }
 });
+
 export default CustomModal;

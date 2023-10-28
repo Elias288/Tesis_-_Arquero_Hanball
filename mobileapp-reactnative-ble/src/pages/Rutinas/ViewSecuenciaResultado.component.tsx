@@ -1,13 +1,15 @@
 import { FlatList, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import React, { FC } from 'react';
-import { RutinaType, secuenciaType } from '../data/RutinasType';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import GlobalStyles from '../utils/EstilosGlobales';
+
+import { RutinaType, secuenciaType } from '../../data/RutinasType';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
 interface ViewSecuenciasResProps {
   rutina: RutinaType;
   style?: StyleProp<ViewStyle>;
 }
+
 const ViewSecuenciaResultadoComponent: FC<ViewSecuenciasResProps> = ({ rutina, style }) => {
   return (
     <View style={style}>
@@ -58,6 +60,7 @@ const RenderItem: FC<{ secuenciaRes: secuenciaType }> = ({ secuenciaRes }) => {
     </View>
   );
 };
+
 const ViewSecuenciaResultadoStyles = StyleSheet.create({
   itemContainer: {
     backgroundColor: GlobalStyles.white,

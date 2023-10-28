@@ -1,18 +1,19 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InicioTabPages } from '../navigation/InicioTab';
-import HeaderComponent from '../components/Header.component';
+import { InicioTabPages } from '../../navigation/InicioTab';
+import HeaderComponent from '../../components/Header.component';
 import { Button } from 'react-native-paper';
-import { useCustomBLE } from '../contexts/BLEProvider';
 import { SelectList } from 'react-native-dropdown-select-list';
-import { JugadorType } from '../data/JugadoresType';
-import { BLUETOOTHNOTCONNECTED } from '../utils/BleCodes';
-import ListarSecuenciaComponent from '../components/ListarSecuencia.component';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import { RutinaType } from '../data/RutinasType';
-import GlobalStyles from '../utils/EstilosGlobales';
-import ModalJugar from '../components/ModalJugar';
+
+import ModalJugar from './ModalJugar';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
+import { useCustomBLE } from '../../contexts/BLEProvider';
+import { JugadorType } from '../../data/JugadoresType';
+import { BLUETOOTHNOTCONNECTED } from '../../utils/BleCodes';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { RutinaType } from '../../data/RutinasType';
 
 type propsType = NativeStackScreenProps<InicioTabPages, 'Jugar'>;
 
@@ -87,7 +88,6 @@ const JugarPage = (props: propsType) => {
 
     runGame(true);
     if (paramRutina) {
-
       selectRutina({ ...paramRutina, jugador: selectedJugador.name });
     }
     setLoading(true);

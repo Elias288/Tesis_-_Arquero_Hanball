@@ -24,7 +24,7 @@ const Main = () => {
   const { initBle } = useCustomBLE();
 
   useEffect(() => {
-    initBle();
+    // initBle();
   }, []);
 
   const pageOptions = (routeName: string, focused: boolean) => {

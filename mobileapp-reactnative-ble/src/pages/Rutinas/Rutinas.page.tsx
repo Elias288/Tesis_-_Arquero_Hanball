@@ -1,13 +1,13 @@
 import { View, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../components/Header.component';
+import HeaderComponent from '../../components/Header.component';
 import { Button, IconButton } from 'react-native-paper';
 
-import { RutinaTabPages } from '../navigation/RutinasTab';
-import ListarRutinasComponent from '../components/ListarRutinas.component';
-import CrearRutina from '../components/CrearRutina.component';
-import GlobalStyles from '../utils/EstilosGlobales';
+import { RutinaTabPages } from '../../navigation/RutinasTab';
+import ListarRutinasComponent from '../../components/ListarRutinas.component';
+import CrearRutina from './CrearRutina.component';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasPage'>;
 

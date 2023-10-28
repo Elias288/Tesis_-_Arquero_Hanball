@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Hist_Jugadores from '../pages/Hist_Jugadores';
-import JugadoresPage from '../pages/Jugadores.page';
+import Hist_Jugadores from '../pages/Jugadores/Hist_Jugadores';
+import JugadoresPage from '../pages/Jugadores/Jugadores.page';
 
 export type ListaJugadoresTabPages = {
   ListaJugadores: undefined;

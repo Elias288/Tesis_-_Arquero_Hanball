@@ -14,7 +14,7 @@ import { IconButton } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import GlobalStyles from '../utils/EstilosGlobales';
-import CustomModal from './CustomModal.component';
+import CustomModal, { customModalStyles } from './CustomModal.component';
 import sortType from '../utils/sortType';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RutinaType } from '../data/RutinasType';
@@ -136,13 +136,8 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
         isVisible={isModalVisible}
         isAcceptCancel={true}
       >
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Borrar Rutina</Text>
-        </View>
-
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 16 }}>Seguro que quiere eliminar esta Rutina?</Text>
-        </View>
+        <Text style={customModalStyles.modalTitle}>Borrar Rutina</Text>
+        <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar esta Rutina?</Text>
       </CustomModal>
     </View>
   );
@@ -152,6 +147,7 @@ interface RenderProps {
   rutina: RutinaType;
   deleteRutina: (id: number) => void;
 }
+
 const RenderItem = (props: RenderProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();

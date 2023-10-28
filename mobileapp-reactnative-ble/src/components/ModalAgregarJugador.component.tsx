@@ -2,7 +2,8 @@ import { View, StyleSheet, Text } from 'react-native';
 import { Button, Modal, Portal, TextInput } from 'react-native-paper';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { useState } from 'react';
-import CustomModal from './CustomModal.component';
+
+import CustomModal, { customModalStyles } from './CustomModal.component';
 import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = {
@@ -78,13 +79,8 @@ const ModalAgregarJugador = ({ isVisible, hideModal }: propsType) => {
         onAceptar={() => {}}
         isVisible={isModalVisible}
       >
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Alerta</Text>
-        </View>
-
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 16 }}>{modalMessage}</Text>
-        </View>
+        <Text style={customModalStyles.modalTitle}>Alerta</Text>
+        <Text style={customModalStyles.modalMessage}>{modalMessage}</Text>
       </CustomModal>
     </>
   );

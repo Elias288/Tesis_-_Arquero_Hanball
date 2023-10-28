@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InicioTabPages } from '../navigation/InicioTab';
-import HeaderComponent from '../components/Header.component';
-import GlobalStyles from '../utils/EstilosGlobales';
+import { InicioTabPages } from '../../navigation/InicioTab';
+import HeaderComponent from '../../components/Header.component';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
 type propsType = NativeStackScreenProps<InicioTabPages, 'Hist_Jugadores'>;
 

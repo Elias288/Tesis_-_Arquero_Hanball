@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../components/Header.component';
+import HeaderComponent from '../../components/Header.component';
 import { IconButton } from 'react-native-paper';
-import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
-import ModalAgregarJugador from '../components/ModalAgregarJugador.component';
-import GlobalStyles from '../utils/EstilosGlobales';
-import ListarJugadoresComponent from '../components/ListarJugadores.component';
+
+import ModalAgregarJugador from '../../components/ModalAgregarJugador.component';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import ListarJugadoresComponent from '../../components/ListarJugadores.component';
+import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;
 
 const JugadoresPage = (props: propsType) => {
-  const { navigation, route } = props;
   const [visible, setVisible] = useState(false);
 
   const hideModal = () => {

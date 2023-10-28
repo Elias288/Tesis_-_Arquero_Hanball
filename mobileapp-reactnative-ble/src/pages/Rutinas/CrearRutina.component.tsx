@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Portal, TextInput } from 'react-native-paper';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import CustomModal from './CustomModal.component';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
 import { SelectList } from 'react-native-dropdown-select-list';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { RutinaType, secuenciaType } from '../data/RutinasType';
-import ListarSecuenciaComponent from './ListarSecuencia.component';
 import Constants from 'expo-constants';
-import { InicioTabPages } from '../navigation/InicioTab';
+
+import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import { RutinaType, secuenciaType } from '../../data/RutinasType';
+import { InicioTabPages } from '../../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { useCustomBLE } from '../contexts/BLEProvider';
-import GlobalStyles from '../utils/EstilosGlobales';
+import { useCustomBLE } from '../../contexts/BLEProvider';
 
 interface propsType {
   isVisible: boolean;
@@ -122,13 +123,8 @@ const CrearRutina = (props: propsType) => {
         isVisible={isWarningModalVisible}
         containerStyle={{ zIndex: 1000 }}
       >
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Alerta</Text>
-        </View>
-
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 16 }}>{modalMessage}</Text>
-        </View>
+        <Text style={customModalStyles.modalTitle}>Alerta</Text>
+        <Text style={customModalStyles.modalMessage}>{modalMessage}</Text>
       </CustomModal>
 
       {/* Alerta Jugar */}
@@ -140,7 +136,7 @@ const CrearRutina = (props: propsType) => {
         onCancelar={closeModal}
         containerStyle={{ zIndex: 1000 }}
       >
-        <Text>Desea iniciar un juego con esta rutina?</Text>
+        <Text style={customModalStyles.modalMessage}>Desea iniciar un juego con esta rutina?</Text>
       </CustomModal>
     </>
   );

@@ -2,6 +2,7 @@ import { FlatList, Text, View, StyleSheet, ViewStyle, StyleProp } from 'react-na
 import React, { FC } from 'react';
 import { secuenciaType } from '../data/RutinasType';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import GlobalStyles from '../utils/EstilosGlobales';
 
 interface ViewSecuenciasProps {

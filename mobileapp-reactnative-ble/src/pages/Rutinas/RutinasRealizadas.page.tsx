@@ -1,18 +1,17 @@
-import HeaderComponent from '../components/Header.component';
+import HeaderComponent from '../../components/Header.component';
 import { View, StyleSheet } from 'react-native';
-import ListarRutinasComponent from '../components/ListarRutinas.component';
+import ListarRutinasComponent from '../../components/ListarRutinas.component';
 import { Button } from 'react-native-paper';
-import GlobalStyles from '../utils/EstilosGlobales';
-import { RutinaTabPages } from '../navigation/RutinasTab';
+
+import sortType from '../../utils/sortType';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import sortType from '../utils/sortType';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasRealizadas'>;
 
 const RutinasRealizadasPage = (props: propsType) => {
   const { navigation, route } = props;
-  const { clearRutinasRealizadas } = useCustomLocalStorage();
 
   const goToRutinas = () => {
     navigation.navigate('RutinasPage');
@@ -41,15 +40,6 @@ const RutinasRealizadasPage = (props: propsType) => {
           >
             Ver Rutinas realizadas
           </Button>
-          {/* <Button
-            mode="outlined"
-            buttonColor={GlobalStyles.yellowBackColor}
-            textColor={GlobalStyles.yellowTextColor}
-            style={{ borderColor: GlobalStyles.yellowBorderColor, flex: 1 }}
-            onPress={clearRutinasRealizadas}
-          >
-            limpiar
-          </Button> */}
         </View>
 
         <View style={{ flex: 1 }}>
@@ -63,6 +53,7 @@ const RutinasRealizadasPage = (props: propsType) => {
     </>
   );
 };
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: GlobalStyles.grayBackground, padding: 20 },
   action: {
@@ -74,4 +65,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
+
 export default RutinasRealizadasPage;

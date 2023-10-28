@@ -1,10 +1,10 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import InicioPage from '../pages/Inicio.page';
-import JugarPage from '../pages/Jugar.page';
-import Hist_Jugadores from '../pages/Hist_Jugadores';
-import RutinasPage from '../pages/Rutinas.page';
+import InicioPage from '../pages/Inicio/Inicio.page';
+import JugarPage from '../pages/Jugar/Jugar.page';
+import Hist_Jugadores from '../pages/Jugadores/Hist_Jugadores';
+import RutinasPage from '../pages/Rutinas/Rutinas.page';
 
 export type InicioTabPages = {
   InicioPage: undefined;

@@ -1,14 +1,15 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../components/Header.component';
+import HeaderComponent from '../../components/Header.component';
 import { View, Text, StyleSheet } from 'react-native';
-import { RutinaTabPages } from '../navigation/RutinasTab';
+import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { useEffect, useState } from 'react';
-import { RutinaType } from '../data/RutinasType';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import GlobalStyles from '../utils/EstilosGlobales';
-import ListarSecuenciaComponent from '../components/ListarSecuencia.component';
+
+import GlobalStyles from '../../utils/EstilosGlobales';
+import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
+import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
+import { RutinaType } from '../../data/RutinasType';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { Button } from 'react-native-paper';
-import CustomModal from '../components/CustomModal.component';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutina'>;
 
@@ -82,13 +83,8 @@ const ViewRutina = (props: propsType) => {
         isAcceptCancel={true}
         onAceptar={deleteRutinaRealizada}
       >
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Borrar Rutina</Text>
-        </View>
-
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 16 }}>Seguro que quiere eliminar esta Rutina?</Text>
-        </View>
+        <Text style={customModalStyles.modalTitle}>Borrar Rutina</Text>
+        <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar esta Rutina?</Text>
       </CustomModal>
     </>
   );

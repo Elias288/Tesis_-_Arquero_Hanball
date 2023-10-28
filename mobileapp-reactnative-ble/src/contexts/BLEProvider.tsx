@@ -3,7 +3,7 @@
  * useBLE.tsx y sus datos
  */
 import { createContext, ReactNode, useContext } from 'react';
-import useBLE, { BluetoothLowEnergyApi } from '../components/useBLE';
+import useBLE, { BluetoothLowEnergyApi } from '../utils/useBLE';
 
 const BLEContext = createContext<BluetoothLowEnergyApi | undefined>(undefined);
 

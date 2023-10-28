@@ -7,11 +7,12 @@ import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { InicioTabPages } from '../navigation/InicioTab';
-import CustomModal from './CustomModal.component';
+import CustomModal, { customModalStyles } from './CustomModal.component';
 import GlobalStyles from '../utils/EstilosGlobales';
 import sortType from '../utils/sortType';
 
 const ItemHeigth = 80;
+
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
@@ -95,13 +96,8 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
         isVisible={isModalVisible}
         isAcceptCancel={true}
       >
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Borrar Jugador</Text>
-        </View>
-
-        <View style={{ paddingBottom: 20 }}>
-          <Text style={{ fontSize: 16 }}>Seguro que quiere eliminar este jugador?</Text>
-        </View>
+        <Text style={customModalStyles.modalTitle}>Borrar Jugador</Text>
+        <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar este jugador?</Text>
       </CustomModal>
 
       <FlatList

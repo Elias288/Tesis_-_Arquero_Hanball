@@ -12,7 +12,7 @@ import {
   BLUETOOTHTIMEOUT,
   BLUETOOTHERROR,
   BLUETOOTHDISCONNECTED,
-} from '../utils/BleCodes';
+} from './BleCodes';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
 
 const ESP32_NAME = 'ESP32-server';
@@ -180,7 +180,7 @@ function useBLE(): BluetoothLowEnergyApi {
           setBLEConnectedStatus(false);
           setBLEPowerStatus(false);
           setScanningLoading(false);
-  
+
           setBLEMsg('Bluetooth apagado');
           setBLECode(BLUETOOTHOFF);
           console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);

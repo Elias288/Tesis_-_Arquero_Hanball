@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import RutinasPage from '../pages/Rutinas.page';
-import RutinasRealizadasPage from '../pages/RutinasRealizadas.page';
-import ViewRutina from '../pages/ViewRutina.page';
+import RutinasPage from '../pages/Rutinas/Rutinas.page';
+import RutinasRealizadasPage from '../pages/Rutinas/RutinasRealizadas.page';
+import ViewRutina from '../pages/Rutinas/ViewRutina.page';
 import { RutinaType } from '../data/RutinasType';
 
 export type RutinaTabPages = {

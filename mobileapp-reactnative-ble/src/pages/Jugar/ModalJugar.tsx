@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { ActivityIndicator, Modal, Portal } from 'react-native-paper';
-import ListarSecuenciaComponent from './ListarSecuencia.component';
-import { secuenciaType } from '../data/RutinasType';
-import GlobalStyles from '../utils/EstilosGlobales';
+
+import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
+import { secuenciaType } from '../../data/RutinasType';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
 type ModalJugarProps = {
   isVisible: boolean;
@@ -11,6 +12,7 @@ type ModalJugarProps = {
   secuencia: secuenciaType[];
   selectedJugadorName: string;
 };
+
 const ModalJugar = (props: ModalJugarProps) => {
   const { isVisible, secuencia, selectedJugadorName } = props;
 
@@ -54,6 +56,7 @@ const ModalJugar = (props: ModalJugarProps) => {
     </Portal>
   );
 };
+
 const ModalJugarStyles = StyleSheet.create({
   container: {
     padding: 20,
