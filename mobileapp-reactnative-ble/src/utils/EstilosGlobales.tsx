@@ -7,6 +7,7 @@ const GlobalStyles = {
   grayText: '#aaaaaa',
   blueBackgroudn: '#536ac7',
   black: '#000',
+  redError: '#c41c1c',
 
   jugadorName: {
     backgroundColor: '#e7d84f',

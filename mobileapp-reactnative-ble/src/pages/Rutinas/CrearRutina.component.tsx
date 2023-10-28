@@ -47,9 +47,8 @@ const CrearRutina = (props: propsType) => {
 
     if (espConnectedStatus && BLEPowerStatus) {
       setIsGameModalVisible(true);
-    } else {
-      closeModal();
     }
+    closeModal();
   };
 
   const gotoJugar = () => {
@@ -61,6 +60,7 @@ const CrearRutina = (props: propsType) => {
     setTitle('');
     setNewSecuencia([]);
     hideModal();
+    setIsWarningModalVisible(false);
   };
 
   const showModal = (message: string) => {
@@ -76,56 +76,52 @@ const CrearRutina = (props: propsType) => {
     <>
       <Portal>
         {visible && (
-          <View style={styles.container}>
-            <View style={{ backgroundColor: GlobalStyles.white, padding: 5, borderRadius: 10 }}>
-              <Text style={styles.title}>Crear Rutina</Text>
-              <TextInput
-                label={'Titulo de la Rutina*'}
-                style={{ marginVertical: 10 }}
-                value={title}
-                onChangeText={setTitle}
+          <View style={styles.modal}>
+            <View style={styles.container}>
+              <View style={{ backgroundColor: GlobalStyles.white, padding: 5, borderRadius: 10 }}>
+                <Text style={styles.title}>Crear Rutina</Text>
+                <TextInput
+                  label={'Titulo de la Rutina*'}
+                  style={{ marginVertical: 10 }}
+                  value={title}
+                  onChangeText={setTitle}
+                />
+
+                <CrearSecuecia showModal={showModal} pushSecuencia={pushSecuencia} />
+              </View>
+
+              {/* //TODO: convertir los componentes en swipes para poder eliminarlos */}
+              <ListarSecuenciaComponent
+                secuencias={newSecuencia}
+                itemStyle={{ flex: 1 }}
+                listStyle={{ borderTopWidth: 1, paddingTop: 10, marginTop: 20, flex: 1 }}
               />
 
-              <CrearSecuecia showModal={showModal} pushSecuencia={pushSecuencia} />
+              {/* Actions */}
+              <View style={styles.actionContainer}>
+                <Button mode="contained" onPress={handleSubmit}>
+                  Crear
+                </Button>
+                <Button mode="contained" onPress={closeModal}>
+                  Cancelar
+                </Button>
+              </View>
             </View>
 
-            {/* //TODO: convertir los componentes en swipes para poder eliminarlos */}
-            <ListarSecuenciaComponent
-              secuencias={newSecuencia}
-              itemStyle={{ flex: 1 }}
-              listStyle={{ borderTopWidth: 1, paddingTop: 10, marginTop: 20, flex: 1 }}
-            />
-
-            {/* Actions */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                marginVertical: 10,
-              }}
-            >
-              <Button mode="contained" onPress={handleSubmit}>
-                Crear
-              </Button>
-              <Button mode="contained" onPress={closeModal}>
-                Cancelar
-              </Button>
-            </View>
+            {/* Warning */}
+            {isWarningModalVisible && (
+              <View style={{ backgroundColor: GlobalStyles.redError, padding: 10 }}>
+                <Text style={[customModalStyles.modalTitle, { color: GlobalStyles.white }]}>
+                  Alerta
+                </Text>
+                <Text style={[customModalStyles.modalMessage, { color: GlobalStyles.white }]}>
+                  {modalMessage}
+                </Text>
+              </View>
+            )}
           </View>
         )}
       </Portal>
-
-      {/* Warning */}
-      <CustomModal
-        hideModal={() => setIsWarningModalVisible(false)}
-        isAccept={true}
-        onAceptar={() => {}}
-        isVisible={isWarningModalVisible}
-        containerStyle={{ zIndex: 1000 }}
-      >
-        <Text style={customModalStyles.modalTitle}>Alerta</Text>
-        <Text style={customModalStyles.modalMessage}>{modalMessage}</Text>
-      </CustomModal>
 
       {/* Alerta Jugar */}
       <CustomModal
@@ -252,14 +248,18 @@ const CrearSecuecia = (props: crearSecuanciaProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  modal: {
     height: Dimensions.get('window').height,
     width: '100%',
     justifyContent: 'flex-start',
-    padding: 20,
-    backgroundColor: GlobalStyles.grayBackground,
     position: 'absolute',
     top: Constants.statusBarHeight,
+    zIndex: 10,
+    backgroundColor: GlobalStyles.grayBackground,
+  },
+  container: {
+    flex: 1,
+    padding: 20,
   },
   title: {
     fontWeight: 'bold',
@@ -268,6 +268,11 @@ const styles = StyleSheet.create({
   subTitle: {
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginVertical: 10,
   },
   itemCircle: {
     borderRadius: 10,

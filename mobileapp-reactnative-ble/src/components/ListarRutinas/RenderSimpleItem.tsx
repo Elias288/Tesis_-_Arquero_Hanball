@@ -21,8 +21,6 @@ export const RenderSimpleItem = ({ rutina, isRutinaRealizada }: renderSimpleItem
   const [jugador, setJugador] = useState<JugadorType>();
 
   useEffect(() => {
-    console.log(JSON.stringify(rutina, null, 4));
-
     if (isRutinaRealizada) {
       const jugadorById = jugadores.find((jugador) => jugador.id == rutina.jugadorID);
       setJugador(jugadorById);

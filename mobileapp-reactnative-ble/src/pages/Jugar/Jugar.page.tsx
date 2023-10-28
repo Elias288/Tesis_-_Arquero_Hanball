@@ -52,8 +52,6 @@ const JugarPage = (props: propsType) => {
   }, []);
 
   useEffect(() => {
-    console.log(BLECode);
-
     if (!isGameRunning) {
       setLoading(false);
     }
