@@ -26,21 +26,16 @@ const CustomCardHistorialRutinas: FC = () => {
   const obtenerRutinasRealizadasEnSemana = (): Array<RutinaType> => {
     // Calcula el periodo de la semana y obtiene la lista de rutinas realizadas en ese periodo
     const fechaActual = new Date();
-    const diaDeLaSemana = fechaActual.getDay();
-    // Calcular la fecha del primer día de la semana actual (domingo)
-    const primerDiaDeLaSemana = new Date(fechaActual);
-    primerDiaDeLaSemana.setDate(fechaActual.getDate() - diaDeLaSemana);
 
-    // Calcular la fecha del último día de la semana actual (sábado)
-    const ultimoDiaDeLaSemana = new Date(fechaActual);
-    ultimoDiaDeLaSemana.setDate(fechaActual.getDate() + (6 - diaDeLaSemana));
+    // Calcular la fecha de los utlimos 7 dias
+    const sieteDíasAtras = new Date(fechaActual);
+    sieteDíasAtras.setDate(fechaActual.getDate() - 7);
 
     // filtra las rutinas realizadas en el periodo calculado
-    const rutinasEnSemana = rutinasRealizadas.filter((item: RutinaType) => {
+    const rutinasEnSemana = rutinasRealizadas.filter((item) => {
       if (item?.createDate) {
         return (
-          new Date(item.createDate) >= primerDiaDeLaSemana &&
-          new Date(item.createDate) <= ultimoDiaDeLaSemana
+          new Date(item.createDate) >= sieteDíasAtras && new Date(item.createDate) <= fechaActual
         );
       }
       return;
