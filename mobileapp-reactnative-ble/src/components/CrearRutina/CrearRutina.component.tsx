@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Portal, TextInput } from 'react-native-paper';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
-import { SelectList } from 'react-native-dropdown-select-list';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import CustomModal, { customModalStyles } from '../CustomModal.component';
 import Constants from 'expo-constants';
 
-import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
+import ListarSecuenciaComponent from '../ListarSecuencia.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { RutinaType, secuenciaType } from '../../data/RutinasType';
 import { InicioTabPages } from '../../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useCustomBLE } from '../../contexts/BLEProvider';
+import { CrearSecuecia } from './CrearSecuecia';
 
 interface propsType {
   isVisible: boolean;
@@ -24,7 +23,7 @@ const CrearRutina = (props: propsType) => {
   const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
   const { isVisible: visible, hideModal } = props;
   const [title, setTitle] = useState('');
-  const { pushRutina, rutinas } = useCustomLocalStorage();
+  const { rutinas, pushRutina, findRutina } = useCustomLocalStorage();
   const [newRutina, setNewRutina] = useState<RutinaType>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
@@ -34,12 +33,28 @@ const CrearRutina = (props: propsType) => {
   const [newSecuencia, setNewSecuencia] = useState<secuenciaType[]>([]);
 
   const handleSubmit = () => {
+    setIsWarningModalVisible(false);
+
     if (title.trim() == '') {
       showModal('Titulo no puede estár vacio');
       return;
     }
 
-    //TODO: comprobar lista de secuencia > 4 y titulo
+    if (title.trim().length < 4) {
+      showModal('Titulo demaciado corto');
+      return;
+    }
+
+    if (findRutina(title, undefined)) {
+      showModal('Titulo de rutina ya registrada');
+      return;
+    }
+
+    if (newSecuencia.length < 4) {
+      showModal('La cantidad de secuencias no puede ser menor a 4');
+      return;
+    }
+
     setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia, createDate: new Date() });
     pushRutina({ id: rutinas.length, title, secuencia: newSecuencia, createDate: new Date() });
 
@@ -106,19 +121,15 @@ const CrearRutina = (props: propsType) => {
                   Cancelar
                 </Button>
               </View>
-            </View>
 
-            {/* Warning */}
-            {isWarningModalVisible && (
-              <View style={{ backgroundColor: GlobalStyles.redError, padding: 10 }}>
-                <Text style={[customModalStyles.modalTitle, { color: GlobalStyles.white }]}>
-                  Alerta
-                </Text>
-                <Text style={[customModalStyles.modalMessage, { color: GlobalStyles.white }]}>
-                  {modalMessage}
-                </Text>
-              </View>
-            )}
+              {/* Warning */}
+              {isWarningModalVisible && (
+                <View style={warningStyles.warningContainer}>
+                  <Text style={warningStyles.warningTitle}>Alerta</Text>
+                  <Text style={{ color: GlobalStyles.white }}>{modalMessage}</Text>
+                </View>
+              )}
+            </View>
           </View>
         )}
       </Portal>
@@ -138,116 +149,7 @@ const CrearRutina = (props: propsType) => {
   );
 };
 
-interface selectedItem {
-  key: string;
-  value: number;
-  disabled: boolean;
-}
-
-interface crearSecuanciaProps {
-  showModal: (text: string) => void;
-  pushSecuencia: (led: string, time: number) => void;
-}
-
-const CrearSecuecia = (props: crearSecuanciaProps) => {
-  const { showModal, pushSecuencia } = props;
-  const [ledsIdList, setLedsIdList] = useState<Array<selectedItem>>([]);
-  const [timeList, setTimeList] = useState<Array<selectedItem>>([]);
-
-  const [ledIdSelected, setLedIdSelected] = useState<string>('1');
-  const [timeSelected, setTimeSelected] = useState<string>('1');
-
-  useEffect(() => {
-    chargeLedList();
-    chargeSecondsList();
-  }, []);
-
-  const chargeLedList = () => {
-    const ledsIdList = [];
-    for (let i = 1; i <= 4; i++) {
-      ledsIdList.push({ key: `${i}`, value: i, disabled: false });
-    }
-    setLedsIdList(ledsIdList);
-  };
-
-  const chargeSecondsList = () => {
-    const secondsList = [];
-    for (let i = 1; i <= 10; i++) {
-      secondsList.push({ key: `${i}`, value: i, disabled: false });
-    }
-    setTimeList(secondsList);
-  };
-
-  // const clean = () => {
-  //   setLedIdSelected('1');
-  //   setTimeSelected('1');
-  // };
-
-  const añadirSecuencia = () => {
-    if (ledIdSelected.trim() == '') {
-      showModal('Debe seleccionar un led');
-      return;
-    }
-
-    if (timeSelected.trim() == '') {
-      showModal('Debe seleccionar un tiempo');
-      return;
-    }
-
-    pushSecuencia(ledIdSelected, +timeSelected);
-    // clean();
-  };
-
-  return (
-    <View
-      style={{ borderTopWidth: 1, borderColor: GlobalStyles.black, marginTop: 20, paddingTop: 10 }}
-    >
-      <Text style={styles.subTitle}>Añadir Secuencia</Text>
-
-      <View style={{ flexDirection: 'row' }}>
-        <View style={{ paddingVertical: 10, flex: 1, marginRight: 10 }}>
-          <View style={[styles.itemCircle, { backgroundColor: GlobalStyles.greenBackColor }]}>
-            <Icon name="led-on" size={40} color={GlobalStyles.white} />
-            <Text style={styles.itemText}>Led</Text>
-          </View>
-          <SelectList
-            setSelected={(ledId: number) => setLedIdSelected(`${ledId}`)}
-            data={ledsIdList}
-            placeholder="1"
-            search={false}
-          />
-        </View>
-
-        <View style={{ paddingVertical: 10, flex: 1 }}>
-          <View style={[styles.itemCircle, { backgroundColor: GlobalStyles.greenBackColor }]}>
-            <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
-            <Text style={styles.itemText}>Time</Text>
-          </View>
-          <SelectList
-            setSelected={(second: number) => setTimeSelected(`${second}`)}
-            data={timeList}
-            placeholder="1"
-            search={false}
-          />
-        </View>
-      </View>
-
-      {/* Actions */}
-      <View>
-        <Button
-          buttonColor={GlobalStyles.yellowBackColor}
-          textColor={GlobalStyles.yellowTextColor}
-          onPress={añadirSecuencia}
-          style={[GlobalStyles.buttonStyle, { marginBottom: 10 }]}
-        >
-          Añadir
-        </Button>
-      </View>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   modal: {
     height: Dimensions.get('window').height,
     width: '100%',
@@ -265,26 +167,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 25,
   },
-  subTitle: {
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
   actionContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     marginVertical: 10,
   },
-  itemCircle: {
+});
+
+export const warningStyles = StyleSheet.create({
+  warningContainer: {
+    backgroundColor: GlobalStyles.redError,
+    padding: 10,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
   },
-  itemText: {
+  warningTitle: {
+    fontSize: 18,
     color: GlobalStyles.white,
     fontWeight: 'bold',
-    fontSize: 20,
   },
 });
 

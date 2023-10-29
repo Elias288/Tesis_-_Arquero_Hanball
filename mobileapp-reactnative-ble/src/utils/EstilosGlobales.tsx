@@ -15,7 +15,6 @@ const GlobalStyles = {
     paddingHorizontal: 10,
     paddingVertical: 5,
     fontSize: 20,
-    color: '#fff',
   },
   buttonStyle: {
     borderColor: '#746c26',

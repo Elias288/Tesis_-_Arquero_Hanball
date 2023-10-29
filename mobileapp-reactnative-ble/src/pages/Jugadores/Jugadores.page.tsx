@@ -4,7 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../../components/Header.component';
 import { IconButton } from 'react-native-paper';
 
-import ModalAgregarJugador from '../../components/ModalAgregarJugador.component';
+import ModalCrearJugador from '../../components/ModalCrearJugador.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import ListarJugadoresComponent from '../../components/ListarJugadores.component';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
@@ -25,7 +25,7 @@ const JugadoresPage = (props: propsType) => {
       <ListarJugadoresComponent />
 
       {/* Agregar jugador como modal */}
-      <ModalAgregarJugador isVisible={visible} hideModal={hideModal} />
+      <ModalCrearJugador isVisible={visible} hideModal={hideModal} />
 
       <IconButton
         icon={'plus'}

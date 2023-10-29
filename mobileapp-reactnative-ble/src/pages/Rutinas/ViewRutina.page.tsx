@@ -78,7 +78,7 @@ const ViewRutina = (props: propsType) => {
             <>
               <View style={{ flex: 1 }}>
                 <Text>Jugador:</Text>
-                <Text style={styles.jugadorName}>{jugadorDeRutina?.name}</Text>
+                <Text style={GlobalStyles.jugadorName}>{jugadorDeRutina?.name}</Text>
               </View>
             </>
           )}
@@ -86,13 +86,13 @@ const ViewRutina = (props: propsType) => {
         <View style={styles.infoContainer}>
           {selectedRutina?.createDate && (
             <View style={{ flex: 1 }}>
-              <Text>Fecha de creación:</Text>
+              <Text style={{ fontWeight: 'bold' }}>Fecha de creación:</Text>
               <Text>{formateDate(new Date(selectedRutina?.createDate), true)}</Text>
             </View>
           )}
           {selectedRutina?.playedDate && (
             <View style={{ flex: 1 }}>
-              <Text>Fecha jugada:</Text>
+              <Text>Fecha realizada:</Text>
               <Text>{formateDate(new Date(selectedRutina?.playedDate), true)}</Text>
             </View>
           )}

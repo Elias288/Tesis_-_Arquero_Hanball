@@ -84,9 +84,9 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
       return new Date(a.createDate).getTime() - new Date(b.createDate).getTime();
     } else if (sort === sortType.lastplayed) {
       // Ordenar por fecha el más viejo
-      if (a.playedDate && b.playedDate)
-        return new Date(a.playedDate).getTime() - new Date(b.playedDate).getTime();
-      return 0;
+      if (!a.playedDate || !b.playedDate) return 0;
+
+      return new Date(a.playedDate).getTime() - new Date(b.playedDate).getTime();
     } else {
       return 0;
     }

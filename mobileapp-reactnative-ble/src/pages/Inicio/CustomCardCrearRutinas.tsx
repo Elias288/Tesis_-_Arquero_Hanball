@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import CrearRutinaAleatoriaComponent from '../../components/CrearRutinaAleatoria.component';
 import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
-import CrearRutina from '../Rutinas/CrearRutina.component';
+import CrearRutina from '../../components/CrearRutina/CrearRutina.component';
 import OptionButtons from './OptionButtons';
 import CustomCard, { cardStyles } from './CustomCard';
 import { RootTabs } from '../../Main';

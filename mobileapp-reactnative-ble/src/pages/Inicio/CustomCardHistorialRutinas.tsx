@@ -37,10 +37,13 @@ const CustomCardHistorialRutinas: FC = () => {
 
     // filtra las rutinas realizadas en el periodo calculado
     const rutinasEnSemana = rutinasRealizadas.filter((item: RutinaType) => {
-      return (
-        new Date(item.createDate) >= primerDiaDeLaSemana &&
-        new Date(item.createDate) <= ultimoDiaDeLaSemana
-      );
+      if (item?.createDate) {
+        return (
+          new Date(item.createDate) >= primerDiaDeLaSemana &&
+          new Date(item.createDate) <= ultimoDiaDeLaSemana
+        );
+      }
+      return;
     });
 
     setRutinasRealizadasEnLaSemana(rutinasEnSemana);

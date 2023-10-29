@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import InicioPage from '../pages/Inicio/Inicio.page';
 import JugarPage from '../pages/Jugar/Jugar.page';
-import ViewJugadorComponent from '../pages/Jugadores/ViewJugador/ViewJugador.component';
 import RutinasPage from '../pages/Rutinas/Rutinas.page';
 
 export type InicioTabPages = {

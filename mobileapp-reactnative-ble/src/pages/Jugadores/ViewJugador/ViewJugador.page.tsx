@@ -10,10 +10,11 @@ import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
 import { JugadorType } from '../../../data/JugadoresType';
 import { RutinaType } from '../../../data/RutinasType';
 import { RenderItemRutinaDeJugador } from './RenderItemRutinaDeJugador';
+import formateDate from '../../../utils/formateDate';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ViewJugadores'>;
 
-const ViewJugadorComponent = (props: propsType) => {
+const ViewJugadorPage = (props: propsType) => {
   const { navigation, route } = props;
   const { jugadores, getRutinasJugadasDeJugador, rutinasRealizadas } = useCustomLocalStorage();
   const { jugadorId } = route.params;
@@ -32,6 +33,7 @@ const ViewJugadorComponent = (props: propsType) => {
     <>
       <HeaderComponent title={'Jugador'} showBackButton={true} />
       <View style={styles.container}>
+        {/* Jugador info */}
         <View style={styles.containerTitle}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text>Jugador: </Text>
@@ -39,6 +41,14 @@ const ViewJugadorComponent = (props: propsType) => {
           </View>
         </View>
 
+        {jugador?.date && (
+          <View style={styles.containerTitle}>
+            <Text style={{ fontWeight: 'bold' }}>Fecha de creación:</Text>
+            <Text>{formateDate(new Date(jugador.date), true)}</Text>
+          </View>
+        )}
+
+        {/* Historial de rutinas */}
         <View style={styles.containerList}>
           <Text style={styles.title}>Historial de entrenamientos</Text>
           {rutinasJugadas?.length == 0 ? (
@@ -63,7 +73,7 @@ const styles = StyleSheet.create({
   containerTitle: {
     backgroundColor: GlobalStyles.white,
     padding: 10,
-    marginBottom: 20,
+    marginBottom: 10,
     borderRadius: 10,
   },
   containerList: {
@@ -86,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewJugadorComponent;
+export default ViewJugadorPage;

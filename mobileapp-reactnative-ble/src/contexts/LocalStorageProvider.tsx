@@ -13,9 +13,17 @@ interface useLocalStorageType {
   pushJugador: (newJugador: JugadorType) => void;
   clearJugadoresDB: () => void;
   popJugador: (jugadorId: number) => void;
+  findJugador: (
+    jugadorName: string | undefined,
+    jugadorId: number | undefined
+  ) => JugadorType | undefined;
   rutinas: Array<RutinaType>;
   pushRutina: (newRutina: RutinaType) => void;
   popRutina: (rutinaId: number) => void;
+  findRutina: (
+    rutinaTitle: string | undefined,
+    rutinaId: number | undefined
+  ) => RutinaType | undefined;
   rutinasRealizadas: Array<RutinaType>;
   pushRutinaRealizada: (newRutina: RutinaType) => void;
   popRutinaRealizada: (rutinaId: number) => void;
@@ -31,13 +39,13 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [rutinasRealizadas, setRutinasRealizadas] = useState<Array<RutinaType>>([]);
 
   useEffect(() => {
-    findJugadores();
-    findRutinas();
-    findAllRutinasRealizadas();
+    listAllJugadores();
+    ListAllRutinas();
+    listAllRutinasRealizadas();
   }, []);
 
   // ****************************************** Jugadores ******************************************
-  const findJugadores = async () => {
+  const listAllJugadores = async () => {
     try {
       const value = await AsyncStorage.getItem('jugadores');
       if (value !== null) setJugadores(JSON.parse(value));
@@ -57,6 +65,15 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('jugadores', JSON.stringify(newJugadoresList));
   };
 
+  const findJugador = (
+    jugadorName: string | undefined,
+    jugadorId: number | undefined
+  ): JugadorType | undefined => {
+    if (jugadorName) return jugadores.find((jugador) => jugador.name == jugadorName);
+    if (jugadorId) return jugadores.find((jugador) => jugador.id == jugadorId);
+    return undefined;
+  };
+
   const clearJugadoresDB = async () => {
     console.log('db clear');
     setJugadores([]);
@@ -64,7 +81,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   // ****************************************** Rutinas ******************************************
-  const findRutinas = async () => {
+  const ListAllRutinas = async () => {
     try {
       const value = await AsyncStorage.getItem('rutinas');
       if (value !== null) setRutinas(JSON.parse(value));
@@ -84,8 +101,17 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinaList));
   };
 
+  const findRutina = (
+    rutinaTitle: string | undefined,
+    rutinaId: number | undefined
+  ): RutinaType | undefined => {
+    if (rutinaTitle) return rutinas.find((rutina) => rutina.title == rutinaTitle);
+    if (rutinaId) return rutinas.find((rutina) => rutina.id == rutinaId);
+    return undefined;
+  };
+
   // ************************************ Rutinas Realizadas ************************************
-  const findAllRutinasRealizadas = async () => {
+  const listAllRutinasRealizadas = async () => {
     try {
       const value = await AsyncStorage.getItem('rutinasRealizadas');
       if (value !== null) setRutinasRealizadas(JSON.parse(value));
@@ -126,9 +152,11 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         pushJugador,
         clearJugadoresDB,
         popJugador,
+        findJugador,
         rutinas,
         popRutina,
         pushRutina,
+        findRutina,
         rutinasRealizadas,
         popRutinaRealizada,
         pushRutinaRealizada,

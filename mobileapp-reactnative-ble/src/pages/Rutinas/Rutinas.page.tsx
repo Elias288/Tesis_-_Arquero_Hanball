@@ -6,7 +6,7 @@ import { Button, IconButton } from 'react-native-paper';
 
 import { RutinaTabPages } from '../../navigation/RutinasTab';
 import ListarRutinasComponent from '../../components/ListarRutinas/ListarRutinas.component';
-import CrearRutina from './CrearRutina.component';
+import CrearRutina from '../../components/CrearRutina/CrearRutina.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasPage'>;

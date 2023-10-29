@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ViewJugadorComponent from '../pages/Jugadores/ViewJugador/ViewJugador.component';
+import ViewJugadorPage from '../pages/Jugadores/ViewJugador/ViewJugador.page';
 import JugadoresPage from '../pages/Jugadores/Jugadores.page';
 
 export type ListaJugadoresTabPages = {
@@ -13,7 +13,7 @@ const ListaJugadoresTab = () => {
   return (
     <Stack.Navigator initialRouteName="ListaJugadores" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ListaJugadores" component={JugadoresPage} />
-      <Stack.Screen name="ViewJugadores" component={ViewJugadorComponent} />
+      <Stack.Screen name="ViewJugadores" component={ViewJugadorPage} />
     </Stack.Navigator>
   );
 };
