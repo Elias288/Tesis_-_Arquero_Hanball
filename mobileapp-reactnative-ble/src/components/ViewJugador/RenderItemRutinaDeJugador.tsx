@@ -2,16 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import GlobalStyles from '../../../utils/EstilosGlobales';
-import { RutinaType } from '../../../data/RutinasType';
-import { RootTabs } from '../../../Main';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import { RutinaType } from '../../data/RutinasType';
+import { RootTabs } from '../../Main';
 import { useNavigation } from '@react-navigation/native';
-import formateDate from '../../../utils/formateDate';
+import formateDate from '../../utils/formateDate';
 
-interface renderItemRutinaProps {
-  rutina: RutinaType;
-}
-export const RenderItemRutinaDeJugador = ({ rutina }: renderItemRutinaProps) => {
+export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) => {
   const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
 
   const goToViewRutina = () => {

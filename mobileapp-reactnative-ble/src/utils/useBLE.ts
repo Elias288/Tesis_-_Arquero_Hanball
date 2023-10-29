@@ -28,7 +28,7 @@ export interface BluetoothLowEnergyApi {
   cleanBLECode(): void;
   initBle(): void;
   secuenciaToString(secuencia: Array<secuenciaType>): string;
-  selectRutina(rutina: RutinaType): void;
+  selectRutina(rutina: RutinaType | undefined): void;
   runGame: (run: boolean) => void;
   stringToSecuencia: (secuencia: string) => Array<secuenciaType>;
   connectedDevice: Device | undefined;
@@ -155,6 +155,7 @@ function useBLE(): BluetoothLowEnergyApi {
                   bleManager.connectedDevices([ESP32_SERVICE_UUID]).then((device) => {
                     console.log(device);
                   });
+                  return;
                 }
               });
             }
@@ -199,6 +200,7 @@ function useBLE(): BluetoothLowEnergyApi {
   };
 
   const connectToDevice = async (device: Device) => {
+    // TODO: bug cuando ya esta conectado
     device
       .connect()
       .then((device) => {

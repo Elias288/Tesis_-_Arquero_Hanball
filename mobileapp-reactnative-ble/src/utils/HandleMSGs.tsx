@@ -22,8 +22,16 @@ const HandleMSGs = () => {
       >
     >();
 
-  const { receivedMSG, BLECode, BLEmsg, cleanBLECode, runGame, stringToSecuencia, selectedRutina } =
-    useCustomBLE();
+  const {
+    receivedMSG,
+    BLECode,
+    BLEmsg,
+    cleanBLECode,
+    runGame,
+    stringToSecuencia,
+    selectRutina,
+    selectedRutina,
+  } = useCustomBLE();
   const { pushRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
@@ -58,15 +66,22 @@ const HandleMSGs = () => {
       const secuenciaRecibida = stringToSecuencia(secuenciaStringRecibida);
 
       if (selectedRutina) {
-        selectedRutina.secuencia.map((sec) => {
+        const rut = selectedRutina;
+        selectRutina(undefined);
+
+        rut.secuencia.map((sec) => {
           sec.resTime = secuenciaRecibida.find((result) => result.id === sec.id)?.resTime;
         });
 
-        pushRutinaRealizada({ ...selectedRutina, id: rutinasRealizadas.length + 1 });
+        pushRutinaRealizada({
+          ...rut,
+          id: rutinasRealizadas.length + 1,
+          title: 'Rutina ' + (rutinasRealizadas.length + 1),
+        });
 
         navigator?.navigate('Rutinas', {
           screen: 'ViewRutina',
-          params: { rutina: JSON.stringify(selectedRutina), isRutinaResultado: true },
+          params: { rutina: JSON.stringify(rut), isRutinaResultado: true },
         });
       }
     },

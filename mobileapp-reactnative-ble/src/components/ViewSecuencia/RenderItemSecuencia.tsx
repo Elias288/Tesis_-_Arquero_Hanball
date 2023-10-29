@@ -1,28 +1,10 @@
-import { FlatList, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { FC } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import { RutinaType, secuenciaType } from '../../data/RutinasType';
+import { secuenciaType } from '../../data/RutinasType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 
-interface ViewSecuenciasResProps {
-  rutina: RutinaType;
-  style?: StyleProp<ViewStyle>;
-}
-
-const ViewSecuenciaResultadoComponent: FC<ViewSecuenciasResProps> = ({ rutina, style }) => {
-  return (
-    <View style={style}>
-      <FlatList
-        data={rutina?.secuencia}
-        renderItem={({ item }) => <RenderItem secuenciaRes={item} />}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </View>
-  );
-};
-
-const RenderItem: FC<{ secuenciaRes: secuenciaType }> = ({ secuenciaRes }) => {
+export const RenderItemSecuencia = ({ secuenciaRes }: { secuenciaRes: secuenciaType }) => {
   return (
     <View style={ViewSecuenciaResultadoStyles.itemContainer}>
       <View
@@ -90,5 +72,3 @@ const ViewSecuenciaResultadoStyles = StyleSheet.create({
     fontSize: 20,
   },
 });
-
-export default ViewSecuenciaResultadoComponent;

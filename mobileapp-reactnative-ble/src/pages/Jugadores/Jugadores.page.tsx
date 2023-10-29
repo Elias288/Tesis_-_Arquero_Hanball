@@ -6,7 +6,7 @@ import { IconButton } from 'react-native-paper';
 
 import ModalCrearJugador from '../../components/ModalCrearJugador.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
-import ListarJugadoresComponent from '../../components/ListarJugadores.component';
+import ListarJugadoresComponent from '../../components/ListarJugadores/ListarJugadores.component';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;

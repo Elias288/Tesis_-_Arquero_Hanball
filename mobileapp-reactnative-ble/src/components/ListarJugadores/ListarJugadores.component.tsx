@@ -1,25 +1,17 @@
 import React, { FC, useEffect, useState } from 'react';
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Text,
-  StyleProp,
-  ViewStyle,
-  TouchableOpacity,
-} from 'react-native';
-import { JugadorType } from '../data/JugadoresType';
-import { IconButton } from 'react-native-paper';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import GlobalStyles from '../utils/EstilosGlobales';
-import sortType from '../utils/sortType';
-import CustomModal, { customModalStyles } from './CustomModal.component';
-import { ListaJugadoresTabPages } from '../navigation/ListaJugadoresTab';
-import { RootTabs } from '../Main';
-import formateDate from '../utils/formateDate';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { JugadorType } from '../../data/JugadoresType';
+import { RootTabs } from '../../Main';
+import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
+import sortType from '../../utils/sortType';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import CustomModal, { customModalStyles } from '../CustomModal.component';
+import { RenderItem } from './RenderItem';
+import { RenderSimpleItem } from './RenderSimpleItem';
 
 const ItemHeigth = 80;
 
@@ -93,8 +85,8 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
 
   if (jugadoresList.length == 0) {
     return (
-      <View style={styles.emptyListContainer}>
-        <Text style={styles.emptyListMessage}>Sin jugadores</Text>
+      <View style={listarJugadoresStyles.emptyListContainer}>
+        <Text style={listarJugadoresStyles.emptyListMessage}>Sin jugadores</Text>
       </View>
     );
   }
@@ -114,7 +106,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   }
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={[listarJugadoresStyles.container, containerStyle]}>
       <FlatList
         data={jugadoresList}
         renderItem={({ item: jugador }) => (
@@ -135,96 +127,21 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
         isAcceptCancel={true}
       >
         <Text style={customModalStyles.modalTitle}>Borrar Jugador</Text>
-        <Text style={customModalStyles.modalMessage}>Seguro que quiere eliminar este jugador?</Text>
+        <View style={customModalStyles.modalMessage}>
+          <Text>Seguro que quiere eliminar este jugador?</Text>
+          <Text>Se eliminarán sus rutinas realizadas tambien</Text>
+        </View>
       </CustomModal>
     </View>
   );
 };
 
-interface RenderProps {
-  jugador: JugadorType;
-  gotoViewJugadores: (jugadorId: number) => void;
-  deleteJugador: (id: number) => void;
-}
-
-const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: RenderProps) => {
-  return (
-    <View style={styles.completeItemContainer}>
-      <Text style={{ flex: 1, fontSize: 18 }}>{jugador.name}</Text>
-
-      {/******************************************* Options *******************************************/}
-      <View style={{ flexDirection: 'row' }}>
-        <IconButton
-          icon={'eye'}
-          containerColor={GlobalStyles.greenBackColor}
-          iconColor={GlobalStyles.white}
-          size={30}
-          onPress={() => gotoViewJugadores(jugador.id)}
-          mode="contained"
-        />
-        <IconButton
-          icon={'delete'}
-          containerColor={GlobalStyles.greenBackColor}
-          iconColor={GlobalStyles.white}
-          size={30}
-          onPress={() => deleteJugador(jugador.id)}
-          mode="contained"
-        />
-      </View>
-    </View>
-  );
-};
-
-const RenderSimpleItem = ({
-  jugador,
-  gotoViewJugadores,
-}: {
-  jugador: JugadorType;
-  gotoViewJugadores: (jugadorId: number) => void;
-}) => {
-  const goToViewJugador = () => {
-    gotoViewJugadores(jugador.id);
-  };
-
-  return (
-    <TouchableOpacity style={styles.simpleItemContainer} onPress={goToViewJugador}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.itemTitle}>{jugador.name}</Text>
-      </View>
-      <Text style={styles.simpleItemSubText}>{formateDate(new Date(jugador.date), false)}</Text>
-    </TouchableOpacity>
-  );
-};
-
-const styles = StyleSheet.create({
+const listarJugadoresStyles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 13,
   },
-  completeItemContainer: {
-    backgroundColor: GlobalStyles.white,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 25,
-    marginBottom: 13,
-  },
-  simpleItemContainer: {
-    backgroundColor: GlobalStyles.grayBackground,
-    padding: 10,
-    borderRadius: 5,
-    flexDirection: 'row',
-    marginBottom: 13,
-  },
-  simpleItemSubText: {
-    fontSize: 13,
-  },
-  itemTitle: {
-    flex: 4,
-    fontSize: 18,
-    marginLeft: 1,
-  },
+
   emptyListContainer: {
     flex: 1,
     alignItems: 'center',

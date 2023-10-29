@@ -8,7 +8,6 @@ import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { RutinaType } from '../../data/RutinasType';
 import { RenderSimpleItem } from './RenderSimpleItem';
 import { RenderItem } from './RenderItem';
-import { RenderItemRutinaDeJugador } from '../../pages/Jugadores/ViewJugador/RenderItemRutinaDeJugador';
 
 const ItemHeigth = 80;
 

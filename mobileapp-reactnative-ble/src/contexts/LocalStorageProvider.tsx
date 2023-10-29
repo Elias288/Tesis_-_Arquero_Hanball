@@ -60,6 +60,11 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const popJugador = async (popJugadorId: number) => {
+    // borra rutinas realizadas por jugador
+    const rutinasDeJugador = getRutinasJugadasDeJugador(popJugadorId);
+    rutinasDeJugador.forEach((rr) => popRutinaRealizada(rr.id));
+
+    // borra jugador
     const newJugadoresList = jugadores.filter((j) => j.id !== popJugadorId);
     setJugadores(newJugadoresList);
     await AsyncStorage.setItem('jugadores', JSON.stringify(newJugadoresList));

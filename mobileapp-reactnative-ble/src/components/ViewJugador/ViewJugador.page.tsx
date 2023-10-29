@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import HeaderComponent from '../../../components/Header.component';
-import GlobalStyles from '../../../utils/EstilosGlobales';
-import { ListaJugadoresTabPages } from '../../../navigation/ListaJugadoresTab';
-import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
-import { JugadorType } from '../../../data/JugadoresType';
-import { RutinaType } from '../../../data/RutinasType';
+import HeaderComponent from '../Header.component';
+import GlobalStyles from '../../utils/EstilosGlobales';
+import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { JugadorType } from '../../data/JugadoresType';
+import { RutinaType } from '../../data/RutinasType';
+import formateDate from '../../utils/formateDate';
 import { RenderItemRutinaDeJugador } from './RenderItemRutinaDeJugador';
-import formateDate from '../../../utils/formateDate';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ViewJugadores'>;
 

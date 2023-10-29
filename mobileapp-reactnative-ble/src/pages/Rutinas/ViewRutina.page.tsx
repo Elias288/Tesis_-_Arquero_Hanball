@@ -92,7 +92,7 @@ const ViewRutina = (props: propsType) => {
           )}
           {selectedRutina?.playedDate && (
             <View style={{ flex: 1 }}>
-              <Text>Fecha realizada:</Text>
+              <Text style={{ fontWeight: 'bold' }}>Fecha realizada:</Text>
               <Text>{formateDate(new Date(selectedRutina?.playedDate), true)}</Text>
             </View>
           )}
