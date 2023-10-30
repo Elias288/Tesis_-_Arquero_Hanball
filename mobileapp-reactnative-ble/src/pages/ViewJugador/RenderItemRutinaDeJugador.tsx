@@ -63,13 +63,10 @@ const renderItemStyles = StyleSheet.create({
     marginBottom: 5,
   },
   countContainer: {
-    // marginTop: 5,
     padding: 5,
     borderTopWidth: 1,
     flexDirection: 'row',
-    flex: 1,
     flexWrap: 'wrap',
-    height: '100%',
   },
   countText: {
     width: '45%',

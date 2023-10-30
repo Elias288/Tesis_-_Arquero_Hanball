@@ -1,21 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Modal, Portal, TextInput } from 'react-native-paper';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import GlobalStyles from '../../utils/EstilosGlobales';
-
+import { JugadorType } from '../../data/JugadoresType';
 
 type propsType = {
   isVisible: boolean;
   hideModal: () => void;
+  editJugador?: JugadorType;
 };
 
-const ModalCrearJugador = ({ isVisible, hideModal }: propsType) => {
+const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => {
   const [name, setName] = useState<string>('');
-  const { jugadores, pushJugador, findJugador } = useCustomLocalStorage();
+  const { jugadores, pushJugador, findJugador, updateJugador } = useCustomLocalStorage();
+  const prevJugador: JugadorType | undefined = editJugador;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState<string>('');
+
+  useEffect(() => {
+    if (editJugador) setName(editJugador.name);
+  }, [editJugador]);
 
   const handleSubmit = () => {
     if (name.trim() == '') {
@@ -24,7 +30,12 @@ const ModalCrearJugador = ({ isVisible, hideModal }: propsType) => {
     }
 
     if (name.trim().length < 4) {
-      showModal('Nombre demaciado corto');
+      showModal('Nombre demasiado corto');
+      return;
+    }
+
+    if (name.trim().length > 20) {
+      showModal('Nombre demasiado largo');
       return;
     }
 
@@ -35,6 +46,33 @@ const ModalCrearJugador = ({ isVisible, hideModal }: propsType) => {
 
     pushJugador({ id: jugadores.length, name: name.trim(), date: new Date() });
     closeModal();
+  };
+
+  const handleEdit = () => {
+    if (prevJugador && prevJugador.name != name) {
+      if (name.trim() == '') {
+        showModal('Nombre no puede estár vacio');
+        return;
+      }
+
+      if (name.trim().length < 4) {
+        showModal('Nombre demasiado corto');
+        return;
+      }
+
+      if (name.trim().length > 20) {
+        showModal('Nombre demasiado largo');
+        return;
+      }
+
+      if (findJugador(name.trim(), undefined)) {
+        showModal('Nombre de jugador ya registrado');
+        return;
+      }
+
+      updateJugador({ ...prevJugador, name: name });
+      closeModal();
+    }
   };
 
   const showModal = (message: string) => {
@@ -66,9 +104,15 @@ const ModalCrearJugador = ({ isVisible, hideModal }: propsType) => {
 
           {/* Actions */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginVertical: 10 }}>
-            <Button mode="contained" onPress={handleSubmit}>
-              Agregar
-            </Button>
+            {editJugador ? (
+              <Button mode="contained" onPress={handleEdit}>
+                Editar
+              </Button>
+            ) : (
+              <Button mode="contained" onPress={handleSubmit}>
+                Agregar
+              </Button>
+            )}
             <Button mode="contained" onPress={closeModal}>
               Cancelar
             </Button>

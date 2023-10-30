@@ -13,6 +13,7 @@ interface useLocalStorageType {
   pushJugador: (newJugador: JugadorType) => void;
   clearJugadoresDB: () => void;
   popJugador: (jugadorId: number) => void;
+  updateJugador: (newJugador: JugadorType) => void;
   findJugador: (
     jugadorName: string | undefined,
     jugadorId: number | undefined
@@ -70,12 +71,23 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('jugadores', JSON.stringify(newJugadoresList));
   };
 
+  const updateJugador = async (newJugador: JugadorType) => {
+    const jugadorIndex = jugadores.findIndex((jugador) => jugador.id === newJugador.id);
+
+    if (jugadorIndex !== -1) {
+      const newJugadores = [...jugadores];
+      newJugadores[jugadorIndex] = newJugador;
+      setJugadores(newJugadores);
+      await AsyncStorage.setItem('jugadores', JSON.stringify(newJugadores));
+    }
+  };
+
   const findJugador = (
     jugadorName: string | undefined,
     jugadorId: number | undefined
   ): JugadorType | undefined => {
-    if (jugadorName) return jugadores.find((jugador) => jugador.name == jugadorName);
-    if (jugadorId) return jugadores.find((jugador) => jugador.id == jugadorId);
+    if (jugadorName != undefined) return jugadores.find((jugador) => jugador.name == jugadorName);
+    if (jugadorId != undefined) return jugadores.find((jugador) => jugador.id == jugadorId);
     return undefined;
   };
 
@@ -110,8 +122,8 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     rutinaTitle: string | undefined,
     rutinaId: number | undefined
   ): RutinaType | undefined => {
-    if (rutinaTitle) return rutinas.find((rutina) => rutina.title == rutinaTitle);
-    if (rutinaId) return rutinas.find((rutina) => rutina.id == rutinaId);
+    if (rutinaTitle !== undefined) return rutinas.find((rutina) => rutina.title == rutinaTitle);
+    if (rutinaId !== undefined) return rutinas.find((rutina) => rutina.id == rutinaId);
     return undefined;
   };
 
@@ -157,6 +169,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         pushJugador,
         clearJugadoresDB,
         popJugador,
+        updateJugador,
         findJugador,
         rutinas,
         popRutina,
