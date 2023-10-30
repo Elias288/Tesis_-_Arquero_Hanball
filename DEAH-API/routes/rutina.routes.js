@@ -1,5 +1,6 @@
 const express = require('express');
 const RutinaController = require('../controller/rutina.controller');
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 const rutinaController = new RutinaController();
@@ -11,5 +12,7 @@ router.put('/update/:id', auth, rutinaController.update);
 router.delete('/delete/:id', auth, rutinaController.deleteById);
 
 router.put('/addSecuencia', auth, rutinaController.asignarSecuencia);
+
+/* TODO: obtener jugador */
 
 module.exports = router;

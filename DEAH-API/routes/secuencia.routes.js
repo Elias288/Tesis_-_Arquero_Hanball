@@ -1,5 +1,6 @@
 const express = require('express');
 const SecuenciaController = require('../controller/secuencia.controller');
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 const secuenciaController = new SecuenciaController();
