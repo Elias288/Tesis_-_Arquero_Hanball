@@ -1,27 +1,19 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { FC } from 'react';
-import { View, ScrollView } from 'react-native';
-import { CompositeScreenProps } from '@react-navigation/native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 
-import { InicioTabPages } from '../../navigation/InicioTab';
 import HeaderComponent from '../../components/Header.component';
-import { RootTabs } from '../../Main';
 import CustomCardHistorialRutinas from './CustomCardHistorialRutinas';
 import CustomCardCrearRutinas from './CustomCardCrearRutinas';
 import CustomCardJugadores from './CustomCardJugadores';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
-type propsType = CompositeScreenProps<
-  NativeStackScreenProps<InicioTabPages, 'InicioPage'>,
-  NativeStackScreenProps<RootTabs>
->;
-
-const InicioPage: FC<propsType> = (props: propsType) => {
+const InicioPage: FC = () => {
   return (
-    <>
+    <View style={styles.container}>
       <HeaderComponent title={'DEAH App'} />
 
-      <ScrollView style={{ padding: 13 }}>
-        <View style={{ marginBottom: 13 }}>
+      <ScrollView contentContainerStyle={styles.scrollStyles}>
+        <View>
           <CustomCardCrearRutinas />
 
           <CustomCardJugadores />
@@ -29,8 +21,18 @@ const InicioPage: FC<propsType> = (props: propsType) => {
           <CustomCardHistorialRutinas />
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: GlobalStyles.grayBackground,
+    flex: 1,
+  },
+  scrollStyles: {
+    paddingTop: 13,
+    paddingHorizontal: 13,
+  },
+});
 export default InicioPage;

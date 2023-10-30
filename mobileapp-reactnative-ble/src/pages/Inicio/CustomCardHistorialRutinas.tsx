@@ -8,6 +8,7 @@ import { RootTabs } from '../../Main';
 import CustomCard, { cardStyles } from './CustomCard';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { RutinaType } from '../../data/RutinasType';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
 const CustomCardHistorialRutinas: FC = () => {
   const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
@@ -77,28 +78,20 @@ const CustomCardHistorialRutinas: FC = () => {
     <CustomCard>
       <Text style={cardStyles.cardTitle}>Historial de Rutinas</Text>
 
-      <View style={historialStyles.container}>
+      <View style={historialStyles.countCard}>
         <View style={{ flex: 1 }}>
-          <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>
-            {rutinasRealizadasEnLaSemana.length}
-          </Text>
+          <Text style={historialStyles.cardText}>{rutinasRealizadasEnLaSemana.length}</Text>
           <Text style={{ textAlign: 'center' }}>Total de entrenamientos esta semana</Text>
         </View>
+
         <View style={{ borderColor: '#b6b6b6', borderWidth: 1 }}></View>
+
         <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'baseline',
-            }}
-          >
-            <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: 'bold' }}>
-              {minutosEnEntrenamientosSemana}
-            </Text>
+          <View style={historialStyles.timeContainer}>
+            <Text style={historialStyles.cardText}>{minutosEnEntrenamientosSemana}</Text>
             <Text>m</Text>
           </View>
+
           <Text style={{ textAlign: 'center' }}>Duración total de entrenamientos esta semana</Text>
         </View>
       </View>
@@ -111,12 +104,22 @@ const CustomCardHistorialRutinas: FC = () => {
 };
 
 const historialStyles = StyleSheet.create({
-  container: {
-    backgroundColor: '#E7E7E7',
+  countCard: {
+    backgroundColor: GlobalStyles.grayBackground,
     borderRadius: 10,
     flexDirection: 'row',
     padding: 3,
     marginBottom: 10,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+  },
+  cardText: {
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
 

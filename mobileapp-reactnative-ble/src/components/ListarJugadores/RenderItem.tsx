@@ -46,7 +46,6 @@ const renderItemStyles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 25,
     marginBottom: 13,
   },
 });

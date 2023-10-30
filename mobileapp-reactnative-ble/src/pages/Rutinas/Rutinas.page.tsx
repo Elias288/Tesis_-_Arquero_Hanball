@@ -23,7 +23,7 @@ const RutinasPage = (props: propsType) => {
     <>
       <HeaderComponent title={'Rutinas'} showBackButton={false} />
       <View style={styles.container}>
-        <View style={styles.action}>
+        <View style={styles.navAction}>
           <Button
             mode="outlined"
             buttonColor={GlobalStyles.yellowBackColor}
@@ -45,9 +45,7 @@ const RutinasPage = (props: propsType) => {
           </Button>
         </View>
 
-        <View style={{ flex: 1 }}>
-          <ListarRutinasComponent />
-        </View>
+        <ListarRutinasComponent />
 
         <CrearRutina isVisible={visibleModal} hideModal={() => setVisibleModal(false)} />
 
@@ -66,12 +64,16 @@ const RutinasPage = (props: propsType) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: GlobalStyles.grayBackground, padding: 20 },
-  action: {
+  container: {
+    flex: 1,
+    backgroundColor: GlobalStyles.grayBackground,
+  },
+  navAction: {
     backgroundColor: GlobalStyles.white,
-    marginBottom: 10,
+    marginVertical: 13,
     borderRadius: 20,
     padding: 10,
+    marginHorizontal: 13,
     flexDirection: 'row',
   },
 });

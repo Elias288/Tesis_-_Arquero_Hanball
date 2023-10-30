@@ -117,7 +117,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
           />
         )}
         keyExtractor={(jugador) => jugador.id.toString()}
-        ListFooterComponent={<View style={{ height: ItemHeigth - 30 }}></View>} // agrega un espacio en blanco al final
+        contentContainerStyle={listarJugadoresStyles.scrollStyle}
       />
 
       <CustomModal
@@ -139,9 +139,12 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
 const listarJugadoresStyles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 13,
   },
-
+  scrollStyle: {
+    paddingBottom: 100,
+    paddingTop: 13,
+    paddingHorizontal: 13,
+  },
   emptyListContainer: {
     flex: 1,
     alignItems: 'center',

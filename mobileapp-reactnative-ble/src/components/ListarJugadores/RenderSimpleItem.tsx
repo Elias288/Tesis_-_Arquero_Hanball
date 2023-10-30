@@ -20,6 +20,7 @@ export const RenderSimpleItem = ({ jugador, gotoViewJugadores }: renderSimpleIte
       <View style={{ flex: 1 }}>
         <Text style={renderSimpleItemStyles.itemTitle}>{jugador.name}</Text>
       </View>
+
       <Text style={renderSimpleItemStyles.simpleItemSubText}>
         {formateDate(new Date(jugador.date), false)}
       </Text>
@@ -39,7 +40,6 @@ const renderSimpleItemStyles = StyleSheet.create({
     fontSize: 13,
   },
   itemTitle: {
-    flex: 4,
     fontSize: 18,
     marginLeft: 1,
   },

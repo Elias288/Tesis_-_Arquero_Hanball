@@ -9,8 +9,6 @@ import { RutinaType } from '../../data/RutinasType';
 import { RenderSimpleItem } from './RenderSimpleItem';
 import { RenderItem } from './RenderItem';
 
-const ItemHeigth = 80;
-
 interface ListarRutinasProps {
   simpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
@@ -123,8 +121,8 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
         renderItem={({ item }) => (
           <RenderItem rutina={item} deleteRutina={() => showDeleteModal(item.id)} />
         )}
+        contentContainerStyle={styles.flatStyle}
         keyExtractor={(item) => item.id.toString()}
-        ListFooterComponent={<View style={{ height: ItemHeigth - 30 }}></View>} // agrega un espacio en blanco al final
       />
       <CustomModal
         hideModal={() => setIsModalVisible(false)}
@@ -143,12 +141,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  completeItemContainer: {
-    backgroundColor: GlobalStyles.white,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 13,
+  flatStyle: {
+    paddingBottom: 100,
+    paddingHorizontal: 13,
   },
   simpleItemContainer: {
     backgroundColor: GlobalStyles.white,
