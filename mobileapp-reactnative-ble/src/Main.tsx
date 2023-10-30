@@ -10,6 +10,7 @@ import HandleMSGs from './utils/HandleMSGs';
 import ListaJugadoresTab, { ListaJugadoresTabPages } from './navigation/ListaJugadoresTab';
 import RutinasTab, { RutinaTabPages } from './navigation/RutinasTab';
 import GlobalStyles from './utils/EstilosGlobales';
+import WifiStatusComponent from './components/WifiStatus.component';
 
 /************************************************* Main *************************************************/
 export type RootTabs = {
@@ -78,6 +79,7 @@ const Main = () => {
             }}
           />
         </Tab.Navigator>
+        <WifiStatusComponent />
       </PaperProvider>
     </NavigationContainer>
   );

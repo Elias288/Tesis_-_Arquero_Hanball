@@ -7,12 +7,13 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "offline": "expo start --offline"
+    "offline": "expo start --localhost --offline"
   },
   "dependencies": {
     "@config-plugins/react-native-ble-plx": "^7.0.0",
     "@react-native-assets/slider": "^7.0.5",
     "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-community/netinfo": "^9.4.1",
     "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.16",
