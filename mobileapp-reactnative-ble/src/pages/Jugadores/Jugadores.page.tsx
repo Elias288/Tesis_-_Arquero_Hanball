@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../../components/Header.component';
+import HeaderComponent from '../../components/Header/Header.component';
 import { IconButton } from 'react-native-paper';
 
 import GlobalStyles from '../../utils/EstilosGlobales';

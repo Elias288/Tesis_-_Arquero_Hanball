@@ -5,7 +5,7 @@ import InicioPage from '../pages/Inicio/Inicio.page';
 import JugarPage from '../pages/Jugar/Jugar.page';
 import RutinasPage from '../pages/Rutinas/Rutinas.page';
 
-export type InicioTabPages = {
+export type inicioTabPages = {
   InicioPage: undefined;
   Jugar: { rutina: string };
   ViewResult: { res: string };
@@ -13,7 +13,7 @@ export type InicioTabPages = {
   RutinasPage: undefined;
 };
 
-const Stack = createNativeStackNavigator<InicioTabPages>();
+const Stack = createNativeStackNavigator<inicioTabPages>();
 
 const InicioTab = () => {
   return (

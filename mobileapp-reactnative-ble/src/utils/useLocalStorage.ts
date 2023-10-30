@@ -4,6 +4,9 @@ import { RutinaType } from '../data/RutinasType';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface LocalStorageType {
+  localToken: string;
+  saveToken: (token: string) => void;
+  clearToken: () => void;
   jugadores: Array<JugadorType>;
   pushJugador: (newJugador: JugadorType) => void;
   clearJugadoresDB: () => void;
@@ -31,12 +34,35 @@ function useLocalStorage(): LocalStorageType {
   const [jugadores, setJugadores] = useState<Array<JugadorType>>([]);
   const [rutinas, setRutinas] = useState<Array<RutinaType>>([]);
   const [rutinasRealizadas, setRutinasRealizadas] = useState<Array<RutinaType>>([]);
+  const [localToken, setLocalToken] = useState<string>('');
 
   useEffect(() => {
     listAllJugadores();
     ListAllRutinas();
     listAllRutinasRealizadas();
+    getToken();
   }, []);
+
+  // ****************************************** Token ******************************************
+
+  const getToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) setLocalToken(value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const saveToken = async (token: string) => {
+    await AsyncStorage.setItem('token', token);
+    setLocalToken(token);
+  };
+
+  const clearToken = async () => {
+    await AsyncStorage.setItem('token', '');
+    setLocalToken('');
+  };
 
   // ****************************************** Jugadores ******************************************
   const listAllJugadores = async () => {
@@ -156,6 +182,9 @@ function useLocalStorage(): LocalStorageType {
   };
 
   return {
+    localToken,
+    saveToken,
+    clearToken,
     jugadores,
     pushJugador,
     clearJugadoresDB,

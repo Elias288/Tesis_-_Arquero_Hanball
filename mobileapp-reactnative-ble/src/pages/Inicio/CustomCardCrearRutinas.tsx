@@ -8,15 +8,15 @@ import CustomModal, { customModalStyles } from '../../components/CustomModal.com
 import CrearRutina from '../Rutinas/CrearRutina/CrearRutina.component';
 import OptionButtons from './OptionButtons';
 import CustomCard, { cardStyles } from './CustomCard';
-import { RootTabs } from '../../Main';
 import { useCustomBLE } from '../../contexts/BLEProvider';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 const CustomCardCrearRutinas: FC = () => {
   const [visibleDialogCreateRandom, setVisibleDialogCreateRandom] = useState<boolean>(false);
   const [visibleDialogCreate, setVisibleDialogCreate] = useState<boolean>(false);
   const [visibleDialogWarning, setVisibleDialogWarning] = useState<boolean>(false);
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
 
   const cargarRutina = () => {
     if (!espConnectedStatus || !BLEPowerStatus) {

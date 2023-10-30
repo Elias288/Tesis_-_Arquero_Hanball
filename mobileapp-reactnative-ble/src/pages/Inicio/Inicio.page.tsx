@@ -3,16 +3,16 @@ import React, { FC } from 'react';
 import { View, ScrollView } from 'react-native';
 import { CompositeScreenProps } from '@react-navigation/native';
 
-import { InicioTabPages } from '../../navigation/InicioTab';
-import HeaderComponent from '../../components/Header.component';
-import { RootTabs } from '../../Main';
+import { inicioTabPages } from '../../navigation/InicioTab';
+import HeaderComponent from '../../components/Header/Header.component';
 import CustomCardHistorialRutinas from './CustomCardHistorialRutinas';
 import CustomCardCrearRutinas from './CustomCardCrearRutinas';
 import CustomCardJugadores from './CustomCardJugadores';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 type propsType = CompositeScreenProps<
-  NativeStackScreenProps<InicioTabPages, 'InicioPage'>,
-  NativeStackScreenProps<RootTabs>
+  NativeStackScreenProps<inicioTabPages, 'InicioPage'>,
+  NativeStackScreenProps<HomeTabs>
 >;
 
 const InicioPage: FC<propsType> = (props: propsType) => {

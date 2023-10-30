@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import ListarSecuenciaComponent from '../../../components/ListarSecuencia.component';
 import GlobalStyles from '../../../utils/EstilosGlobales';
 import { RutinaType, secuenciaType } from '../../../data/RutinasType';
-import { InicioTabPages } from '../../../navigation/InicioTab';
+import { inicioTabPages } from '../../../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useCustomBLE } from '../../../contexts/BLEProvider';
@@ -20,7 +20,7 @@ interface propsType {
 }
 
 const CrearRutina = (props: propsType) => {
-  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<inicioTabPages>>();
   const { isVisible: visible, hideModal } = props;
   const [title, setTitle] = useState('');
   const { rutinas, pushRutina, findRutina } = useCustomLocalStorage();

@@ -7,7 +7,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RootTabs } from '../Main';
-import { RutinaType } from '../data/RutinasType';
+import { HomeTabs } from '../navigation/HomeTab';
 
 export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
@@ -18,7 +18,7 @@ const HandleMSGs = () => {
     useNavigation<
       CompositeNavigationProp<
         NativeStackNavigationProp<RutinaTabPages>,
-        NativeStackNavigationProp<RootTabs>
+        NativeStackNavigationProp<HomeTabs>
       >
     >();
 

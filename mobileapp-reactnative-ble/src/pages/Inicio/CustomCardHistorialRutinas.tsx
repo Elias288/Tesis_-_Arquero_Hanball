@@ -4,13 +4,13 @@ import { Text, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
-import { RootTabs } from '../../Main';
 import CustomCard, { cardStyles } from './CustomCard';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { RutinaType } from '../../data/RutinasType';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 const CustomCardHistorialRutinas: FC = () => {
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
   const { rutinasRealizadas } = useCustomLocalStorage();
   const [rutinasRealizadasEnLaSemana, setRutinasRealizadasEnLaSemana] = useState<Array<RutinaType>>(
     []
