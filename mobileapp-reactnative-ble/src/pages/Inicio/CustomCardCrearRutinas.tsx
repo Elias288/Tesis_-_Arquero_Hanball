@@ -1,11 +1,11 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { FC, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import CrearRutinaAleatoriaComponent from '../../components/CrearRutinaAleatoria.component';
 import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
-import CrearRutina from '../../components/CrearRutina/CrearRutina.component';
+import CrearRutina from '../Rutinas/CrearRutina/CrearRutina.component';
 import OptionButtons from './OptionButtons';
 import CustomCard, { cardStyles } from './CustomCard';
 import { RootTabs } from '../../Main';

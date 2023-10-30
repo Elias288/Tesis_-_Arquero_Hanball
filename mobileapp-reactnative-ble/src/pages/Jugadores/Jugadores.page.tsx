@@ -4,10 +4,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import HeaderComponent from '../../components/Header.component';
 import { IconButton } from 'react-native-paper';
 
-import ModalCrearJugador from '../../components/ModalCrearJugador.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import ListarJugadoresComponent from '../../components/ListarJugadores/ListarJugadores.component';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
+import ModalCrearJugador from './ModalCrearJugador.component';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ListaJugadores'>;
 

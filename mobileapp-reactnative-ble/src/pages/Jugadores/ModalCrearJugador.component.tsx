@@ -1,9 +1,9 @@
-import { View, StyleSheet, Text } from 'react-native';
-import { Button, Modal, Portal, TextInput } from 'react-native-paper';
 import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button, Modal, Portal, TextInput } from 'react-native-paper';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import GlobalStyles from '../../utils/EstilosGlobales';
 
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import GlobalStyles from '../utils/EstilosGlobales';
 
 type propsType = {
   isVisible: boolean;

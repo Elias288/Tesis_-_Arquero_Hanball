@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Dimensions } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SelectList } from 'react-native-dropdown-select-list';
-import Constants from 'expo-constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import GlobalStyles from '../../utils/EstilosGlobales';
+import GlobalStyles from '../../../utils/EstilosGlobales';
 
 interface selectedItem {
   key: string;

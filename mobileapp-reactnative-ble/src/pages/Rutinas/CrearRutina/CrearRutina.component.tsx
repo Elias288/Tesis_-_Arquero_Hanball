@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Portal, TextInput } from 'react-native-paper';
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import CustomModal, { customModalStyles } from '../CustomModal.component';
+import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
+import CustomModal, { customModalStyles } from '../../../components/CustomModal.component';
 import Constants from 'expo-constants';
 
-import ListarSecuenciaComponent from '../ListarSecuencia.component';
-import GlobalStyles from '../../utils/EstilosGlobales';
-import { RutinaType, secuenciaType } from '../../data/RutinasType';
-import { InicioTabPages } from '../../navigation/InicioTab';
+import ListarSecuenciaComponent from '../../../components/ListarSecuencia.component';
+import GlobalStyles from '../../../utils/EstilosGlobales';
+import { RutinaType, secuenciaType } from '../../../data/RutinasType';
+import { InicioTabPages } from '../../../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-import { useCustomBLE } from '../../contexts/BLEProvider';
+import { useCustomBLE } from '../../../contexts/BLEProvider';
 import { CrearSecuecia } from './CrearSecuecia';
 
 interface propsType {

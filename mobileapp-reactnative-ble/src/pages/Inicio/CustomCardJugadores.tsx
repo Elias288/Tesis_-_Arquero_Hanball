@@ -5,11 +5,11 @@ import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import sortType from '../../utils/sortType';
-import ModalCrearJugador from '../../components/ModalCrearJugador.component';
 import ListarJugadoresComponent from '../../components/ListarJugadores/ListarJugadores.component';
 import CustomCard, { cardStyles } from './CustomCard';
 import OptionButtons from './OptionButtons';
 import { RootTabs } from '../../Main';
+import ModalCrearJugador from '../Jugadores/ModalCrearJugador.component';
 
 const CustomCardJugadores: FC = () => {
   const [isVisibleAgregarJugador, setVisibleAgregarJugador] = useState(false);
