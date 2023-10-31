@@ -8,6 +8,7 @@ import GlobalStyles from '../../utils/EstilosGlobales';
 import HeaderComponent from '../../components/Header/Header.component';
 
 const InicioPage: FC = () => {
+  
   return (
     <View style={styles.container}>
       <HeaderComponent title={'DEAH App'} />
