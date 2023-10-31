@@ -33,7 +33,7 @@ const ViewJugadorPage = (props: propsType) => {
     const rutinasJugadas = getRutinasJugadasDeJugador(jugadorId);
     setJugador(jugadorById);
     setRutinasJugadas(rutinasJugadas);
-  }, [rutinasRealizadas]);
+  }, [rutinasRealizadas, jugadores]);
 
   const deleteJugador = () => {
     popJugador(jugadorId);
