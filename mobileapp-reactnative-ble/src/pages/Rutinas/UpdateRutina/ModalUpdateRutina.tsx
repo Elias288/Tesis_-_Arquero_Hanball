@@ -21,9 +21,9 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
 
   // const prevRutina: RutinaType | undefined = editRutina; // Rutina a editar
   const [prevRutina, setPrevRutina] = useState<RutinaType>(editRutina);
-  const [title, setTitle] = useState(editRutina.title); // Titulo de rutina
+  const [title, setTitle] = useState(editRutina.titulo); // Titulo de rutina
   const [selectedSecuencia, setSelectedSecuencia] = useState<secuenciaType>(); // Secuencia seleccionada para editar
-  const [newSecuencias, setNewSecuencias] = useState<secuenciaType[]>(editRutina.secuencia);
+  const [newSecuencias, setNewSecuencias] = useState<secuenciaType[]>(editRutina.secuencias);
 
   const [showEdit, setShowEdit] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -53,17 +53,18 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
     }
 
     if (
-      prevRutina.title.trim() !== title.trim() &&
-      rutinas.find((rutina) => rutina.title === title)
+      prevRutina.titulo.trim() !== title.trim() &&
+      rutinas.find((rutina) => rutina.titulo === title)
     ) {
       showModal('Titulo ya registrado');
       return;
     }
 
-    const rutina = {
+    const rutina: RutinaType = {
       ...prevRutina,
-      title: title.trim(),
-      secuencia: newSecuencias,
+      fechaDeCreación: new Date(),
+      titulo: title.trim(),
+      secuencias: newSecuencias,
     };
 
     if (JSON.stringify(prevRutina) !== JSON.stringify(rutina)) {
@@ -100,8 +101,8 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
   };
 
   const cancelEdit = () => {
-    setTitle(editRutina.title);
-    setNewSecuencias(editRutina.secuencia);
+    setTitle(editRutina.titulo);
+    setNewSecuencias(editRutina.secuencias);
     setIsWarningModalVisible(false);
     setShowAdd(false);
     setShowEdit(false);
@@ -113,10 +114,10 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
     setModalMessage(message);
   };
 
-  const pushSecuencia = (ledId: string, time: number) => {
+  const pushSecuencia = (ledId: string, tiempo: number) => {
     setNewSecuencias([
       ...newSecuencias,
-      { id: uuid.v4().toString().replace(/-/g, ''), ledId, time },
+      { id: uuid.v4().toString().replace(/-/g, ''), ledId, tiempo },
     ]);
     setShowAdd(false);
   };

@@ -29,6 +29,7 @@ const JugarPage = (props: propsType) => {
     sendData,
     secuenciaToString,
     selectRutina,
+    selectJugador,
     runGame,
     BLECode,
     connectedDevice,
@@ -48,7 +49,7 @@ const JugarPage = (props: propsType) => {
   useEffect(() => {
     setSelectedListJugadores([]);
     chargeJugadores();
-    setFormatedRutina(secuenciaToString(paramRutina.secuencia));
+    setFormatedRutina(secuenciaToString(paramRutina.secuencias));
   }, []);
 
   useEffect(() => {
@@ -69,7 +70,7 @@ const JugarPage = (props: propsType) => {
     jugadores.map((jugador) => {
       setSelectedListJugadores((selectedListJugadores) => [
         ...selectedListJugadores,
-        { key: jugador.id.toString(), value: jugador.name },
+        { key: jugador._id, value: jugador.nombre },
       ]);
     });
   };
@@ -92,7 +93,8 @@ const JugarPage = (props: propsType) => {
 
     runGame(true);
     if (paramRutina) {
-      selectRutina({ ...paramRutina, jugadorID: selectedJugador.id });
+      selectRutina(paramRutina);
+      selectJugador(selectedJugador)
     }
     setLoading(true);
     sendData(connectedDevice, formatedRutina);
@@ -107,7 +109,7 @@ const JugarPage = (props: propsType) => {
           <View style={{ marginRight: 10 }}>
             <Text style={styles.title}>Secuencia</Text>
             <ListarSecuenciaComponent
-              secuencias={paramRutina.secuencia}
+              secuencias={paramRutina.secuencias}
               listStyle={styles.viewSecuenciasStyle}
             />
           </View>
@@ -118,7 +120,7 @@ const JugarPage = (props: propsType) => {
             <SelectList
               data={selectedListJugadores}
               setSelected={(jugadorId: string) => {
-                setSelectedJugador(jugadores.find((jugador) => jugador.id == jugadorId));
+                setSelectedJugador(jugadores.find((jugador) => jugador._id == jugadorId));
               }}
             />
           </View>
@@ -137,8 +139,8 @@ const JugarPage = (props: propsType) => {
         <ModalJugar
           isVisible={loading}
           hideModal={() => setLoading(false)}
-          secuencia={paramRutina.secuencia}
-          selectedJugadorName={selectedJugador ? selectedJugador?.name : ''}
+          secuencia={paramRutina.secuencias}
+          selectedJugadorName={selectedJugador ? selectedJugador?.nombre : ''}
         />
       </View>
     </>

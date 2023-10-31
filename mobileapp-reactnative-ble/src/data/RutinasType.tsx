@@ -1,15 +1,14 @@
 export type secuenciaType = {
   id: string;
   ledId: string;
-  time: number;
+  tiempo: number;
   resTime?: string | number;
 };
 
 export type RutinaType = {
-  id: string;
-  title: string;
-  secuencia: Array<secuenciaType>;
-  jugadorID?: string;
-  createDate: Date;
-  playedDate?: Date;
+  _id: string;
+  titulo: string;
+  fechaDeCreación: Date;
+  id_usuario: string;
+  secuencias: Array<secuenciaType>;
 };

@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
-import { RutinaType } from '../../data/RutinasType';
 import { useNavigation } from '@react-navigation/native';
 import formateDate from '../../utils/formateDate';
 import { HomeTabs } from '../../navigation/HomeTab';
+import { ResultadoType } from '../../data/ResultadoType';
 
-export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) => {
+export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: ResultadoType }) => {
   const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
 
   const goToViewRutina = () => {
@@ -21,23 +21,23 @@ export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) =>
   return (
     <TouchableOpacity style={renderItemStyles.itemContainer} onPress={goToViewRutina}>
       <View style={renderItemStyles.infoContainer}>
-        <Text style={renderItemStyles.itemTitle}>{rutina.title}</Text>
-        <Text>{formateDate(new Date(rutina.createDate), true)}</Text>
+        <Text style={renderItemStyles.itemTitle}>{rutina.titulo}</Text>
+        <Text>{formateDate(new Date(rutina.playedDate), true)}</Text>
       </View>
 
       <View style={renderItemStyles.countContainer}>
-        <Text style={renderItemStyles.countText}>Tamaño de rutina: {rutina.secuencia.length}</Text>
+        <Text style={renderItemStyles.countText}>N° Secuencias: {rutina.secuencias.length}</Text>
         <Text style={renderItemStyles.countText}>
           Tiempo total:
-          {rutina.secuencia.reduce(
-            (acumuladorSecuencias, secuencia) => acumuladorSecuencias + secuencia.time,
+          {rutina.secuencias.reduce(
+            (acumuladorSecuencias, secuencia) => acumuladorSecuencias + secuencia.tiempo,
             0
           )}
           s
         </Text>
         <Text style={[renderItemStyles.countText, { width: 'auto' }]}>
           Suma de tiempo realizados:{' '}
-          {rutina.secuencia.reduce((acumuladorSecuencias, secuencia) => {
+          {rutina.secuencias.reduce((acumuladorSecuencias, secuencia) => {
             if (typeof secuencia.resTime == 'number') {
               return acumuladorSecuencias + secuencia.resTime;
             }

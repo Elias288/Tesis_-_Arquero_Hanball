@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -6,38 +6,41 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
 import formateDate from '../../utils/formateDate';
-import { RutinaType } from '../../data/RutinasType';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
-import { JugadorType } from '../../data/JugadoresType';
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { ResultadoType } from '../../data/ResultadoType';
 
-type renderSimpleItemProps = {
-  rutina: RutinaType;
+type renderSimpleResultadoProps = {
+  rutina: ResultadoType;
+  index: number;
 };
-export const RenderSimpleItem = ({ rutina }: renderSimpleItemProps) => {
+
+export const RenderSimpleRutinaRealizada = ({ rutina, index }: renderSimpleResultadoProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<RutinaTabPages>>();
 
   const goToViewRutina = () => {
-    navigator.navigate('ViewRutina', { rutinaId: rutina._id });
+    navigator.navigate('ViewRutinaResultado', { rutina: JSON.stringify(rutina) });
   };
 
   return (
     <TouchableOpacity style={styles.simpleItemContainer} onPress={goToViewRutina}>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
-        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina._id}</Text>
+        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{index}</Text>
       </View>
 
       <View style={styles.simpleInfoContainer}>
         <Text style={styles.itemTitle}>{rutina.titulo}</Text>
       </View>
 
-      <Text style={styles.simpleItemSubText}>
-        {formateDate(new Date(rutina.fechaDeCreación), true)}
-      </Text>
+      <View>
+        <Text style={styles.simpleItemSubText}>
+          {formateDate(new Date(rutina.playedDate), true)}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };
+
 const styles = StyleSheet.create({
   simpleItemContainer: {
     backgroundColor: GlobalStyles.white,

@@ -14,7 +14,7 @@ interface RenderProps {
 export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: RenderProps) => {
   return (
     <View style={renderItemStyles.completeItemContainer}>
-      <Text style={{ flex: 1, fontSize: 18 }}>{jugador.name}</Text>
+      <Text style={{ flex: 1, fontSize: 18 }}>{jugador.nombre}</Text>
 
       {/******************************************* Options *******************************************/}
       <View style={{ flexDirection: 'row' }}>
@@ -23,7 +23,7 @@ export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: Render
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => gotoViewJugadores(jugador.id)}
+          onPress={() => gotoViewJugadores(jugador._id)}
           mode="contained"
         />
         <IconButton
@@ -31,7 +31,7 @@ export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: Render
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => deleteJugador(jugador.id)}
+          onPress={() => deleteJugador(jugador._id)}
           mode="contained"
         />
       </View>

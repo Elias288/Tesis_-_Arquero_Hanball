@@ -12,6 +12,7 @@ import CustomModal, { customModalStyles } from '../CustomModal.component';
 import { RenderItem } from './RenderItem';
 import { RenderSimpleItem } from './RenderSimpleItem';
 import { HomeTabs } from '../../navigation/HomeTab';
+import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
@@ -25,8 +26,10 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const { isSimpleList, cantRenderItems, containerStyle, sort, navigation } = props;
   const navigator = useNavigation<NativeStackNavigationProp<ListaJugadoresTabPages>>();
 
+  const { jugadores: localStoredJugadores, popJugador } = useCustomLocalStorage();
+
+  // const [remoteJugadores, setRemoteJugadores] = useState<JugadorType[]>([]);
   const [listMode, setListMode] = useState<boolean>(false);
-  const { jugadores: storedJugadores, popJugador } = useCustomLocalStorage();
   const [jugadoresList, setJugadoresList] = useState<Array<JugadorType>>([]);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -35,13 +38,13 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const sortArray = (a: JugadorType, b: JugadorType): number => {
     if (sort === undefined || sort === sortType.alphabetic) {
       // Ordenar por nombre
-      return a.name.localeCompare(b.name);
+      return a.nombre.localeCompare(b.nombre);
     } else if (sort === sortType.newestFirst) {
       // Ordenar por fecha el más nuevo
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      return new Date(b.fechaCreación).getTime() - new Date(a.fechaCreación).getTime();
     } else if (sort === sortType.oldestFirst) {
       // Ordenar por fecha el más viejo
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
+      return new Date(a.fechaCreación).getTime() - new Date(b.fechaCreación).getTime();
     } else {
       return 0;
     }
@@ -53,14 +56,22 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       setListMode(isSimpleList || false);
     }
 
-    // carga todos los jugadores
-    setJugadoresList(storedJugadores.sort((a, b) => sortArray(a, b)));
+    // if (isWifiConnected) {
+      // carga todos los jugadores en la bd
+      // if (remoteJugadores !== undefined)
+      //   setJugadoresList(remoteJugadores /* .sort((a, b) => sortArray(a, b)) */);
+    // } else {
+      // carga todos los jugadores
+      setJugadoresList(localStoredJugadores.sort((a, b) => sortArray(a, b)));
+    // }
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
-      setJugadoresList(storedJugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b)));
+      setJugadoresList(
+        localStoredJugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b))
+      );
     }
-  }, [storedJugadores]);
+  }, [localStoredJugadores]);
 
   const deleteJugador = () => {
     popJugador(selectedJugadorId);
@@ -94,7 +105,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       <>
         {jugadoresList.map((jugador) => (
           <RenderSimpleItem
-            key={jugador.id}
+            key={jugador._id}
             jugador={jugador}
             gotoViewJugadores={gotoViewJugadores}
           />
@@ -110,11 +121,11 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
         renderItem={({ item: jugador }) => (
           <RenderItem
             jugador={jugador}
-            deleteJugador={() => showDeleteModal(jugador.id)}
+            deleteJugador={() => showDeleteModal(jugador._id)}
             gotoViewJugadores={gotoViewJugadores}
           />
         )}
-        keyExtractor={(jugador) => jugador.id.toString()}
+        keyExtractor={(jugador) => jugador._id.toString()}
         contentContainerStyle={listarJugadoresStyles.scrollStyle}
       />
 

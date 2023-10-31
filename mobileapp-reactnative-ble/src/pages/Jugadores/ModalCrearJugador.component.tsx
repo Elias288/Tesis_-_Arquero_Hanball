@@ -22,7 +22,7 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
   const [modalMessage, setModalMessage] = useState<string>('');
 
   useEffect(() => {
-    if (editJugador) setName(editJugador.name);
+    if (editJugador) setName(editJugador.nombre);
   }, [editJugador]);
 
   const handleSubmit = () => {
@@ -47,15 +47,15 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
     }
 
     pushJugador({
-      id: uuid.v4().toString().replace(/-/g, ''),
-      name: name.trim(),
-      date: new Date(),
+      _id: uuid.v4().toString().replace(/-/g, ''),
+      nombre: name.trim(),
+      fechaCreación: new Date(),
     });
     closeModal();
   };
 
   const handleEdit = () => {
-    if (prevJugador && prevJugador.name != name) {
+    if (prevJugador && prevJugador.nombre != name) {
       if (name.trim() == '') {
         showModal('Nombre no puede estár vacio');
         return;
@@ -76,7 +76,7 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
         return;
       }
 
-      updateJugador({ ...prevJugador, name: name });
+      updateJugador({ ...prevJugador, nombre: name });
       closeModal();
     }
   };

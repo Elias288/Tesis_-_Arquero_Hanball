@@ -45,7 +45,8 @@ const HeaderComponent = (props: headerProps) => {
 
       <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
         {/* TODO: eliminar */}
-        {/* <IconButton icon={'logout'} onPress={clearToken} /> */}
+        {isWifiConnected && <IconButton icon={'logout'} onPress={clearToken} />}
+
         {!isWifiConnected && <Icon name="wifi-strength-off" size={30} color={GlobalStyles.white} />}
       </View>
     </View>

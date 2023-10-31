@@ -8,8 +8,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import { RootTabs } from '../Main';
 import { HomeTabs } from '../navigation/HomeTab';
+import { secuenciaType } from '../data/RutinasType';
+import { ResultadoType } from '../data/ResultadoType';
 
 export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
@@ -24,8 +25,16 @@ const HandleMSGs = () => {
       >
     >();
 
-  const { receivedMSG, BLECode, BLEmsg, runGame, stringToSecuencia, selectRutina, selectedRutina } =
-    useCustomBLE();
+  const {
+    receivedMSG,
+    BLECode,
+    BLEmsg,
+    runGame,
+    stringToSecuencia,
+    selectRutina,
+    selectedJugador,
+    selectedRutina,
+  } = useCustomBLE();
   const { pushRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
@@ -58,25 +67,39 @@ const HandleMSGs = () => {
     res: (secuenciaStringRecibida) => {
       const secuenciaRecibida = stringToSecuencia(secuenciaStringRecibida);
 
-      if (selectedRutina) {
-        const rut = selectedRutina;
+      if (selectedRutina && selectedJugador) {
+        const secuenciasDeRutinaSeleccionada: secuenciaType[] = selectedRutina.secuencias;
         selectRutina(undefined);
 
-        rut.secuencia.map((sec) => {
-          sec.resTime = secuenciaRecibida.find((result) => result.id === sec.id)?.resTime;
+        // a las secuencias de la rutina seleccionada se le agregan los tiempos recibidos
+        secuenciasDeRutinaSeleccionada.map((secuencia) => {
+          secuencia.resTime = secuenciaRecibida.find((result) => result.id === secuencia.id)
+            ?.resTime;
         });
 
-        pushRutinaRealizada({
-          ...rut,
-          id: uuid.v4().toString().replace(/-/g, ''),
-          title: 'Rutina ' + (rutinasRealizadas.length + 1),
-        });
+        const title =
+          'Rutina - ' +
+          new Date().getDate().toString().padStart(2, '0') +
+          (new Date().getMonth() + 1).toString().padStart(2, '0') +
+          new Date().getFullYear().toString().slice(-2) +
+          new Date().getHours().toString().padStart(2, '0') +
+          new Date().getMinutes().toString().padStart(2, '0');
 
-        console.log(rut);
+        const newRutinaRealizada: ResultadoType = {
+          _id: uuid.v4().toString().replace(/-/g, ''),
+          createDate: selectedRutina.fechaDeCreación,
+          id_jugador: selectedJugador._id,
+          id_rutina: selectedRutina._id,
+          secuencias: secuenciasDeRutinaSeleccionada,
+          titulo: title,
+          playedDate: new Date(),
+        };
+
+        pushRutinaRealizada(newRutinaRealizada);
 
         navigator?.navigate('Rutinas', {
           screen: 'ViewRutinaResultado',
-          params: { rutina: JSON.stringify(rut) },
+          params: { rutina: JSON.stringify(newRutinaRealizada) },
         });
       }
     },

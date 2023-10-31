@@ -1,13 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
-import { View, FlatList, Text, StyleProp, ViewStyle, StyleSheet } from 'react-native';
+import { View, Text, StyleProp, ViewStyle, StyleSheet } from 'react-native';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
 import CustomModal, { customModalStyles } from '../CustomModal.component';
 import sortType from '../../utils/sortType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { RutinaType } from '../../data/RutinasType';
-import { RenderSimpleItem } from './RenderSimpleItem';
-import { RenderItem } from './RenderItem';
+import { ResultadoType } from '../../data/ResultadoType';
+import { RenderSimpleRutinaRealizada } from './RenderSimpleResultado';
 
 interface ListarRutinasProps {
   simpleList?: boolean; // muestra un lista sin opciones
@@ -16,19 +15,18 @@ interface ListarRutinasProps {
   sort?: number;
 }
 
-const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
+const ListarRutinasRealizadasComponent: FC<ListarRutinasProps> = (props) => {
   const { simpleList, cantRenderItems, containerStyle, sort } = props;
   const {
     rutinas: storedRutinas,
     rutinasRealizadas: storedRutinasRealizadas,
-    popRutina,
     popRutinaRealizada,
   } = useCustomLocalStorage();
 
   const [selectedRutinaId, setSelectedRutinaId] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [listMode, setListMode] = useState<boolean>(false);
-  const [rutinaList, setRutinaList] = useState<Array<RutinaType>>([]);
+  const [rutinaList, setRutinaList] = useState<Array<ResultadoType>>([]);
 
   useEffect(() => {
     // si mode no está definido lo define
@@ -36,42 +34,40 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
       setListMode(simpleList || false);
     }
 
-    setRutinaList(storedRutinas.sort((a, b) => sortRutinas(a, b)));
+    // carga todas las rutinas
+    setRutinaList(storedRutinasRealizadas.sort((a, b) => sortResultados(a, b)));
 
+    // si cantRenderItems está definido
     if (cantRenderItems) {
-      setRutinaList(storedRutinas.slice(0, cantRenderItems).sort((a, b) => sortRutinas(a, b)));
+      setRutinaList(
+        storedRutinasRealizadas.slice(0, cantRenderItems).sort((a, b) => sortResultados(a, b))
+      );
     }
   }, [storedRutinas, storedRutinasRealizadas]);
 
   const deleteRutina = () => {
-    popRutina(selectedRutinaId);
+    popRutinaRealizada(selectedRutinaId);
     setIsModalVisible(false);
   };
 
-  const showDeleteModal = (rutinaId: string) => {
-    setIsModalVisible(true);
-    setSelectedRutinaId(rutinaId);
-  };
-
-  const sortRutinas = (a: RutinaType, b: RutinaType): number => {
+  const sortResultados = (a: ResultadoType, b: ResultadoType): number => {
     if (sort === undefined || sort === sortType.alphabetic) {
-      // Ordenar por nombre
       return a.titulo.localeCompare(b.titulo);
     } else if (sort === sortType.newestFirst) {
-      // Ordenar por fecha el más nuevo
-      return new Date(b.fechaDeCreación).getTime() - new Date(a.fechaDeCreación).getTime();
+      return new Date(b.createDate).getTime() - new Date(a.createDate).getTime();
     } else if (sort === sortType.oldestFirst) {
-      // Ordenar por fecha el más viejo
-      return new Date(a.fechaDeCreación).getTime() - new Date(b.fechaDeCreación).getTime();
-    } else {
-      return 0;
+      return new Date(a.createDate).getTime() - new Date(b.createDate).getTime();
+    } else if (sort === sortType.lastplayedFirst) {
+      return new Date(b.playedDate).getTime() - new Date(a.playedDate).getTime();
     }
+
+    return 0;
   };
 
   if (rutinaList.length == 0) {
     return (
       <View style={styles.emptyListContainer}>
-        <Text style={styles.emptyListMessage}>Sin Rutinas Cargadas</Text>
+        <Text style={styles.emptyListMessage}>Sin Rutinas</Text>
       </View>
     );
   }
@@ -79,8 +75,8 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
   if (simpleList) {
     return (
       <>
-        {rutinaList.map((item) => (
-          <RenderSimpleItem key={item._id} rutina={item} />
+        {rutinaList.sort().map((item, index) => (
+          <RenderSimpleRutinaRealizada rutina={item} index={index + 1} key={item._id} />
         ))}
       </>
     );
@@ -89,14 +85,14 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
   return (
     <View style={[styles.container, containerStyle]}>
       {/* // lista completa */}
-      <FlatList
+      {/* <FlatList
         data={rutinaList}
         renderItem={({ item }) => (
           <RenderItem rutina={item} deleteRutina={() => showDeleteModal(item._id)} />
         )}
         contentContainerStyle={styles.flatStyle}
         keyExtractor={(item) => item._id}
-      />
+      /> */}
       <CustomModal
         hideModal={() => setIsModalVisible(false)}
         onAceptar={deleteRutina}
@@ -148,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListarRutinasComponent;
+export default ListarRutinasRealizadasComponent;

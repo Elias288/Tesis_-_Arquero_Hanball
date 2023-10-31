@@ -8,7 +8,7 @@ const usuarioController = new UsuarioController();
 router.post("/add", usuarioController.add);
 router.post("/login", usuarioController.login);
 
-router.get("/list", auth, usuarioController.getAll);
+router.get("/list", usuarioController.getAll);
 router.get("/details/:id", auth, usuarioController.getById);
 router.put("/update/:id", auth, usuarioController.update);
 router.delete("/delete/:id", auth, usuarioController.deleteById);

@@ -31,7 +31,7 @@ const EditListaSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuenc
             deleteSecuencia={deleteSecuencia}
           />
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -49,7 +49,7 @@ const RenderItem: FC<renderItempProps> = (props) => {
   const { secuencia, itemStyle, viewResult, editSecuencia, deleteSecuencia } = props;
 
   const editSec = () => {
-    editSecuencia({ id: secuencia.id, ledId: secuencia.ledId, time: secuencia.time });
+    editSecuencia({ id: secuencia.id, ledId: secuencia.ledId, tiempo: secuencia.tiempo });
   };
 
   const dropSecuencia = () => {
@@ -72,7 +72,7 @@ const RenderItem: FC<renderItempProps> = (props) => {
 
           <View style={[styles.itemCircle, { marginRight: 5, backgroundColor: '#536ac7' }]}>
             <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
-            <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
+            <Text style={styles.itemTimeText}>{secuencia.tiempo.toString()}s</Text>
           </View>
 
           <View style={[styles.itemCircle, { backgroundColor: '#536ac7' }]}>
@@ -108,7 +108,7 @@ const RenderItem: FC<renderItempProps> = (props) => {
           ]}
         >
           <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
-          <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
+          <Text style={styles.itemTimeText}>{secuencia.tiempo.toString()}s</Text>
         </View>
 
         {editSecuencia !== undefined && (

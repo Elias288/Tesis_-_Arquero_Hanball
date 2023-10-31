@@ -19,6 +19,7 @@ var JugadorSchema = new Schema(
     },
     fechaCreación: {
       type: Date,
+      require: true,
     },
     localidad: {
       type: String,

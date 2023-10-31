@@ -7,12 +7,12 @@ import GlobalStyles from '../../utils/EstilosGlobales';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { JugadorType } from '../../data/JugadoresType';
-import { RutinaType } from '../../data/RutinasType';
 import formateDate from '../../utils/formateDate';
 import { RenderItemRutinaDeJugador } from './RenderItemRutinaDeJugador';
 import { Button } from 'react-native-paper';
 import ModalCrearJugador from '../Jugadores/ModalCrearJugador.component';
 import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
+import { ResultadoType } from '../../data/ResultadoType';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ViewJugadores'>;
 
@@ -23,7 +23,7 @@ const ViewJugadorPage = (props: propsType) => {
   const { jugadorId } = route.params;
 
   const [jugador, setJugador] = useState<JugadorType>();
-  const [rutinasJugadas, setRutinasJugadas] = useState<Array<RutinaType>>();
+  const [rutinasJugadas, setRutinasJugadas] = useState<Array<ResultadoType>>();
 
   const [isCreateModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isDeleteModalVisible, setisDeleteModalVisible] = useState<boolean>(false);
@@ -49,19 +49,15 @@ const ViewJugadorPage = (props: propsType) => {
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
             <Text>Jugador: </Text>
             <Text style={GlobalStyles.jugadorName} textBreakStrategy="simple">
-              {jugador?.name}
+              {jugador?.nombre}
             </Text>
           </View>
-
-          {/* <View style={{ alignItems: 'center', backgroundColor: 'red' }}>
-            <Button mode="contained">Editar</Button>
-          </View> */}
         </View>
 
-        {jugador?.date && (
+        {jugador?.fechaCreación && (
           <View style={styles.containerTitle}>
             <Text style={{ fontWeight: 'bold' }}>Fecha de creación:</Text>
-            <Text>{formateDate(new Date(jugador.date), true)}</Text>
+            <Text>{formateDate(new Date(jugador.fechaCreación), true)}</Text>
           </View>
         )}
 

@@ -24,6 +24,7 @@ var RutinaSchema = new Schema(
     },
     id_usuario: {
       type: String,
+      require: true,
     },
   },
   { versionKey: false }

@@ -12,17 +12,17 @@ interface renderSimpleItemProps {
 
 export const RenderSimpleItem = ({ jugador, gotoViewJugadores }: renderSimpleItemProps) => {
   const goToViewJugador = () => {
-    gotoViewJugadores(jugador.id);
+    gotoViewJugadores(jugador._id);
   };
 
   return (
     <TouchableOpacity style={renderSimpleItemStyles.simpleItemContainer} onPress={goToViewJugador}>
       <View style={{ flex: 1 }}>
-        <Text style={renderSimpleItemStyles.itemTitle}>{jugador.name}</Text>
+        <Text style={renderSimpleItemStyles.itemTitle}>{jugador.nombre}</Text>
       </View>
 
       <Text style={renderSimpleItemStyles.simpleItemSubText}>
-        {formateDate(new Date(jugador.date), false)}
+        {formateDate(new Date(jugador.fechaCreación), false)}
       </Text>
     </TouchableOpacity>
   );

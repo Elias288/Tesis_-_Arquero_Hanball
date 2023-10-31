@@ -28,13 +28,13 @@ const ViewRutina = (props: propsType) => {
   const [isModalUpateVisible, setIsModalUpateVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const rutinaById = rutinas.find((rutina) => rutina.id === rutinaId);
+    const rutinaById = rutinas.find((rutina) => rutina._id === rutinaId);
     setSelectedRutina(rutinaById);
   }, [rutinas]);
 
   const deleteRutina = () => {
     if (rutinaId && selectedRutina) {
-      popRutina(selectedRutina.id);
+      popRutina(selectedRutina._id);
     }
     navigation.goBack();
   };
@@ -50,27 +50,27 @@ const ViewRutina = (props: propsType) => {
         <View style={styles.infoContainer}>
           <View style={{ flex: 1 }}>
             <Text>Rutina:</Text>
-            <Text style={styles.title}>{selectedRutina?.title}</Text>
+            <Text style={styles.title}>{selectedRutina?.titulo}</Text>
           </View>
         </View>
         <View style={styles.infoContainer}>
-          {selectedRutina?.createDate && (
+          {selectedRutina?.fechaDeCreación && (
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold' }}>Fecha de creación:</Text>
-              <Text>{formateDate(new Date(selectedRutina?.createDate), true)}</Text>
+              <Text>{formateDate(new Date(selectedRutina?.fechaDeCreación), true)}</Text>
             </View>
           )}
-          {selectedRutina?.playedDate && (
+          {selectedRutina?.fechaDeCreación && (
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold' }}>Fecha realizada:</Text>
-              <Text>{formateDate(new Date(selectedRutina?.playedDate), true)}</Text>
+              <Text>{formateDate(new Date(selectedRutina?.fechaDeCreación), true)}</Text>
             </View>
           )}
         </View>
 
-        {selectedRutina?.secuencia && (
+        {selectedRutina?.secuencias && (
           <ListarSecuenciaComponent
-            secuencias={selectedRutina.secuencia}
+            secuencias={selectedRutina.secuencias}
             listStyle={{ flex: 1, marginBottom: 10 }}
           />
         )}

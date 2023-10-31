@@ -6,17 +6,17 @@ import { useEffect, useState } from 'react';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 import { RootTabs } from '../../Main';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useLocalStorage from '../../utils/useLocalStorage';
 import WifiStatusComponent from '../../components/WifiStatus.component';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 
 type propsType = NativeStackScreenProps<RootTabs>;
 
 const LoginPage = (props: propsType) => {
   const { navigation } = props;
-  const [userName, setUserName] = useState<string>('');
-  const [contraseña, setContraseña] = useState<string>('');
-  const { login, isLoginLoading } = useCustomRemoteStorage();
-  const { localToken, saveToken } = useLocalStorage();
+  const [userName, setUserName] = useState<string>('elias.bianchi');
+  const [contraseña, setContraseña] = useState<string>('contra123');
+  const { localToken, saveToken } = useCustomLocalStorage();
+  const { login, isLoginLoading, isWifiConnected } = useCustomRemoteStorage();
 
   useEffect(() => {
     if (localToken !== '') {
@@ -34,6 +34,10 @@ const LoginPage = (props: propsType) => {
       return;
     }
 
+    if (isWifiConnected) {
+      login(userName.trim(), contraseña.trim());
+      return;
+    }
     saveToken('Elias el mejor');
   };
 

@@ -10,6 +10,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { PaperProvider, Portal } from 'react-native-paper';
 import HandleMSGs from '../utils/HandleMSGs';
 import WifiStatusComponent from '../components/WifiStatus.component';
+import useLocalStorage from '../utils/useLocalStorage';
+import useRemoteStorage from '../utils/useRemoteStorage';
 
 export type HomeTabs = {
   Inicio: NavigatorScreenParams<inicioTabPages>;
@@ -23,7 +25,7 @@ const Home = () => {
   const { initBle } = useCustomBLE();
 
   useEffect(() => {
-    // initBle();
+    initBle();
   }, []);
 
   const pageOptions = (routeName: string, focused: boolean) => {

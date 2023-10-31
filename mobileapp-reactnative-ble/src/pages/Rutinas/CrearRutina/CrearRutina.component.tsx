@@ -61,11 +61,13 @@ const CrearRutina = (props: propsType) => {
       return;
     }
 
-    const rutina = {
-      id: uuid.v4().toString().replace(/-/g, ''),
-      title: title.trim(),
-      secuencia: newSecuencia,
-      createDate: new Date(),
+    const rutina: RutinaType = {
+      _id: uuid.v4().toString().replace(/-/g, ''),
+      titulo: title.trim(),
+      secuencias: newSecuencia,
+      fechaDeCreación: new Date(),
+      // TODO: obtener id del usuario logueado
+      id_usuario: '',
     };
 
     setNewRutina(rutina);
@@ -96,8 +98,8 @@ const CrearRutina = (props: propsType) => {
     setModalMessage(message);
   };
 
-  const pushSecuencia = (ledId: string, time: number) => {
-    setNewSecuencia([...newSecuencia, { id: `${newSecuencia.length}`, ledId, time }]);
+  const pushSecuencia = (ledId: string, tiempo: number) => {
+    setNewSecuencia([...newSecuencia, { id: `${newSecuencia.length}`, ledId, tiempo }]);
   };
 
   return (

@@ -71,7 +71,7 @@ export const CrearSecuecia = (props: crearSecuanciaProps) => {
 
   const actualizarSecuencia = () => {
     if (updateSecuencia !== undefined && secuencia !== undefined) {
-      updateSecuencia({ ...secuencia, ledId: ledIdSelected, time: +timeSelected });
+      updateSecuencia({ ...secuencia, ledId: ledIdSelected, tiempo: +timeSelected });
     }
   };
 
@@ -128,7 +128,7 @@ export const CrearSecuecia = (props: crearSecuanciaProps) => {
                       fontSize: 20,
                     }}
                   >
-                    {selectedSecuencia.time}s
+                    {selectedSecuencia.tiempo}s
                   </Text>
                 </View>
                 <Text style={styles.itemText}>Time</Text>
