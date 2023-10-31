@@ -14,7 +14,7 @@ router.put("/update/:id", auth, usuarioController.update);
 router.delete("/delete/:id", auth, usuarioController.deleteById);
 
 router.put("/addRutina", auth, usuarioController.asignarRutina);
-
-/* TODO: lista de jugadores, lista de rutinas */
+router.get("/JugadorList", auth, usuarioController.jugadorlist);
+router.get("/RutinaList", auth, usuarioController.rutinalist);
 
 module.exports = router;

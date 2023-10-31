@@ -27,6 +27,7 @@ var UsuarioSchema = new Schema({
         type: String,
     },
     rutinas: [{ type: ObjectID, ref: 'Rutina' }],
+    jugadores: [{ type: ObjectID, ref: 'Jugador' }],
 }, { versionKey: false });
 
 UsuarioSchema.pre('save', function (next) {

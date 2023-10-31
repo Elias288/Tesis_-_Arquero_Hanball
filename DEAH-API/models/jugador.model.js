@@ -13,6 +13,9 @@ var JugadorSchema = new Schema({
     type: String,
     required: true
   },
+  cedula: {
+    type: String,
+  },
   localidad: {
     type: String,
   },

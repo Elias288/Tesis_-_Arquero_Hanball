@@ -13,8 +13,8 @@ router.delete("/delete/:id", auth, jugadorController.deleteById);
 
 router.put("/addResultado", auth, jugadorController.asignarResultado);
 router.put("/addRutina", auth, jugadorController.asignarRutina);
-/*
- * TODO: obtener rutinas, obtener resultados
- */
+
+router.get('/getRutinas', auth, jugadorController.getrutinas);
+router.get('/getResultados', auth, jugadorController.getresultados);
 
 module.exports = router;

@@ -13,6 +13,4 @@ router.delete('/delete/:id', auth, rutinaController.deleteById);
 
 router.put('/addSecuencia', auth, rutinaController.asignarSecuencia);
 
-/* TODO: obtener jugador */
-
 module.exports = router;
