@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { useCustomBLE } from '../../contexts/BLEProvider';
 import GlobalStyles from '../../utils/EstilosGlobales';
-import { HEADERSIZE } from './Header.component';
+export const HEADERSIZE = 50;
 
 export const BleStatus = () => {
   const {

@@ -7,7 +7,7 @@ import GlobalStyles from '../utils/EstilosGlobales';
 import { useEffect } from 'react';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PaperProvider } from 'react-native-paper';
+import { PaperProvider, Portal } from 'react-native-paper';
 import HandleMSGs from '../utils/HandleMSGs';
 import WifiStatusComponent from '../components/WifiStatus.component';
 
@@ -77,7 +77,9 @@ const Home = () => {
             }}
           />
         </Tab.Navigator>
-        <WifiStatusComponent />
+        <Portal>
+          <WifiStatusComponent />
+        </Portal>
       </PaperProvider>
     </>
   );

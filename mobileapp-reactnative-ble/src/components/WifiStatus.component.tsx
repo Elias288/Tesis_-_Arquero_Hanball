@@ -1,32 +1,44 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
 import GlobalStyles from '../utils/EstilosGlobales';
 
-interface wifiStatusProps {}
+interface wifiStatusProps {
+  neverHide?: boolean;
+  timeToHide?: number;
+  style?: StyleProp<ViewStyle>;
+}
 
-const WifiStatusComponent = ({}: wifiStatusProps) => {
+const WifiStatusComponent = ({
+  neverHide,
+  timeToHide = 3000,
+  style: styleProp,
+}: wifiStatusProps) => {
   const [isVisibleWifiStatus, setIsVisibleWifiStatus] = useState<boolean>(true);
   const { isWifiConnected } = useCustomRemoteStorage();
 
   useEffect(() => {
     setIsVisibleWifiStatus(true);
 
-    setTimeout(() => {
-      setIsVisibleWifiStatus(false);
-    }, 3000);
+    if (!neverHide) {
+      setTimeout(() => {
+        setIsVisibleWifiStatus(false);
+      }, timeToHide);
+    }
   }, [isWifiConnected]);
 
   if (isVisibleWifiStatus) {
     return (
       <Portal>
         {isWifiConnected ? (
-          <View style={[styles.container, { backgroundColor: GlobalStyles.greenAlertColor }]}>
+          <View
+            style={[styles.container, { backgroundColor: GlobalStyles.greenAlertColor }, styleProp]}
+          >
             <Text style={styles.message}>Aplicacion online</Text>
           </View>
         ) : (
-          <View style={[styles.container, { backgroundColor: 'red' }]}>
+          <View style={[styles.container, { backgroundColor: 'red' }, styleProp]}>
             <Text style={styles.message}>Aplicacion offline</Text>
           </View>
         )}
