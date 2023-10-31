@@ -10,10 +10,10 @@ var ResultadoSchema = new Schema({
         auto: true
     },
     id_jugador: {
-        type: String,
+        type: ObjectID, ref: 'Jugador'
     },
     id_rutina: {
-        type: Number,
+        type: ObjectID, ref: 'Rutina'
     },
     secuencias: { type: ObjectID, ref: 'Secuencia' },
 }, { versionKey: false });

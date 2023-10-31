@@ -1,6 +1,7 @@
 const UsuarioRepository = require('../repositories/usuario.repository');
 const BaseController = require('./base.controller');
 const UsuarioSchema = require('../models/usuario.model')
+const RutinaSchema = require('../models/rutina.model')
 
 var bcrypt = require('bcrypt');
 
@@ -46,16 +47,38 @@ class UsuarioController extends BaseController {
             }
         )
     }
-    asignarRutina(req, res) {
-        return UsuarioSchema.findOneAndUpdate(
-            { username: req.body.username },
-            {
-                $push: {
-                    rutinas: req.body.id_rutina
-                }
-            }).then(result => {
-                res.status(200).json({ message: "Rutina asignada con exito" });
-            })
+    asignarRutina = async (req, res) => {
+        const { user_id } = req;
+
+        try {
+            const loggedUser = await UsuarioSchema.findById(user_id)
+
+            const rutina = await RutinaSchema.findById(req.body.id_rutina)
+
+            loggedUser.rutinas.push(rutina._id)
+            res.status(201).send(loggedUser)
+        } catch (error) {
+            //console.log(error)
+            res.status(404).send(error)
+        }
+    }
+    jugadorlist(req, res) {
+        const { user_id } = req;
+        //console.log("idusuario: ", user_id)
+        return UsuarioSchema.findOne(
+            { _id: user_id }
+        ).populate('jugadores').then(result => {
+            res.status(200).json({ result })
+        })
+    }
+    rutinalist(req, res) {
+        const { user_id } = req;
+        //console.log("idusuario: ", user_id)
+        return UsuarioSchema.findOne(
+            { _id: user_id }
+        ).populate('rutinas').then(result => {
+            res.status(200).json({ result })
+        })
     }
 }
 module.exports = UsuarioController;

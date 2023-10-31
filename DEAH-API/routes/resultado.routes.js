@@ -12,5 +12,7 @@ router.put("/update/:id", auth, resultadoController.update);
 router.delete("/delete/:id", auth, resultadoController.deleteById);
 
 router.put("/addSecuencia", auth, resultadoController.asignarSecuencia);
+router.get('/getjugador', auth, resultadoController.getjugador);
+
 
 module.exports = router;

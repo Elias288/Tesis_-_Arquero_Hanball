@@ -11,6 +11,7 @@ module.exports = (req, res, next) => {
             //console.log('Id de usuario invalido');
             throw 'Id de usuario invalido';
         } else {
+            req.user_id = usuarioID;
             next();
         }
     } catch {
