@@ -192,7 +192,7 @@ export const CrearSecuecia = (props: crearSecuanciaProps) => {
         <View style={{ paddingVertical: 10, flex: 1 }}>
           <View style={[styles.itemCircle, { backgroundColor: GlobalStyles.greenBackColor }]}>
             <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
-            <Text style={styles.itemText}>Time</Text>
+            <Text style={styles.itemText}>Tiempo</Text>
           </View>
           <SelectList
             setSelected={(second: number) => setTimeSelected(`${second}`)}

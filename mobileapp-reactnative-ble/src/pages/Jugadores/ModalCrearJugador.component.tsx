@@ -98,7 +98,11 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
         <View style={styles.container}>
           <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: GlobalStyles.white, borderRadius: 20, padding: 5 }}>
-              <Text style={styles.title}>Agregar Jugador</Text>
+              {editJugador ? (
+                <Text style={styles.title}>Editar Jugador</Text>
+              ) : (
+                <Text style={styles.title}>Agregar Jugador</Text>
+              )}
               <TextInput
                 label={'Nombre*'}
                 style={{ marginVertical: 10 }}
@@ -112,7 +116,7 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginVertical: 10 }}>
             {editJugador ? (
               <Button mode="contained" onPress={handleEdit}>
-                Editar
+                Actualizar
               </Button>
             ) : (
               <Button mode="contained" onPress={handleSubmit}>

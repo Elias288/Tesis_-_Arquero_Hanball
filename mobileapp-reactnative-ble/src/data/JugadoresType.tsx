@@ -4,6 +4,5 @@ export type JugadorType = {
   fechaCreación: Date;
   cedula?: string;
   localidad?: string;
-  rutinas?: string[];
-  resultados?: string[];
+  resultados?: Array<string>;
 };

@@ -90,7 +90,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
             <Text style={styles.title}>Crear rutina aleatoria</Text>
 
             <View style={{ marginTop: 10 }}>
-              <Text>Tamaño de Rutina</Text>
+              <Text>Cantidad de secuencias</Text>
               <Slider
                 minimumValue={4}
                 maximumValue={10}
