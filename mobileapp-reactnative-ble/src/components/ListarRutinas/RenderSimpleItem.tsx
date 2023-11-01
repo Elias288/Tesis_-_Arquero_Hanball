@@ -3,10 +3,11 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import GlobalStyles from '../../utils/EstilosGlobales';
+import formateDate from '../../utils/formateDate';
 import { RutinaType } from '../../data/RutinasType';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
-import formateDate from '../../utils/formateDate';
 import { JugadorType } from '../../data/JugadoresType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 
@@ -28,7 +29,13 @@ export const RenderSimpleItem = ({ rutina, isRutinaRealizada }: renderSimpleItem
   }, []);
 
   const goToViewRutina = () => {
-    navigator.navigate('ViewRutina', { rutinaId: rutina.id, isRutinaResultado: isRutinaRealizada });
+    if (isRutinaRealizada) {
+      console.log(JSON.stringify(rutina));
+
+      navigator.navigate('ViewRutinaResultado', { rutina: JSON.stringify(rutina) });
+    } else {
+      navigator.navigate('ViewRutina', { rutinaId: rutina.id });
+    }
   };
 
   return (

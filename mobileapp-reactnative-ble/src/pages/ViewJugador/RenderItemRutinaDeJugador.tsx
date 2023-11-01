@@ -13,8 +13,8 @@ export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) =>
 
   const goToViewRutina = () => {
     navigator.navigate('Rutinas', {
-      screen: 'ViewRutina',
-      params: { rutinaId: rutina.id, isRutinaResultado: true },
+      screen: 'ViewRutinaResultado',
+      params: { rutina: JSON.stringify(rutina) },
     });
   };
 

@@ -7,8 +7,8 @@ import GlobalStyles from '../../utils/EstilosGlobales';
 
 interface RenderProps {
   jugador: JugadorType;
-  gotoViewJugadores: (jugadorId: number) => void;
-  deleteJugador: (id: number) => void;
+  gotoViewJugadores: (jugadorId: string) => void;
+  deleteJugador: (id: string) => void;
 }
 
 export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: RenderProps) => {

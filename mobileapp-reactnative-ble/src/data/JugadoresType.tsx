@@ -1,5 +1,5 @@
 export type JugadorType = {
-  id: number;
+  id: string;
   name: string;
   date: Date;
 };

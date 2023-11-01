@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Modal, Portal, TextInput } from 'react-native-paper';
+import uuid from 'react-native-uuid';
+
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { JugadorType } from '../../data/JugadoresType';
@@ -44,7 +46,11 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
       return;
     }
 
-    pushJugador({ id: jugadores.length, name: name.trim(), date: new Date() });
+    pushJugador({
+      id: uuid.v4().toString().replace(/-/g, ''),
+      name: name.trim(),
+      date: new Date(),
+    });
     closeModal();
   };
 

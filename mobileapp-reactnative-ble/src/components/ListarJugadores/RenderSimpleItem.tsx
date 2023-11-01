@@ -7,7 +7,7 @@ import formateDate from '../../utils/formateDate';
 
 interface renderSimpleItemProps {
   jugador: JugadorType;
-  gotoViewJugadores: (jugadorId: number) => void;
+  gotoViewJugadores: (jugadorId: string) => void;
 }
 
 export const RenderSimpleItem = ({ jugador, gotoViewJugadores }: renderSimpleItemProps) => {

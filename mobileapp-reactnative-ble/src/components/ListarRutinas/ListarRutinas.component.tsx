@@ -26,7 +26,7 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
     popRutinaRealizada,
   } = useCustomLocalStorage();
 
-  const [selectedRutinaId, setSelectedRutinaId] = useState<number>(0);
+  const [selectedRutinaId, setSelectedRutinaId] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [listMode, setListMode] = useState<boolean>(false);
   const [rutinaList, setRutinaList] = useState<Array<RutinaType>>([]);
@@ -64,7 +64,7 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
     setIsModalVisible(false);
   };
 
-  const showDeleteModal = (rutinaId: number) => {
+  const showDeleteModal = (rutinaId: string) => {
     setIsModalVisible(true);
     setSelectedRutinaId(rutinaId);
   };
