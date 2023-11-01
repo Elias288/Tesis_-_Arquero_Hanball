@@ -13,8 +13,6 @@ import CustomModal, { customModalStyles } from '../CustomModal.component';
 import { RenderItem } from './RenderItem';
 import { RenderSimpleItem } from './RenderSimpleItem';
 
-const ItemHeigth = 80;
-
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
@@ -32,7 +30,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const [jugadoresList, setJugadoresList] = useState<Array<JugadorType>>([]);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedJugadorId, setSelectedJugadorId] = useState<number>(0);
+  const [selectedJugadorId, setSelectedJugadorId] = useState<string>('');
 
   const sortArray = (a: JugadorType, b: JugadorType): number => {
     if (sort === undefined || sort === sortType.alphabetic) {
@@ -69,12 +67,12 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     setIsModalVisible(false);
   };
 
-  const showDeleteModal = (jugadorId: number) => {
+  const showDeleteModal = (jugadorId: string) => {
     setIsModalVisible(true);
     setSelectedJugadorId(jugadorId);
   };
 
-  const gotoViewJugadores = (jugadorId: number) => {
+  const gotoViewJugadores = (jugadorId: string) => {
     if (navigation) {
       navigation.navigate('Jugadores', { screen: 'ViewJugadores', params: { jugadorId } });
       return;
@@ -96,7 +94,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       <>
         {jugadoresList.map((jugador) => (
           <RenderSimpleItem
-            key={jugador.id.toString()}
+            key={jugador.id}
             jugador={jugador}
             gotoViewJugadores={gotoViewJugadores}
           />

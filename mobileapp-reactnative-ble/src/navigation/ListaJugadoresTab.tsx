@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import ViewJugadorPage from '../pages/ViewJugador/ViewJugador.page';
 import JugadoresPage from '../pages/Jugadores/Jugadores.page';
 
 export type ListaJugadoresTabPages = {
   ListaJugadores: undefined;
-  ViewJugadores: { jugadorId: number };
+  ViewJugadores: { jugadorId: string };
 };
 
 const Stack = createNativeStackNavigator<ListaJugadoresTabPages>();

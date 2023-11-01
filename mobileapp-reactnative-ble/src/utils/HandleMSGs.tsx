@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Portal, Snackbar } from 'react-native-paper';
 import { useCustomBLE } from '../contexts/BLEProvider';
-import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
+import uuid from 'react-native-uuid';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
 import { RutinaTabPages } from '../navigation/RutinasTab';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { RootTabs } from '../Main';
-import { RutinaType } from '../data/RutinasType';
 
 export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
@@ -22,16 +23,8 @@ const HandleMSGs = () => {
       >
     >();
 
-  const {
-    receivedMSG,
-    BLECode,
-    BLEmsg,
-    cleanBLECode,
-    runGame,
-    stringToSecuencia,
-    selectRutina,
-    selectedRutina,
-  } = useCustomBLE();
+  const { receivedMSG, BLECode, BLEmsg, runGame, stringToSecuencia, selectRutina, selectedRutina } =
+    useCustomBLE();
   const { pushRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
@@ -39,7 +32,6 @@ const HandleMSGs = () => {
   useEffect(() => {
     // si recibe un mensaje desde el servidor BLE
     if (receivedMSG) {
-      console.log('receivedMSG: ' + receivedMSG);
       runGame(false);
       // convierte el mensaje en funcion:dato
       const partes = receivedMSG.split('^');
@@ -75,13 +67,15 @@ const HandleMSGs = () => {
 
         pushRutinaRealizada({
           ...rut,
-          id: rutinasRealizadas.length + 1,
+          id: uuid.v4().toString().replace(/-/g, ''),
           title: 'Rutina ' + (rutinasRealizadas.length + 1),
         });
 
+        console.log(rut);
+
         navigator?.navigate('Rutinas', {
-          screen: 'ViewRutina',
-          params: { rutina: JSON.stringify(rut), isRutinaResultado: true },
+          screen: 'ViewRutinaResultado',
+          params: { rutina: JSON.stringify(rut) },
         });
       }
     },

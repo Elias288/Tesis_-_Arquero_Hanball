@@ -117,7 +117,7 @@ const JugarPage = (props: propsType) => {
             <Text style={styles.title}>Seleccionar Jugador</Text>
             <SelectList
               data={selectedListJugadores}
-              setSelected={(jugadorId: number) => {
+              setSelected={(jugadorId: string) => {
                 setSelectedJugador(jugadores.find((jugador) => jugador.id == jugadorId));
               }}
             />

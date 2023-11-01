@@ -4,6 +4,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
+import uuid from 'react-native-uuid';
+
 import { InicioTabPages } from '../navigation/InicioTab';
 import { RootTabs } from '../Main';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
@@ -35,8 +37,8 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
 
   const gotoJugar = (secuencia: Array<secuenciaType>) => {
     const rutina: RutinaType = {
-      id: rutinas.length,
-      title: 'rutina random ' + rutinas.length,
+      id: uuid.v4().toString().replace(/-/g, ''),
+      title: 'rutina random ' + uuid.v4().toString().replace(/-/g, ''),
       secuencia,
       createDate: new Date(),
     };
