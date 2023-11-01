@@ -14,16 +14,13 @@ var RutinaSchema = new Schema(
       type: String,
       require: true,
     },
-    createDate: {
+    fechaDeCreación: {
       type: Date,
       require: true,
     },
     secuencias: {
       type: String,
       require: true,
-    },
-    createDate: {
-      type: Date,
     },
     id_usuario: {
       type: String,

@@ -10,6 +10,12 @@ var ResultadoSchema = new Schema(
       type: ObjectID,
       auto: true,
     },
+    titulo: {
+      type: String,
+    },
+    createDate: {
+      type: Date,
+    },
     id_jugador: {
       type: ObjectID,
       ref: "Jugador",
@@ -18,18 +24,12 @@ var ResultadoSchema = new Schema(
       type: ObjectID,
       ref: "Rutina",
     },
-    secuencias: { 
-        type: String,
+    secuencias: {
+      type: String,
     },
   },
   { versionKey: false }
 );
 
-// Exportar el modelo
+
 module.exports = mongoose.model("Resultado", ResultadoSchema);
-/*
-Id_resultado: String
-Id_jugador: String
-Id_rutina: String
-Secuencias: Array<Id_secuencia>
-*/

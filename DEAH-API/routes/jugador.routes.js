@@ -12,9 +12,9 @@ router.put("/update/:id", auth, jugadorController.update);
 router.delete("/delete/:id", auth, jugadorController.deleteById);
 
 router.put("/addResultado", auth, jugadorController.asignarResultado);
-router.put("/addRutina", auth, jugadorController.asignarRutina);
+//router.put("/addRutina", auth, jugadorController.asignarRutina);
 
-router.get('/getRutinas', auth, jugadorController.getrutinas);
+//router.get('/getRutinas', auth, jugadorController.getrutinas);
 router.get('/getResultados', auth, jugadorController.getresultados);
 
 module.exports = router;

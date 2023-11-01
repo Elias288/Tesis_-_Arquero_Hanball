@@ -61,10 +61,4 @@ UsuarioSchema.methods.compare = function (password) {
   });
 };
 
-// Exportar el modelo
 module.exports = mongoose.model("Usuario", UsuarioSchema);
-/*
-Id_usuario: String
-Nombre: String
-Rutinas: Array<Id_rutina>
-*/

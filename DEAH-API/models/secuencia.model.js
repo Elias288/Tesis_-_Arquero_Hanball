@@ -10,7 +10,7 @@ var SecuenciaSchema = new Schema(
       type: ObjectID,
       auto: true,
     },
-    time: {
+    tiempo: {
       type: String,
     },
     ledId: {

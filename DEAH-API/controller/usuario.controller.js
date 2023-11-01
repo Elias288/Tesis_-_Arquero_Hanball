@@ -16,20 +16,14 @@ class UsuarioController extends BaseController {
     login = (req, res, next) => {
         UsuarioSchema.findOne({ username: req.body.username }).then(
             (usuario) => {
-                //console.log(usuario);
                 if (!usuario) {
-                    //console.log('Usuario no encontrado');
                     return res.status(401).json({
                         error: new Error({ msg: 'Usuario no encontrado' })
                     });
                 }
-                //console.log('req.body.contrasenia: ', req.body.contrasenia, '\n');
-                //console.log('usuario.contrasenia: ', usuario.contrasenia, '\n');
                 bcrypt.compare(req.body.contrasenia, usuario.contrasenia).then(
                     (valid) => {
-                        //console.log('valid: ', valid);
                         if (!valid) {
-                            //console.log('Contrasenia incorrecta');
                             return res.status(401).json({
                                 error: new Error({ msg: 'Contrasenia incorrecta' })
                             });
@@ -58,13 +52,11 @@ class UsuarioController extends BaseController {
             loggedUser.rutinas.push(rutina._id)
             res.status(201).send(loggedUser)
         } catch (error) {
-            //console.log(error)
             res.status(404).send(error)
         }
     }
     jugadorlist(req, res) {
         const { user_id } = req;
-        //console.log("idusuario: ", user_id)
         return UsuarioSchema.findOne(
             { _id: user_id }
         ).populate('jugadores').then(result => {
@@ -73,7 +65,6 @@ class UsuarioController extends BaseController {
     }
     rutinalist(req, res) {
         const { user_id } = req;
-        //console.log("idusuario: ", user_id)
         return UsuarioSchema.findOne(
             { _id: user_id }
         ).populate('rutinas').then(result => {
