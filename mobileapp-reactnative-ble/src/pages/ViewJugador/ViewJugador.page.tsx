@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import HeaderComponent from '../../components/Header.component';
+import HeaderComponent from '../../components/Header/Header.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';

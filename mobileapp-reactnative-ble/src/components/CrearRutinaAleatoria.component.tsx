@@ -6,7 +6,7 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
 import uuid from 'react-native-uuid';
 
-import { InicioTabPages } from '../navigation/InicioTab';
+import { inicioTabPages } from '../navigation/InicioTab';
 import { RootTabs } from '../Main';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
@@ -16,7 +16,7 @@ const CANTLEDS = 4;
 const MAXSECONDS = 5;
 
 type navigationType = CompositeNavigationProp<
-  NativeStackNavigationProp<InicioTabPages, 'InicioPage', undefined>,
+  NativeStackNavigationProp<inicioTabPages, 'InicioPage', undefined>,
   NativeStackNavigationProp<RootTabs>
 >;
 

@@ -1,52 +1,68 @@
-/*
- * Este contexto comparte entre todos sus componentes hijos las lista de jugadores y
- * rutinas guardadas
- */
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-
+import { useEffect, useState } from 'react';
 import { JugadorType } from '../data/JugadoresType';
 import { RutinaType } from '../data/RutinasType';
-import useLocalStorage from '../utils/useLocalStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface useLocalStorageType {
+export interface LocalStorageType {
+  localToken: string;
+  saveToken: (token: string) => void;
+  clearToken: () => void;
   jugadores: Array<JugadorType>;
   pushJugador: (newJugador: JugadorType) => void;
   clearJugadoresDB: () => void;
-  popJugador: (jugadorId: string) => void;
+  popJugador: (jugadorId: number) => void;
   updateJugador: (newJugador: JugadorType) => void;
   findJugador: (
     jugadorName: string | undefined,
-    jugadorId: string | undefined
+    jugadorId: number | undefined
   ) => JugadorType | undefined;
   rutinas: Array<RutinaType>;
   pushRutina: (newRutina: RutinaType) => void;
-  popRutina: (rutinaId: string) => void;
-  updateRutina: (newRutina: RutinaType) => void;
+  popRutina: (rutinaId: number) => void;
   findRutina: (
     rutinaTitle: string | undefined,
-    rutinaId: string | undefined
+    rutinaId: number | undefined
   ) => RutinaType | undefined;
-  clearRutinasDB: () => void;
   rutinasRealizadas: Array<RutinaType>;
   pushRutinaRealizada: (newRutina: RutinaType) => void;
-  popRutinaRealizada: (rutinaId: string) => void;
+  popRutinaRealizada: (rutinaId: number) => void;
   clearRutinasRealizadas: () => void;
-  getRutinasJugadasDeJugador: (jugadorId: string) => Array<RutinaType>;
+  getRutinasJugadasDeJugador: (jugadorId: number) => Array<RutinaType>;
 }
 
-const LocalStorageContext = createContext<useLocalStorageType | undefined>(undefined);
-
-const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+function useLocalStorage(): LocalStorageType {
   const [jugadores, setJugadores] = useState<Array<JugadorType>>([]);
   const [rutinas, setRutinas] = useState<Array<RutinaType>>([]);
   const [rutinasRealizadas, setRutinasRealizadas] = useState<Array<RutinaType>>([]);
+  const [localToken, setLocalToken] = useState<string>('');
 
   useEffect(() => {
     listAllJugadores();
     ListAllRutinas();
     listAllRutinasRealizadas();
+    getToken();
   }, []);
+
+  // ****************************************** Token ******************************************
+
+  const getToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) setLocalToken(value);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const saveToken = async (token: string) => {
+    await AsyncStorage.setItem('token', token);
+    setLocalToken(token);
+  };
+
+  const clearToken = async () => {
+    await AsyncStorage.setItem('token', '');
+    setLocalToken('');
+  };
 
   // ****************************************** Jugadores ******************************************
   const listAllJugadores = async () => {
@@ -63,7 +79,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('jugadores', JSON.stringify([...jugadores, newJugador]));
   };
 
-  const popJugador = async (popJugadorId: string) => {
+  const popJugador = async (popJugadorId: number) => {
     // borra rutinas realizadas por jugador
     const rutinasDeJugador = getRutinasJugadasDeJugador(popJugadorId);
     rutinasDeJugador.forEach((rr) => popRutinaRealizada(rr.id));
@@ -87,7 +103,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const findJugador = (
     jugadorName: string | undefined,
-    jugadorId: string | undefined
+    jugadorId: number | undefined
   ): JugadorType | undefined => {
     if (jugadorName != undefined) return jugadores.find((jugador) => jugador.name == jugadorName);
     if (jugadorId != undefined) return jugadores.find((jugador) => jugador.id == jugadorId);
@@ -115,37 +131,21 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('rutinas', JSON.stringify([...rutinas, newRutina]));
   };
 
-  const popRutina = async (popRutinaId: string) => {
+  const popRutina = async (popRutinaId: number) => {
     const newRutinaList = rutinas.filter((j) => j.id !== popRutinaId);
     setRutinas(newRutinaList);
     await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinaList));
   };
 
-  const updateRutina = async (newRutina: RutinaType) => {
-    const rutinaIndex = rutinas.findIndex((rutina) => rutina.id === newRutina.id);
-
-    if (rutinaIndex !== -1) {
-      const newRutinas = [...rutinas];
-      newRutinas[rutinaIndex] = newRutina;
-      setRutinas(newRutinas);
-      await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinas));
-    }
-  };
-
   const findRutina = (
     rutinaTitle: string | undefined,
-    rutinaId: string | undefined
+    rutinaId: number | undefined
   ): RutinaType | undefined => {
     if (rutinaTitle !== undefined) return rutinas.find((rutina) => rutina.title == rutinaTitle);
     if (rutinaId !== undefined) return rutinas.find((rutina) => rutina.id == rutinaId);
     return undefined;
   };
 
-  const clearRutinasDB = async () => {
-    console.log('db clear');
-    setRutinas([]);
-    await AsyncStorage.setItem('rutinas', JSON.stringify([]));
-  };
   // ************************************ Rutinas Realizadas ************************************
   const listAllRutinasRealizadas = async () => {
     try {
@@ -164,7 +164,7 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     );
   };
 
-  const popRutinaRealizada = async (popRutinaId: string) => {
+  const popRutinaRealizada = async (popRutinaId: number) => {
     const newRutinaList = rutinasRealizadas.filter((j) => j.id !== popRutinaId);
     setRutinasRealizadas(newRutinaList);
     await AsyncStorage.setItem('rutinasRealizadas', JSON.stringify(newRutinaList));
@@ -175,45 +175,32 @@ const LocalStorageProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('rutinasRealizadas', '[]');
   };
 
-  const getRutinasJugadasDeJugador = (jugadorId: string) => {
+  const getRutinasJugadasDeJugador = (jugadorId: number) => {
     return rutinasRealizadas.filter((rutina) => {
       return rutina.jugadorID == jugadorId;
     });
   };
 
-  return (
-    <LocalStorageContext.Provider
-      value={{
-        jugadores,
-        pushJugador,
-        clearJugadoresDB,
-        popJugador,
-        updateJugador,
-        findJugador,
-        rutinas,
-        popRutina,
-        pushRutina,
-        updateRutina,
-        findRutina,
-        clearRutinasDB,
-        rutinasRealizadas,
-        popRutinaRealizada,
-        pushRutinaRealizada,
-        clearRutinasRealizadas,
-        getRutinasJugadasDeJugador,
-      }}
-    >
-      {children}
-    </LocalStorageContext.Provider>
-  );
-};
+  return {
+    localToken,
+    saveToken,
+    clearToken,
+    jugadores,
+    pushJugador,
+    clearJugadoresDB,
+    popJugador,
+    updateJugador,
+    findJugador,
+    rutinas,
+    popRutina,
+    pushRutina,
+    findRutina,
+    rutinasRealizadas,
+    popRutinaRealizada,
+    pushRutinaRealizada,
+    clearRutinasRealizadas,
+    getRutinasJugadasDeJugador,
+  };
+}
 
-export const useCustomLocalStorage = () => {
-  const context = useContext(LocalStorageContext);
-  if (!context) {
-    throw new Error('useLocalStorage debe ser utilizado dentro de un LocalStorageProvider');
-  }
-  return context;
-};
-
-export default LocalStorageProvider;
+export default useLocalStorage;

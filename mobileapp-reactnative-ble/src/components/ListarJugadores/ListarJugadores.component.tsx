@@ -5,19 +5,19 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { JugadorType } from '../../data/JugadoresType';
-import { RootTabs } from '../../Main';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import sortType from '../../utils/sortType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import CustomModal, { customModalStyles } from '../CustomModal.component';
 import { RenderItem } from './RenderItem';
 import { RenderSimpleItem } from './RenderSimpleItem';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
   cantRenderItems?: number; // renderiza el número de items
   containerStyle?: StyleProp<ViewStyle>; // estilo personalizado del componente
-  navigation?: NativeStackNavigationProp<RootTabs>;
+  navigation?: NativeStackNavigationProp<HomeTabs>;
   sort?: number;
 }
 

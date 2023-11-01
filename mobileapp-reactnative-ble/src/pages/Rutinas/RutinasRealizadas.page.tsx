@@ -1,4 +1,4 @@
-import HeaderComponent from '../../components/Header.component';
+import HeaderComponent from '../../components/Header/Header.component';
 import { View, StyleSheet } from 'react-native';
 import ListarRutinasComponent from '../../components/ListarRutinas/ListarRutinas.component';
 import { Button } from 'react-native-paper';

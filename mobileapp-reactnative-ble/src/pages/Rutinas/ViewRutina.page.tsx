@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../../components/Header.component';
+import HeaderComponent from '../../components/Header/Header.component';
 import { View, Text, StyleSheet } from 'react-native';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { useEffect, useState } from 'react';

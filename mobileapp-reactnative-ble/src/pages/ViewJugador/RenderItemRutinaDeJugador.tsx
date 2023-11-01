@@ -4,12 +4,12 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { RutinaType } from '../../data/RutinasType';
-import { RootTabs } from '../../Main';
 import { useNavigation } from '@react-navigation/native';
 import formateDate from '../../utils/formateDate';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) => {
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
 
   const goToViewRutina = () => {
     navigator.navigate('Rutinas', {

@@ -8,12 +8,12 @@ import sortType from '../../utils/sortType';
 import ListarJugadoresComponent from '../../components/ListarJugadores/ListarJugadores.component';
 import CustomCard, { cardStyles } from './CustomCard';
 import OptionButtons from './OptionButtons';
-import { RootTabs } from '../../Main';
 import ModalCrearJugador from '../Jugadores/ModalCrearJugador.component';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 const CustomCardJugadores: FC = () => {
   const [isVisibleAgregarJugador, setVisibleAgregarJugador] = useState(false);
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
 
   const gotAgregarJugador = () => {
     navigator.navigate('Jugadores', { screen: 'ListaJugadores' });
