@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../../components/Header.component';
 import { View, Text, StyleSheet } from 'react-native';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { useEffect, useState } from 'react';
@@ -10,10 +9,10 @@ import CustomModal, { customModalStyles } from '../../components/CustomModal.com
 import { RutinaType } from '../../data/RutinasType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { Button, IconButton } from 'react-native-paper';
-import { useCustomBLE } from '../../contexts/BLEProvider';
 import { JugadorType } from '../../data/JugadoresType';
 import formateDate from '../../utils/formateDate';
 import ModalUpdateRutina from './UpdateRutina/ModalUpdateRutina';
+import HeaderComponent from '../../components/Header/Header.component';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutinaResultado'>;
 

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import Constants from 'expo-constants';
-import { Button, PaperProvider, Portal, TextInput } from 'react-native-paper';
+import { Button, PaperProvider, ActivityIndicator, TextInput } from 'react-native-paper';
 import { useEffect, useState } from 'react';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 import { RootTabs } from '../../Main';
@@ -13,13 +13,13 @@ type propsType = NativeStackScreenProps<RootTabs>;
 
 const LoginPage = (props: propsType) => {
   const { navigation } = props;
-  const [userName, setUserName] = useState<string>('EliasBianchi');
-  const [contraseña, setContraseña] = useState<string>('bianchi');
-  const { login, isWifiConnected } = useCustomRemoteStorage();
-  const { localToken } = useLocalStorage();
+  const [userName, setUserName] = useState<string>('');
+  const [contraseña, setContraseña] = useState<string>('');
+  const { login, isLoginLoading } = useCustomRemoteStorage();
+  const { localToken, saveToken } = useLocalStorage();
 
   useEffect(() => {
-    if (localToken !== '' || !isWifiConnected) {
+    if (localToken !== '') {
       navigation.navigate('Home');
     }
   }, [localToken]);
@@ -34,7 +34,7 @@ const LoginPage = (props: propsType) => {
       return;
     }
 
-    login(userName.trim(), contraseña.trim());
+    saveToken('Elias el mejor');
   };
 
   return (
@@ -57,13 +57,18 @@ const LoginPage = (props: propsType) => {
               style={{ marginVertical: 10 }}
               value={contraseña}
               onChangeText={setContraseña}
-              // secureTextEntry={true}
+              secureTextEntry={true}
             />
 
             <View style={{ marginTop: 30 }}>
               <Button mode="contained" onPress={handleSubmit}>
                 Entrar
               </Button>
+            </View>
+            <View style={{ marginTop: 20 }}>
+              {isLoginLoading && (
+                <ActivityIndicator animating={true} color={GlobalStyles.blueBackgroudn} size={50} />
+              )}
             </View>
             <WifiStatusComponent neverHide={true} style={{ bottom: 0 }} />
           </View>

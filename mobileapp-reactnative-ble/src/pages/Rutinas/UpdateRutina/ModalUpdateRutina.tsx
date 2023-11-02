@@ -1,6 +1,3 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { InicioTabPages } from '../../../navigation/InicioTab';
-import { useNavigation } from '@react-navigation/native';
 import { RutinaType, secuenciaType } from '../../../data/RutinasType';
 import { Button, Portal, TextInput } from 'react-native-paper';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
@@ -8,9 +5,8 @@ import uuid from 'react-native-uuid';
 
 import GlobalStyles from '../../../utils/EstilosGlobales';
 import Constants from 'expo-constants';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
-import ListarSecuenciaComponent from '../../../components/ListarSecuencia.component';
 import { CrearSecuecia } from '../CrearRutina/CrearSecuecia';
 import EditListaSecuenciaComponent from './EditListSecuencias';
 
@@ -21,7 +17,6 @@ interface propsType {
 }
 
 const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
-  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
   const { updateRutina, rutinas } = useCustomLocalStorage();
 
   // const prevRutina: RutinaType | undefined = editRutina; // Rutina a editar

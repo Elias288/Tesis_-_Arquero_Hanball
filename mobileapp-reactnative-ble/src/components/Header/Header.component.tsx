@@ -8,8 +8,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { inicioTabPages } from '../../navigation/InicioTab';
 import { BleStatus } from './BleStatus';
-import useLocalStorage from '../../utils/useLocalStorage';
-import useRemoteStorage from '../../utils/useRemoteStorage';
+import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 
 type headerProps = {
   showBackButton?: boolean;
@@ -20,7 +20,8 @@ export const HEADERSIZE = 50;
 
 const HeaderComponent = (props: headerProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<inicioTabPages>>();
-  const { isWifiConnected } = useRemoteStorage();
+  const { isWifiConnected } = useCustomRemoteStorage();
+  const { clearToken } = useCustomLocalStorage();
 
   return (
     <View style={styles.container}>
