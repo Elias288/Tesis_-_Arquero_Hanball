@@ -10,7 +10,7 @@ router.post("/login", usuarioController.login);
 
 router.get("/list", usuarioController.getAll);
 router.get("/details/:id", auth, usuarioController.getById);
-router.put("/update/:id", auth, usuarioController.update);
+router.put("/update/", auth, usuarioController.update);
 router.delete("/delete/:id", auth, usuarioController.deleteById);
 
 router.put("/addRutina", auth, usuarioController.asignarRutina);
