@@ -1,14 +1,14 @@
 const GlobalStyles = {
-  yellowBackColor: '#e7d84f',
-  yellowTextColor: '#746c26',
-  greenBackColor: '#3CB371',
-  white: '#fff',
+  black: '#000',
+  blueBackgroudn: '#536ac7',
+  buttonStyle: {
+    borderColor: '#746c26',
+    borderWidth: 1,
+  },
   grayBackground: '#e7e7e7',
   grayText: '#aaaaaa',
-  blueBackgroudn: '#536ac7',
-  black: '#000',
-  redError: '#c41c1c',
-
+  greenBackColor: '#3CB371',
+  greenAlertColor: '#159c09',
   jugadorName: {
     backgroundColor: '#e7d84f',
     borderRadius: 20,
@@ -16,10 +16,10 @@ const GlobalStyles = {
     paddingVertical: 5,
     fontSize: 20,
   },
-  buttonStyle: {
-    borderColor: '#746c26',
-    borderWidth: 1,
-  },
+  redError: '#c41c1c',
+  yellowBackColor: '#e7d84f',
+  yellowTextColor: '#746c26',
+  white: '#fff',
 };
 
 export default GlobalStyles;

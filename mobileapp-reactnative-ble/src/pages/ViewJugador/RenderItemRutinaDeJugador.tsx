@@ -4,17 +4,17 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { RutinaType } from '../../data/RutinasType';
-import { RootTabs } from '../../Main';
 import { useNavigation } from '@react-navigation/native';
 import formateDate from '../../utils/formateDate';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) => {
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
 
   const goToViewRutina = () => {
     navigator.navigate('Rutinas', {
-      screen: 'ViewRutina',
-      params: { rutinaId: rutina.id, isRutinaResultado: true },
+      screen: 'ViewRutinaResultado',
+      params: { rutina: JSON.stringify(rutina) },
     });
   };
 
@@ -26,7 +26,7 @@ export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) =>
       </View>
 
       <View style={renderItemStyles.countContainer}>
-        <Text style={renderItemStyles.countText}>Tamaño de rutina: {rutina.secuencia.length}</Text>
+        <Text style={renderItemStyles.countText}>Cantidad de secuencias: {rutina.secuencia.length}</Text>
         <Text style={renderItemStyles.countText}>
           Tiempo total:
           {rutina.secuencia.reduce(

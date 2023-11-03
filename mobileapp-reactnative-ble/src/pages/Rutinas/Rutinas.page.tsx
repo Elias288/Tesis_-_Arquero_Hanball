@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../../components/Header.component';
+import HeaderComponent from '../../components/Header/Header.component';
 import { Button, IconButton } from 'react-native-paper';
 
 import { RutinaTabPages } from '../../navigation/RutinasTab';

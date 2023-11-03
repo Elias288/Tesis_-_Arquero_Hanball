@@ -3,17 +3,18 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { IconButton } from 'react-native-paper';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { RutinaType } from '../../data/RutinasType';
 import { useCustomBLE } from '../../contexts/BLEProvider';
-import { RootTabs } from '../../Main';
+import { HomeTabs } from '../../navigation/HomeTab';
 
 interface RenderProps {
   rutina: RutinaType;
-  deleteRutina: (id: number) => void;
+  deleteRutina: (id: string) => void;
 }
 export const RenderItem = (props: RenderProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<RootTabs>>();
+  const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
   const { rutina, deleteRutina } = props;
 
@@ -29,7 +30,7 @@ export const RenderItem = (props: RenderProps) => {
   const goToViewRutina = () => {
     navigator.navigate('Rutinas', {
       screen: 'ViewRutina',
-      params: { rutina: JSON.stringify(rutina), isRutinaResultado: false },
+      params: { rutinaId: rutina.id },
     });
   };
 

@@ -6,6 +6,7 @@ class RutinaController extends BaseController {
     constructor() {
         super(RutinaRepository);
     }
+    /*
     asignarSecuencia(req, res) {
         return RutinaSchema.findOneAndUpdate(
             { _id: req.body.id_rutina },
@@ -17,5 +18,6 @@ class RutinaController extends BaseController {
                 res.status(200).json({ message: "Secuencia asignada con exito" });
             })
     }
+    */
 }
 module.exports = RutinaController;

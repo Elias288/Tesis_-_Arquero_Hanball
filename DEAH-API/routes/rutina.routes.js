@@ -11,6 +11,6 @@ router.post('/add', auth, rutinaController.add);
 router.put('/update/:id', auth, rutinaController.update);
 router.delete('/delete/:id', auth, rutinaController.deleteById);
 
-router.put('/addSecuencia', auth, rutinaController.asignarSecuencia);
+//router.put('/addSecuencia', auth, rutinaController.asignarSecuencia);
 
 module.exports = router;

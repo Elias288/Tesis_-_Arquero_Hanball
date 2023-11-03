@@ -1,26 +1,23 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var Schema = mongoose.Schema;
 
 const ObjectID = mongoose.Schema.Types.ObjectId;
 
-var SecuenciaSchema = new Schema({
+var SecuenciaSchema = new Schema(
+  {
     _id: {
-        type: ObjectID,
-        auto: true
+      type: ObjectID,
+      auto: true,
     },
     tiempo: {
-        type: String,
+      type: String,
     },
-    led: {
-        type: Number,
+    ledId: {
+      type: Number,
     },
-}, { versionKey: false });
+  },
+  { versionKey: false }
+);
 
-// Exportar el modelo
-module.exports = mongoose.model('Secuencia', SecuenciaSchema);
-/*
-Id_secuencia: String
-tiempo: String
-led: Number
-*/
+module.exports = mongoose.model("Secuencia", SecuenciaSchema);

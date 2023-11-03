@@ -1,26 +1,35 @@
 import { FlatList, Text, View, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 import React, { FC } from 'react';
-import { secuenciaType } from '../data/RutinasType';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import GlobalStyles from '../utils/EstilosGlobales';
+import { secuenciaType } from '../../../data/RutinasType';
+import GlobalStyles from '../../../utils/EstilosGlobales';
+import { IconButton } from 'react-native-paper';
 
 interface ViewSecuenciasProps {
   secuencias: Array<secuenciaType>;
   listStyle?: StyleProp<ViewStyle>;
   itemStyle?: StyleProp<ViewStyle>;
   viewResult?: boolean;
+  edit: (secuencia: secuenciaType) => void;
+  deleteSecuencia: (secuenciaId: string) => void;
 }
 
-const ListarSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuenciasProps) => {
-  const { secuencias, listStyle, itemStyle, viewResult } = props;
+const EditListaSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuenciasProps) => {
+  const { secuencias, listStyle, itemStyle, viewResult, deleteSecuencia, edit } = props;
 
   return (
     <View style={listStyle}>
       <FlatList
         data={secuencias}
         renderItem={({ item }) => (
-          <RenderItem secuencia={item} itemStyle={itemStyle} viewResult={viewResult} />
+          <RenderItem
+            secuencia={item}
+            itemStyle={itemStyle}
+            viewResult={viewResult}
+            editSecuencia={edit}
+            deleteSecuencia={deleteSecuencia}
+          />
         )}
         keyExtractor={(item) => item.id.toString()}
       />
@@ -32,9 +41,21 @@ type renderItempProps = {
   secuencia: secuenciaType;
   itemStyle?: StyleProp<ViewStyle>;
   viewResult?: boolean;
+  editSecuencia: (secuencia: secuenciaType) => void;
+  deleteSecuencia: (secuenciaId: string) => void;
 };
 
-const RenderItem: FC<renderItempProps> = ({ secuencia, itemStyle, viewResult }) => {
+const RenderItem: FC<renderItempProps> = (props) => {
+  const { secuencia, itemStyle, viewResult, editSecuencia, deleteSecuencia } = props;
+
+  const editSec = () => {
+    editSecuencia({ id: secuencia.id, ledId: secuencia.ledId, time: secuencia.time });
+  };
+
+  const dropSecuencia = () => {
+    deleteSecuencia(secuencia.id);
+  };
+
   const content = () => {
     if (viewResult) {
       return (
@@ -89,6 +110,37 @@ const RenderItem: FC<renderItempProps> = ({ secuencia, itemStyle, viewResult }) 
           <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
           <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
         </View>
+
+        {editSecuencia !== undefined && (
+          <View
+            style={{
+              marginLeft: 10,
+              paddingHorizontal: 10,
+              borderLeftWidth: 1,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: GlobalStyles.grayBackground,
+                borderRadius: 30,
+                flexDirection: 'row',
+              }}
+            >
+              <IconButton
+                icon={'pencil'}
+                size={30}
+                iconColor={GlobalStyles.black}
+                onPress={editSec}
+              />
+              <IconButton
+                icon={'delete'}
+                size={30}
+                iconColor={GlobalStyles.black}
+                onPress={dropSecuencia}
+              />
+            </View>
+          </View>
+        )}
       </>
     );
   };
@@ -130,4 +182,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListarSecuenciaComponent;
+export default EditListaSecuenciaComponent;

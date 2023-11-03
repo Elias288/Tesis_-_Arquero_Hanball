@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InicioTabPages } from '../../navigation/InicioTab';
-import HeaderComponent from '../../components/Header.component';
+import { inicioTabPages } from '../../navigation/InicioTab';
+import HeaderComponent from '../../components/Header/Header.component';
 import { Button } from 'react-native-paper';
 import { SelectList } from 'react-native-dropdown-select-list';
 
@@ -15,7 +15,7 @@ import { BLUETOOTHDISCONNECTED, BLUETOOTHNOTCONNECTED, BLUETOOTHOFF } from '../.
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { RutinaType } from '../../data/RutinasType';
 
-type propsType = NativeStackScreenProps<InicioTabPages, 'Jugar'>;
+type propsType = NativeStackScreenProps<inicioTabPages, 'Jugar'>;
 
 type selectListJugadoresType = {
   key: string;
@@ -117,7 +117,7 @@ const JugarPage = (props: propsType) => {
             <Text style={styles.title}>Seleccionar Jugador</Text>
             <SelectList
               data={selectedListJugadores}
-              setSelected={(jugadorId: number) => {
+              setSelected={(jugadorId: string) => {
                 setSelectedJugador(jugadores.find((jugador) => jugador.id == jugadorId));
               }}
             />

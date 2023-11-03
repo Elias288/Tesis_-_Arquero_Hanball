@@ -7,21 +7,28 @@ class ResultadoController extends BaseController {
     constructor() {
         super(ResultadoRepository);
     }
-    asignarSecuencia(req, res) {
+    asignarRutina(req, res) {
         return ResultadoSchema.findOneAndUpdate(
             { _id: req.body.id_resultado },
             {
                 $push: {
-                    secuencias: req.body.secuenciaId
+                    id_rutina: req.body.rutinaId
                 }
             }).then(result => {
-                res.status(200).json({ message: "Secuencia asignada con exito" });
+                res.status(200).json({ message: "Rutina asignada con exito" });
             })
     }
     getjugador(req, res) {
         return ResultadoSchema.findOne(
             { _id: req.body.id_resultado }
         ).populate('id_jugador').then(result => {
+            res.status(200).json({ result })
+        })
+    }
+    getRutina(req, res) {
+        return ResultadoSchema.findOne(
+            { _id: req.body.id_resultado }
+        ).populate('id_rutina').then(result => {
             res.status(200).json({ result })
         })
     }

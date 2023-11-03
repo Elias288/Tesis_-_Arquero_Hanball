@@ -5,6 +5,7 @@ class RutinaRepository extends BaseRepository {
     constructor() {
         super(RutinaSchema);
     }
+    /*
     asignarSecuencia(id_rutina, secuencia) {
         RutinaSchema.findOne({ _id: id_rutina }).then(
             (rutina) => {
@@ -12,6 +13,7 @@ class RutinaRepository extends BaseRepository {
                 return this.collection.findByIdAndUpdate(id_rutina, rutina);
             })
     }
+    */
 }
 
 module.exports = RutinaRepository;

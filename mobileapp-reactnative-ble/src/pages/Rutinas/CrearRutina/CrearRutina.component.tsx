@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Portal, TextInput } from 'react-native-paper';
-import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
-import CustomModal, { customModalStyles } from '../../../components/CustomModal.component';
 import Constants from 'expo-constants';
+import uuid from 'react-native-uuid';
 
-import ListarSecuenciaComponent from '../../../components/ListarSecuencia.component';
+import CustomModal, { customModalStyles } from '../../../components/CustomModal.component';
 import GlobalStyles from '../../../utils/EstilosGlobales';
+import ListarSecuenciaComponent from '../../../components/ListarSecuencia.component';
+import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
 import { RutinaType, secuenciaType } from '../../../data/RutinasType';
-import { InicioTabPages } from '../../../navigation/InicioTab';
+import { inicioTabPages } from '../../../navigation/InicioTab';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { useCustomBLE } from '../../../contexts/BLEProvider';
@@ -20,7 +21,7 @@ interface propsType {
 }
 
 const CrearRutina = (props: propsType) => {
-  const navigator = useNavigation<NativeStackNavigationProp<InicioTabPages>>();
+  const navigator = useNavigation<NativeStackNavigationProp<inicioTabPages>>();
   const { isVisible: visible, hideModal } = props;
   const [title, setTitle] = useState('');
   const { rutinas, pushRutina, findRutina } = useCustomLocalStorage();
@@ -45,6 +46,11 @@ const CrearRutina = (props: propsType) => {
       return;
     }
 
+    if (title.trim().length > 20) {
+      showModal('Titulo demasiado largo');
+      return;
+    }
+
     if (findRutina(title, undefined)) {
       showModal('Titulo de rutina ya registrada');
       return;
@@ -55,8 +61,15 @@ const CrearRutina = (props: propsType) => {
       return;
     }
 
-    setNewRutina({ id: rutinas.length, title, secuencia: newSecuencia, createDate: new Date() });
-    pushRutina({ id: rutinas.length, title, secuencia: newSecuencia, createDate: new Date() });
+    const rutina = {
+      id: uuid.v4().toString().replace(/-/g, ''),
+      title: title.trim(),
+      secuencia: newSecuencia,
+      createDate: new Date(),
+    };
+
+    setNewRutina(rutina);
+    pushRutina(rutina);
 
     setModalMessage('');
 
@@ -84,7 +97,7 @@ const CrearRutina = (props: propsType) => {
   };
 
   const pushSecuencia = (ledId: string, time: number) => {
-    setNewSecuencia([...newSecuencia, { id: `${newSecuencia.length}`, ledId, time }]);
+    setNewSecuencia([...newSecuencia, { id: uuid.v4().toString().replace(/-/g, ''), ledId, time }]);
   };
 
   return (
@@ -102,7 +115,9 @@ const CrearRutina = (props: propsType) => {
                   onChangeText={setTitle}
                 />
 
-                <CrearSecuecia showModal={showModal} pushSecuencia={pushSecuencia} />
+                <View style={styles.line}></View>
+
+                <CrearSecuecia callModal={showModal} pushSecuencia={pushSecuencia} />
               </View>
 
               {/* //TODO: convertir los componentes en swipes para poder eliminarlos */}
@@ -162,6 +177,12 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  line: {
+    borderTopWidth: 1,
+    borderColor: GlobalStyles.black,
+    marginTop: 20,
+    paddingTop: 10,
   },
   title: {
     fontWeight: 'bold',

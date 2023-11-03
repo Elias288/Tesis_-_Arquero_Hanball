@@ -7,6 +7,7 @@ class ResultadoRepository extends BaseRepository {
     constructor() {
         super(ResultadoSchema);
     }
+    /*
     asignarSecuencia(id_resultado, secuencia) {
         ResultadoSchema.findOne({ _id: req.body.id_resultado }).then(
             (resultado) => {
@@ -14,6 +15,7 @@ class ResultadoRepository extends BaseRepository {
                 return this.collection.findByIdAndUpdate(id_resultado, resultado);
             })
     }
+    */
 }
 
 module.exports = ResultadoRepository;

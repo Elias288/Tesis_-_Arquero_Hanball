@@ -1,28 +1,35 @@
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var Schema = mongoose.Schema;
 
 const ObjectID = mongoose.Schema.Types.ObjectId;
 
-var ResultadoSchema = new Schema({
+var ResultadoSchema = new Schema(
+  {
     _id: {
-        type: ObjectID,
-        auto: true
+      type: ObjectID,
+      auto: true,
+    },
+    titulo: {
+      type: String,
+    },
+    createDate: {
+      type: Date,
     },
     id_jugador: {
-        type: ObjectID, ref: 'Jugador'
+      type: ObjectID,
+      ref: "Jugador",
     },
     id_rutina: {
-        type: ObjectID, ref: 'Rutina'
+      type: ObjectID,
+      ref: "Rutina",
     },
-    secuencias: { type: ObjectID, ref: 'Secuencia' },
-}, { versionKey: false });
+    secuencias: {
+      type: String,
+    },
+  },
+  { versionKey: false }
+);
 
-// Exportar el modelo
-module.exports = mongoose.model('Resultado', ResultadoSchema);
-/*
-Id_resultado: String
-Id_jugador: String
-Id_rutina: String
-Secuencias: Array<Id_secuencia>
-*/
+
+module.exports = mongoose.model("Resultado", ResultadoSchema);

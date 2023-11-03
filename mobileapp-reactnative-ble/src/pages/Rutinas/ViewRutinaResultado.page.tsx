@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import HeaderComponent from '../../components/Header/Header.component';
 import { View, Text, StyleSheet } from 'react-native';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { useEffect, useState } from 'react';
@@ -10,37 +9,43 @@ import CustomModal, { customModalStyles } from '../../components/CustomModal.com
 import { RutinaType } from '../../data/RutinasType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { Button, IconButton } from 'react-native-paper';
-import { useCustomBLE } from '../../contexts/BLEProvider';
+import { JugadorType } from '../../data/JugadoresType';
 import formateDate from '../../utils/formateDate';
 import ModalUpdateRutina from './UpdateRutina/ModalUpdateRutina';
+import HeaderComponent from '../../components/Header/Header.component';
 
-type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutina'>;
+type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutinaResultado'>;
 
-const ViewRutina = (props: propsType) => {
+const ViewRutinaResultado = (props: propsType) => {
   const { navigation, route } = props;
-  const { rutinaId } = route.params;
-  const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
-  const { popRutina, rutinas } = useCustomLocalStorage();
+  const { rutina } = route.params;
+  const { popRutinaRealizada, jugadores, rutinas } = useCustomLocalStorage();
 
   const [selectedRutina, setSelectedRutina] = useState<RutinaType>();
+  const [jugadorDeRutina, setJugadorDeRutina] = useState<JugadorType>();
 
   const [visibleModal, setVisibleModal] = useState(false);
   const [isModalUpateVisible, setIsModalUpateVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const rutinaById = rutinas.find((rutina) => rutina.id === rutinaId);
-    setSelectedRutina(rutinaById);
+    if (rutina) {
+      const recibedRutina = JSON.parse(rutina);
+      setSelectedRutina(recibedRutina);
+      const jugadorById = jugadores.find((jugador) => jugador.id === recibedRutina.jugadorID);
+      setJugadorDeRutina(jugadorById);
+    }
   }, [rutinas]);
 
   const deleteRutina = () => {
-    if (rutinaId && selectedRutina) {
-      popRutina(selectedRutina.id);
+    if (rutina && selectedRutina) {
+      popRutinaRealizada(selectedRutina.id);
     }
+
     navigation.goBack();
   };
 
   const goBack = () => {
-    navigation.navigate('RutinasPage');
+    navigation.navigate('RutinasRealizadas');
   };
 
   return (
@@ -52,7 +57,15 @@ const ViewRutina = (props: propsType) => {
             <Text>Rutina:</Text>
             <Text style={styles.title}>{selectedRutina?.title}</Text>
           </View>
+
+          <>
+            <View style={{ flex: 1 }}>
+              <Text>Jugador:</Text>
+              <Text style={GlobalStyles.jugadorName}>{jugadorDeRutina?.name}</Text>
+            </View>
+          </>
         </View>
+
         <View style={styles.infoContainer}>
           {selectedRutina?.createDate && (
             <View style={{ flex: 1 }}>
@@ -60,6 +73,7 @@ const ViewRutina = (props: propsType) => {
               <Text>{formateDate(new Date(selectedRutina?.createDate), true)}</Text>
             </View>
           )}
+
           {selectedRutina?.playedDate && (
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold' }}>Fecha realizada:</Text>
@@ -68,39 +82,22 @@ const ViewRutina = (props: propsType) => {
           )}
         </View>
 
-        {selectedRutina?.secuencia && (
+        {selectedRutina && (
           <ListarSecuenciaComponent
             secuencias={selectedRutina.secuencia}
             listStyle={{ flex: 1, marginBottom: 10 }}
+            viewResult={true}
           />
         )}
 
         {/* Actions */}
         <View style={styles.action}>
-          {espConnectedStatus && BLEPowerStatus && (
-            <View style={{ marginHorizontal: 10 }}>
-              <IconButton
-                icon={'play'}
-                containerColor={GlobalStyles.greenBackColor}
-                iconColor={GlobalStyles.white}
-                size={30}
-                onPress={() => alert('go to play')}
-              />
-            </View>
-          )}
           <Button
             mode="outlined"
             onPress={() => setVisibleModal(true)}
             style={{ justifyContent: 'center', alignItems: 'center' }}
           >
             Borrar
-          </Button>
-          <Button
-            mode="outlined"
-            onPress={() => setIsModalUpateVisible(true)}
-            style={{ justifyContent: 'center', alignItems: 'center' }}
-          >
-            Editar
           </Button>
 
           <Button
@@ -163,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewRutina;
+export default ViewRutinaResultado;

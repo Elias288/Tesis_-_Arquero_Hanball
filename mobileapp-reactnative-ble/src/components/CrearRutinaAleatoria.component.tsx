@@ -4,7 +4,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
-import { InicioTabPages } from '../navigation/InicioTab';
+import uuid from 'react-native-uuid';
+
+import { inicioTabPages } from '../navigation/InicioTab';
 import { RootTabs } from '../Main';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
@@ -14,7 +16,7 @@ const CANTLEDS = 4;
 const MAXSECONDS = 5;
 
 type navigationType = CompositeNavigationProp<
-  NativeStackNavigationProp<InicioTabPages, 'InicioPage', undefined>,
+  NativeStackNavigationProp<inicioTabPages, 'InicioPage', undefined>,
   NativeStackNavigationProp<RootTabs>
 >;
 
@@ -35,8 +37,8 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
 
   const gotoJugar = (secuencia: Array<secuenciaType>) => {
     const rutina: RutinaType = {
-      id: rutinas.length,
-      title: 'rutina random ' + rutinas.length,
+      id: uuid.v4().toString().replace(/-/g, ''),
+      title: 'rutina random ' + uuid.v4().toString().replace(/-/g, ''),
       secuencia,
       createDate: new Date(),
     };
