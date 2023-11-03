@@ -97,7 +97,7 @@ const CrearRutina = (props: propsType) => {
   };
 
   const pushSecuencia = (ledId: string, time: number) => {
-    setNewSecuencia([...newSecuencia, { id: `${newSecuencia.length}`, ledId, time }]);
+    setNewSecuencia([...newSecuencia, { id: uuid.v4().toString().replace(/-/g, ''), ledId, time }]);
   };
 
   return (

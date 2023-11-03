@@ -26,7 +26,7 @@ export const RenderItemRutinaDeJugador = ({ rutina }: { rutina: RutinaType }) =>
       </View>
 
       <View style={renderItemStyles.countContainer}>
-        <Text style={renderItemStyles.countText}>Tamaño de rutina: {rutina.secuencia.length}</Text>
+        <Text style={renderItemStyles.countText}>Cantidad de secuencias: {rutina.secuencia.length}</Text>
         <Text style={renderItemStyles.countText}>
           Tiempo total:
           {rutina.secuencia.reduce(

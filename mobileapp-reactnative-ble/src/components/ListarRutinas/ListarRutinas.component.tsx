@@ -104,7 +104,7 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
       <>
         {rutinaList.map((item) => (
           <RenderSimpleItem
-            key={item.id.toString()}
+            key={item.id}
             rutina={item}
             isRutinaRealizada={listRutinasRealizadas || false}
           />
@@ -122,7 +122,7 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
           <RenderItem rutina={item} deleteRutina={() => showDeleteModal(item.id)} />
         )}
         contentContainerStyle={styles.flatStyle}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
       />
       <CustomModal
         hideModal={() => setIsModalVisible(false)}
