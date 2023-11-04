@@ -167,7 +167,7 @@ function useBLE(): BluetoothLowEnergyApi {
         });
 
         // ************************* Detiene el escaneo despues de 10 segundos *************************
-        setTimeout(() => {
+        const time = setTimeout(() => {
           if (espdevice === undefined) {
             bleManager.stopDeviceScan();
             setScanningLoading(false);
@@ -179,6 +179,8 @@ function useBLE(): BluetoothLowEnergyApi {
             return;
           }
         }, 10000);
+
+        return () => clearTimeout(time);
       } else if (state === 'PoweredOff') {
         // ******************************* si el bluetooth está a pagado *******************************
         if (BLECode !== BLUETOOTHOFF) {
@@ -190,7 +192,7 @@ function useBLE(): BluetoothLowEnergyApi {
           setBLECode(BLUETOOTHOFF);
           console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);
           // bleManager.stopDeviceScan();
-          // suscription.remove();
+          suscription.remove();
         }
       }
     }, true);

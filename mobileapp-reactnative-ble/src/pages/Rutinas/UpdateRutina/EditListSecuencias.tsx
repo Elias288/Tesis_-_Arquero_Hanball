@@ -103,7 +103,7 @@ const RenderItem: FC<renderItempProps> = (props) => {
         <View
           style={[
             styles.itemCircle,
-            { marginRight: 5, backgroundColor: GlobalStyles.blueBackgroudn },
+            { marginRight: 5, backgroundColor: GlobalStyles.blueBackground },
             itemStyle,
           ]}
         >

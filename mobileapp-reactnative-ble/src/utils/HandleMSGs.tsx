@@ -16,14 +16,13 @@ export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
 }
 
+type navigationType = CompositeNavigationProp<
+  NativeStackNavigationProp<RutinaTabPages>,
+  NativeStackNavigationProp<HomeTabs>
+>;
+
 const HandleMSGs = () => {
-  const navigator =
-    useNavigation<
-      CompositeNavigationProp<
-        NativeStackNavigationProp<RutinaTabPages>,
-        NativeStackNavigationProp<HomeTabs>
-      >
-    >();
+  const navigator = useNavigation<navigationType>();
 
   const {
     receivedMSG,
