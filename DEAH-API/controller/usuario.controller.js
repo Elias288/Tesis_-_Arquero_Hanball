@@ -19,7 +19,7 @@ class UsuarioController extends BaseController {
       if (!usuario) {
         return res.status(StatusCodes.NOT_FOUND).json({
           res: "error",
-          error: "Usuario no encontrado",
+          message: "Usuario no encontrado",
         });
       }
       bcrypt
@@ -28,7 +28,7 @@ class UsuarioController extends BaseController {
           if (!valid) {
             return res.status(StatusCodes.UNAUTHORIZED).json({
               res: "error",
-              error: "Contraseña incorrecta",
+              message: "Contraseña incorrecta",
             });
           }
           const token = jwt.sign({ userID: usuario._id }, JWebToken, {
@@ -53,7 +53,7 @@ class UsuarioController extends BaseController {
       const rutina = await RutinaSchema.findById(req.body.id_rutina);
 
       await loggedUser.rutinas.push(rutina._id);
-      await loggedUser.save()
+      await loggedUser.save();
       res.status(StatusCodes.CREATED).send({ res: "0", message: loggedUser });
     } catch (error) {
       res.status(StatusCodes.NOT_FOUND).send({ res: "error", message: error });

@@ -1,27 +1,38 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import { IconButton, Text } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { inicioTabPages } from '../../navigation/InicioTab';
 import { BleStatus } from './BleStatus';
+import { RootTabs } from '../../Main';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type headerProps = {
   showBackButton?: boolean;
   title?: string;
 };
 
+type navigationType = CompositeNavigationProp<
+  NativeStackNavigationProp<inicioTabPages>,
+  NativeStackNavigationProp<RootTabs>
+>;
+
 export const HEADERSIZE = 50;
 
 const HeaderComponent = (props: headerProps) => {
-  const navigator = useNavigation<NativeStackNavigationProp<inicioTabPages>>();
+  const navigator = useNavigation<navigationType>();
   const { isWifiConnected } = useCustomRemoteStorage();
   const { clearToken } = useCustomLocalStorage();
+
+  const logout = () => {
+    clearToken();
+    navigator.navigate('Login');
+  };
 
   return (
     <View style={styles.container}>
@@ -43,12 +54,14 @@ const HeaderComponent = (props: headerProps) => {
         <Text style={styles.textTitle}>{props.title}</Text>
       </View>
 
-      <View style={{ width: 50, height: 50, justifyContent: 'center', alignItems: 'center' }}>
-        {/* TODO: eliminar */}
-        {isWifiConnected && <IconButton icon={'logout'} onPress={clearToken} />}
-
-        {!isWifiConnected && <Icon name="wifi-strength-off" size={30} color={GlobalStyles.white} />}
-      </View>
+      {!isWifiConnected && (
+        <Icon name="wifi-strength-off-outline" size={20} color={GlobalStyles.white} />
+      )}
+      {isWifiConnected && (
+        <TouchableOpacity onPress={logout}>
+          <Icon name="logout" size={20} color={GlobalStyles.white} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

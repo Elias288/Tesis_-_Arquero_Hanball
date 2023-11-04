@@ -1,17 +1,20 @@
+import { useEffect } from 'react';
 import { NavigatorScreenParams } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { PaperProvider, Portal } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import GlobalStyles from '../utils/EstilosGlobales';
+import HandleMSGs from '../utils/HandleMSGs';
+import WifiStatusComponent from '../components/WifiStatus.component';
 import InicioTab, { inicioTabPages } from './InicioTab';
 import ListaJugadoresTab, { ListaJugadoresTabPages } from './ListaJugadoresTab';
 import RutinasTab, { RutinaTabPages } from './RutinasTab';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import GlobalStyles from '../utils/EstilosGlobales';
-import { useEffect } from 'react';
 import { useCustomBLE } from '../contexts/BLEProvider';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PaperProvider, Portal } from 'react-native-paper';
-import HandleMSGs from '../utils/HandleMSGs';
-import WifiStatusComponent from '../components/WifiStatus.component';
-import useLocalStorage from '../utils/useLocalStorage';
-import useRemoteStorage from '../utils/useRemoteStorage';
+import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootTabs } from '../Main';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 
 export type HomeTabs = {
   Inicio: NavigatorScreenParams<inicioTabPages>;
@@ -20,13 +23,25 @@ export type HomeTabs = {
 };
 
 const Tab = createBottomTabNavigator<HomeTabs>();
+type propsType = NativeStackScreenProps<RootTabs>;
 
-const Home = () => {
+const Home = ({ navigation }: propsType) => {
   const { initBle } = useCustomBLE();
+  const { isWifiConnected } = useCustomRemoteStorage();
+  const { localToken } = useCustomLocalStorage();
 
   useEffect(() => {
     initBle();
   }, []);
+
+  useEffect(() => {
+    // si el wifi se enciende cuando se entró offline, se redirige al login
+    if (isWifiConnected && localToken === '') {
+      console.log('home go to login');
+
+      navigation.navigate('Login');
+    }
+  }, [isWifiConnected]);
 
   const pageOptions = (routeName: string, focused: boolean) => {
     let iconName = '';

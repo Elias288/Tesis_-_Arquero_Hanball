@@ -3,6 +3,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { API_URL } from '@env';
 import { JugadorType } from '../data/JugadoresType';
 import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import { APIResType } from '../data/APIResType';
 
 export interface remoteStorageProps {
   isWifiConnected: boolean;
@@ -11,6 +12,7 @@ export interface remoteStorageProps {
   remoteJugadores: JugadorType[];
 
   login: (user: string, password: string) => void;
+  clearErrorLogin: () => void;
 }
 
 function useRemoteStorage(): remoteStorageProps {
@@ -22,6 +24,7 @@ function useRemoteStorage(): remoteStorageProps {
   const [remoteJugadores, setRemoteJugadores] = useState<JugadorType[]>([]);
 
   useEffect(() => {
+    clearErrorLogin();
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsWifiConnected(state.isConnected ?? false);
     });
@@ -32,12 +35,6 @@ function useRemoteStorage(): remoteStorageProps {
     };
   }, []);
 
-  useEffect(() => {
-    if (localToken && remoteJugadores.length == 0) {
-      getJugadores();
-    }
-  }, [localToken]);
-
   const login = (usuario: string, contraseña: string) => {
     const options = {
       method: 'POST',
@@ -46,20 +43,44 @@ function useRemoteStorage(): remoteStorageProps {
         'Content-Type': 'application/json',
       },
     };
+    setIsLoginLoading(true);
+
+    const time = setTimeout(() => {
+      setIsLoginLoading(false);
+      setErrorLogin('Tiempo agotado. Servidor no repondío');
+      return;
+    }, 10000);
 
     fetch(`${API_URL}/api/usuario/login`, options)
       .then((res) => res.json())
       .then(
-        (result) => {
-          saveToken(`Bearer ${result.token}`);
-          setIsLoginLoading(false);
+        (result: APIResType) => {
+          if (result.res == '0') {
+            saveToken(`Bearer ${result.message}`);
+            setIsLoginLoading(false);
+          } else {
+            setIsLoginLoading(false);
+            setErrorLogin(result.message);
+          }
+
+          return () => clearTimeout(time);
         },
-        (error) => {
+        (err) => {
           setIsLoginLoading(false);
-          setErrorLogin(error);
-          console.log(error);
+          setErrorLogin(err);
+          return () => clearTimeout(time);
         }
-      );
+      )
+      .catch((err) => {
+        setIsLoginLoading(false);
+        setErrorLogin(err);
+        console.log('Catch:' + err);
+        return () => clearTimeout(time);
+      });
+  };
+
+  const clearErrorLogin = () => {
+    setErrorLogin('');
   };
 
   const getJugadores = () => {
@@ -94,6 +115,7 @@ function useRemoteStorage(): remoteStorageProps {
     errorLogin,
     remoteJugadores,
     login,
+    clearErrorLogin,
   };
 }
 
