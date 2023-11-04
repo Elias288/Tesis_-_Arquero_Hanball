@@ -29,5 +29,30 @@ class RutinaController extends BaseController {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
     }
   };
+  deleteById = async (req, res) => {
+    let rutinaId = req.params.id;
+    const { user_id } = req;
+
+    if (rutinaId.trim() === "")
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ res: "error", message: "invalid param" });
+
+    try {
+      const usuario = await UsuarioSchema.findById(user_id);
+      usuario.rutinas = usuario.rutinas.filter(
+        (rutina_id) => rutina_id.toString() !== rutinaId
+      );
+
+      RutinaSchema.findByIdAndDelete(rutinaId).then((doc) => {
+        return res.status(StatusCodes.OK).send({ res: "0", message: doc });
+      });
+
+      await usuario.save();
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+    }
+  };
 }
 module.exports = RutinaController;

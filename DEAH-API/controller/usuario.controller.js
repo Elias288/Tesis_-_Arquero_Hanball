@@ -36,35 +36,22 @@ class UsuarioController extends BaseController {
           });
           res.status(StatusCodes.OK).json({
             res: "0",
-            message: {
-              userID: usuario._id,
-              token: token,
-            },
+            message: token,
           });
         });
     });
-  };
-  asignarRutina = async (req, res) => {
-    const { user_id } = req;
-
-    try {
-      const loggedUser = await UsuarioSchema.findById(user_id);
-
-      const rutina = await RutinaSchema.findById(req.body.id_rutina);
-
-      await loggedUser.rutinas.push(rutina._id);
-      await loggedUser.save();
-      res.status(StatusCodes.CREATED).send({ res: "0", message: loggedUser });
-    } catch (error) {
-      res.status(StatusCodes.NOT_FOUND).send({ res: "error", message: error });
-    }
   };
   jugadorlist(req, res) {
     const { user_id } = req;
     return UsuarioSchema.findOne({ _id: user_id })
       .populate("jugadores")
       .then((result) => {
-        res.status(StatusCodes.OK).json({ res: "0", message: result });
+        console.log(
+          "getJugadores: " + result.jugadores.map((jugador) => jugador.nombre)
+        );
+        res
+          .status(StatusCodes.OK)
+          .json({ res: "0", message: result.jugadores });
       });
   }
   rutinalist(req, res) {
@@ -72,7 +59,11 @@ class UsuarioController extends BaseController {
     return UsuarioSchema.findOne({ _id: user_id })
       .populate("rutinas")
       .then((result) => {
-        res.status(StatusCodes.OK).json({ res: "0", message: result });
+        if (process.env.develop)
+          console.log(
+            "getRutinas: " + result.rutinas.map((rutina) => rutina.titulo)
+          );
+        res.status(StatusCodes.OK).json({ res: "0", message: result.rutinas });
       });
   }
 }

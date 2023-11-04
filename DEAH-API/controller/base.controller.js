@@ -11,9 +11,7 @@ class BaseController {
         return res.status(StatusCodes.OK).send({ res: "0", message: doc });
       })
       .catch((err) => {
-        return res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .send();
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
       });
   };
   add = (req, res) => {
@@ -22,15 +20,15 @@ class BaseController {
       .create(body)
       .then((doc) => {
         if (doc)
-          return res.status(StatusCodes.CREATED).send({ res: "0", message: doc });
+          return res
+            .status(StatusCodes.CREATED)
+            .send({ res: "0", message: doc });
 
-        return res.status(StatusCodes.BAD_GATEWAY).send()
+        return res.status(StatusCodes.BAD_GATEWAY).send();
       })
       .catch((err) => {
         console.log(err);
-        return res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .send();
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
       });
   };
   update = (req, res) => {
@@ -42,9 +40,7 @@ class BaseController {
       })
       .catch((err) => {
         console.log(err);
-        return res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .send();
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
       });
   };
   deleteById = (req, res) => {
@@ -56,7 +52,7 @@ class BaseController {
     this.repo
       .deleteById(id)
       .then((doc) => {
-        return res.status(StatusCodes.CREATED).send({ res: "0", message: doc });
+        return res.status(StatusCodes.OK).send({ res: "0", message: doc });
       })
       .catch((err) => {
         console.log(err);

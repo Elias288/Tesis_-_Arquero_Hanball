@@ -46,5 +46,30 @@ class JugadorController extends BaseController {
         res.status(StatusCodes.OK).json({ res: "0", message: result });
       });
   }
+  deleteById = async (req, res) => {
+    let jugadorId = req.params.id;
+    const { user_id } = req;
+
+    if (jugadorId.trim() === "")
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ res: "error", message: "invalid param" });
+
+    try {
+      const usuario = await UsuarioSchema.findById(user_id);
+      usuario.jugadores = usuario.jugadores.filter(
+        (jugador_id) => jugador_id.toString() !== jugadorId
+      );
+
+      JugadorSchema.findByIdAndDelete(jugadorId).then((doc) => {
+        return res.status(StatusCodes.OK).send({ res: "0", message: doc });
+      });
+
+      await usuario.save();
+    } catch (error) {
+      console.log(error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+    }
+  };
 }
 module.exports = JugadorController;

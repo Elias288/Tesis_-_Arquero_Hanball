@@ -13,7 +13,6 @@ router.get("/details/:id", auth, usuarioController.getById);
 router.put("/update/", auth, usuarioController.update);
 router.delete("/delete/:id", auth, usuarioController.deleteById);
 
-//router.put("/addRutina", auth, usuarioController.asignarRutina);
 router.get("/JugadorList", auth, usuarioController.jugadorlist);
 router.get("/RutinaList", auth, usuarioController.rutinalist);
 
