@@ -20,9 +20,9 @@ class JugadorController extends BaseController {
       usuario.jugadores.push(savedJugador._id);
       await usuario.save();
 
-      res.status(201).send({ res: "0", message: savedJugador });
+      res.status(StatusCodes.CREATED).send({ res: "0", message: savedJugador });
     } catch (error) {
-      res.status(StatusCodes.NOT_FOUND).send({ res: "error", message: error });
+      res.status(StatusCodes.NOT_FOUND).send();
     }
   };
   asignarResultado(req, res) {

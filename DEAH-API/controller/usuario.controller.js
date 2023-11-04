@@ -17,7 +17,7 @@ class UsuarioController extends BaseController {
   login = (req, res, next) => {
     UsuarioSchema.findOne({ username: req.body.username }).then((usuario) => {
       if (!usuario) {
-        return res.status(401).json({
+        return res.status(StatusCodes.NOT_FOUND).json({
           res: "error",
           error: "Usuario no encontrado",
         });
@@ -26,7 +26,7 @@ class UsuarioController extends BaseController {
         .compare(req.body.contrasenia, usuario.contrasenia)
         .then((valid) => {
           if (!valid) {
-            return res.status(401).json({
+            return res.status(StatusCodes.UNAUTHORIZED).json({
               res: "error",
               error: "Contraseña incorrecta",
             });
@@ -52,10 +52,11 @@ class UsuarioController extends BaseController {
 
       const rutina = await RutinaSchema.findById(req.body.id_rutina);
 
-      loggedUser.rutinas.push(rutina._id);
-      res.status(201).send({ res: "0", message: loggedUser });
+      await loggedUser.rutinas.push(rutina._id);
+      await loggedUser.save()
+      res.status(StatusCodes.CREATED).send({ res: "0", message: loggedUser });
     } catch (error) {
-      res.status(404).send({ res: "error", message: error });
+      res.status(StatusCodes.NOT_FOUND).send({ res: "error", message: error });
     }
   };
   jugadorlist(req, res) {
