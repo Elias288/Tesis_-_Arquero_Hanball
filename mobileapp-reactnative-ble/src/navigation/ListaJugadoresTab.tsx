@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import ViewJugadorPage from '../pages/ViewJugador/ViewJugador.page';
+import ViewJugadorPage from '../components/ViewJugador/ViewJugador.page';
 import JugadoresPage from '../pages/Jugadores/Jugadores.page';
 
 export type ListaJugadoresTabPages = {

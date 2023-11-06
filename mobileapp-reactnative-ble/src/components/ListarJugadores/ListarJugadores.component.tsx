@@ -3,16 +3,15 @@ import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-na
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { JugadorType } from '../../data/JugadoresType';
-import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import sortType from '../../utils/sortType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import CustomModal, { customModalStyles } from '../CustomModal.component';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { JugadorType } from '../../data/JugadoresType';
+import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import { RenderItem } from './RenderItem';
 import { RenderSimpleItem } from './RenderSimpleItem';
 import { HomeTabs } from '../../navigation/HomeTab';
-import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 
 interface ListarJugadoresProps {
   isSimpleList?: boolean; // muestra un lista sin opciones
@@ -26,9 +25,8 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const { isSimpleList, cantRenderItems, containerStyle, sort, navigation } = props;
   const navigator = useNavigation<NativeStackNavigationProp<ListaJugadoresTabPages>>();
 
-  const { jugadores: localStoredJugadores, popJugador } = useCustomLocalStorage();
+  const { jugadores, popJugador } = useCustomLocalStorage();
 
-  // const [remoteJugadores, setRemoteJugadores] = useState<JugadorType[]>([]);
   const [listMode, setListMode] = useState<boolean>(false);
   const [jugadoresList, setJugadoresList] = useState<Array<JugadorType>>([]);
 
@@ -56,22 +54,13 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       setListMode(isSimpleList || false);
     }
 
-    // if (isWifiConnected) {
-      // carga todos los jugadores en la bd
-      // if (remoteJugadores !== undefined)
-      //   setJugadoresList(remoteJugadores /* .sort((a, b) => sortArray(a, b)) */);
-    // } else {
-      // carga todos los jugadores
-      setJugadoresList(localStoredJugadores.sort((a, b) => sortArray(a, b)));
-    // }
+    setJugadoresList(jugadores.sort((a, b) => sortArray(a, b)));
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
-      setJugadoresList(
-        localStoredJugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b))
-      );
+      setJugadoresList(jugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b)));
     }
-  }, [localStoredJugadores]);
+  }, [jugadores]);
 
   const deleteJugador = () => {
     popJugador(selectedJugadorId);

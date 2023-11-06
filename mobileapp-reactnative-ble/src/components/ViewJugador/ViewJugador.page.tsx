@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import HeaderComponent from '../../components/Header/Header.component';
+import HeaderComponent from '../Header/Header.component';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
@@ -10,8 +10,8 @@ import { JugadorType } from '../../data/JugadoresType';
 import formateDate from '../../utils/formateDate';
 import { RenderItemRutinaDeJugador } from './RenderItemRutinaDeJugador';
 import { Button } from 'react-native-paper';
-import ModalCrearJugador from '../Jugadores/ModalCrearJugador.component';
-import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
+import ModalCrearJugador from '../../pages/Jugadores/ModalCrearJugador.component';
+import CustomModal, { customModalStyles } from '../CustomModal.component';
 import { ResultadoType } from '../../data/ResultadoType';
 
 type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ViewJugadores'>;
