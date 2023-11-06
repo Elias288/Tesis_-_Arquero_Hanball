@@ -3,6 +3,7 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { PaperProvider, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import GlobalStyles from '../utils/EstilosGlobales';
 import HandleMSGs from '../utils/HandleMSGs';
@@ -12,9 +13,7 @@ import ListaJugadoresTab, { ListaJugadoresTabPages } from './ListaJugadoresTab';
 import RutinasTab, { RutinaTabPages } from './RutinasTab';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootTabs } from '../Main';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 
 export type HomeTabs = {
   Inicio: NavigatorScreenParams<inicioTabPages>;
@@ -27,8 +26,7 @@ type propsType = NativeStackScreenProps<RootTabs>;
 
 const Home = ({ navigation }: propsType) => {
   const { initBle } = useCustomBLE();
-  const { isWifiConnected } = useCustomRemoteStorage();
-  const { localToken } = useCustomLocalStorage();
+  const { isWifiConnected, token } = useCustomRemoteStorage();
 
   useEffect(() => {
     initBle();
@@ -36,12 +34,10 @@ const Home = ({ navigation }: propsType) => {
 
   useEffect(() => {
     // si el wifi se enciende cuando se entró offline, se redirige al login
-    if (isWifiConnected && localToken === '') {
-      console.log('home go to login');
-
+    if (isWifiConnected && token === '') {
       navigation.navigate('Login');
     }
-  }, [isWifiConnected]);
+  }, [isWifiConnected, token]);
 
   const pageOptions = (routeName: string, focused: boolean) => {
     let iconName = '';

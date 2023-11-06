@@ -14,17 +14,16 @@ import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 type propsType = NativeStackScreenProps<RootTabs>;
 
 const LoginPage = ({ navigation }: propsType) => {
-  const { isWifiConnected } = useCustomRemoteStorage();
-  const { localToken, clearJugadoresDB, clearRutinasRealizadas, clearToken, clearRutinasDB } =
-    useCustomLocalStorage();
+  const { isWifiConnected, token, clearStoredToken } = useCustomRemoteStorage();
+  const { clearJugadoresDB, clearRutinasRealizadas, clearRutinasDB } = useCustomLocalStorage();
 
   const [isConnectedLoading, setIsConnectedLoading] = useState(true);
 
   useEffect(() => {
-    /* clearRutinas();
-    clearJugadoresDB();
-    clearRutinasRealizadas();
-    clearToken(); */
+    // clearRutinasDB();
+    // clearJugadoresDB();
+    // clearRutinasRealizadas();
+    // clearStoredToken();
 
     if (isWifiConnected) {
       // si el wifi está conectado a wifi inicia login
@@ -40,13 +39,11 @@ const LoginPage = ({ navigation }: propsType) => {
         clearTimeout(time);
       };
     }
-  }, [isWifiConnected]);
 
-  useEffect(() => {
-    if (localToken !== '') {
+    if (token !== '') {
       navigation.navigate('Home');
     }
-  }, [localToken]);
+  }, [isWifiConnected, token]);
 
   return (
     <PaperProvider>

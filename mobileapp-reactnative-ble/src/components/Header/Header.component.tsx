@@ -26,11 +26,10 @@ export const HEADERSIZE = 50;
 
 const HeaderComponent = (props: headerProps) => {
   const navigator = useNavigation<navigationType>();
-  const { isWifiConnected } = useCustomRemoteStorage();
-  const { clearToken } = useCustomLocalStorage();
+  const { isWifiConnected, clearStoredToken } = useCustomRemoteStorage();
 
   const logout = () => {
-    clearToken();
+    clearStoredToken();
     navigator.navigate('Login');
   };
 

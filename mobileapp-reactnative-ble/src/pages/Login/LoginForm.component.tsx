@@ -7,7 +7,6 @@ import GlobalStyles from '../../utils/EstilosGlobales';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 
 const LoginFormComponent = () => {
-  const { saveToken } = useCustomLocalStorage();
   const { isLoginLoading, errorLogin, login, clearErrorLogin } = useCustomRemoteStorage();
 
   const [userName, setUserName] = useState<string>('elias.bianchi');

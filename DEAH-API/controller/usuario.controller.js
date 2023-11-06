@@ -46,9 +46,6 @@ class UsuarioController extends BaseController {
     return UsuarioSchema.findOne({ _id: user_id })
       .populate("jugadores")
       .then((result) => {
-        console.log(
-          "getJugadores: " + result.jugadores.map((jugador) => jugador.nombre)
-        );
         res
           .status(StatusCodes.OK)
           .json({ res: "0", message: result.jugadores });
@@ -60,10 +57,9 @@ class UsuarioController extends BaseController {
       .populate("rutinas")
       .then((result) => {
         if (process.env.develop)
-          console.log(
-            "getRutinas: " + result.rutinas.map((rutina) => rutina.titulo)
-          );
-        res.status(StatusCodes.OK).json({ res: "0", message: result.rutinas });
+          res
+            .status(StatusCodes.OK)
+            .json({ res: "0", message: result.rutinas });
       });
   }
 }

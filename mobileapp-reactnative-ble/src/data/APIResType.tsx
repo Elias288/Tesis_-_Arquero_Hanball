@@ -1,4 +1,4 @@
 export type APIResType = {
     res: string,
-    message: string
+    message: string | Array<any>
 }

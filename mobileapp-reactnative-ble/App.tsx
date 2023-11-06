@@ -9,14 +9,14 @@ import RemoteStorageProvider from './src/contexts/RemoteStorageProvider';
 export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <LocalStorageProvider>
-        <RemoteStorageProvider>
+      <RemoteStorageProvider>
+        <LocalStorageProvider>
           <BleProvider>
             <Main />
             <StatusBar style="auto" />
           </BleProvider>
-        </RemoteStorageProvider>
-      </LocalStorageProvider>
+        </LocalStorageProvider>
+      </RemoteStorageProvider>
     </SafeAreaView>
   );
 }
