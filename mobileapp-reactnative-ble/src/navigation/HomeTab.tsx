@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NavigatorScreenParams } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PaperProvider, Portal } from 'react-native-paper';
+import { ActivityIndicator, PaperProvider, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -14,6 +14,8 @@ import RutinasTab, { RutinaTabPages } from './RutinasTab';
 import { useCustomBLE } from '../contexts/BLEProvider';
 import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
 import { RootTabs } from '../Main';
+import { View } from 'react-native';
+import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 
 export type HomeTabs = {
   Inicio: NavigatorScreenParams<inicioTabPages>;
@@ -27,17 +29,27 @@ type propsType = NativeStackScreenProps<RootTabs>;
 const Home = ({ navigation }: propsType) => {
   const { initBle } = useCustomBLE();
   const { isWifiConnected, token } = useCustomRemoteStorage();
+  const { chargeAllJugadores, chargeAllRutinas } = useCustomLocalStorage();
+
+  const [loadingData, setLoadingData] = useState<boolean>(true);
 
   useEffect(() => {
-    initBle();
+    chargeAllRutinas();
+    chargeAllJugadores();
+
+    setTimeout(() => {
+      setLoadingData(false);
+    }, 3000);
+
+    if (!loadingData) initBle();
   }, []);
 
   useEffect(() => {
     // si el wifi se enciende cuando se entró offline, se redirige al login
-    if (isWifiConnected && token === '') {
+    if (token === '') {
       navigation.navigate('Login');
     }
-  }, [isWifiConnected, token]);
+  }, [token]);
 
   const pageOptions = (routeName: string, focused: boolean) => {
     let iconName = '';
@@ -59,40 +71,49 @@ const Home = ({ navigation }: propsType) => {
     <>
       <PaperProvider>
         <HandleMSGs />
+        {!loadingData && (
+          <>
+            <Tab.Navigator
+              initialRouteName="Inicio"
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  return pageOptions(route.name, focused);
+                },
+              })}
+            >
+              <Tab.Screen
+                name="Inicio"
+                component={InicioTab}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Tab.Screen
+                name="Jugadores"
+                component={ListaJugadoresTab}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Tab.Screen
+                name="Rutinas"
+                component={RutinasTab}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Tab.Navigator>
+            <Portal>
+              <WifiStatusComponent />
+            </Portal>
+          </>
+        )}
 
-        <Tab.Navigator
-          initialRouteName="Inicio"
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              return pageOptions(route.name, focused);
-            },
-          })}
-        >
-          <Tab.Screen
-            name="Inicio"
-            component={InicioTab}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Tab.Screen
-            name="Jugadores"
-            component={ListaJugadoresTab}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Tab.Screen
-            name="Rutinas"
-            component={RutinasTab}
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Tab.Navigator>
-        <Portal>
-          <WifiStatusComponent />
-        </Portal>
+        {loadingData && (
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ActivityIndicator animating={true} color={GlobalStyles.blueBackground} size={80} />
+          </View>
+        )}
       </PaperProvider>
     </>
   );

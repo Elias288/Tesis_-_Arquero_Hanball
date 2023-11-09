@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ActivityIndicator, Button, TextInput } from 'react-native-paper';
 
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 
 const LoginFormComponent = () => {
-  const { isLoginLoading, errorLogin, login, clearErrorLogin } = useCustomRemoteStorage();
+  const { isLoginLoading, errorLogin, login, setErrorLogin } = useCustomRemoteStorage();
 
   const [userName, setUserName] = useState<string>('elias.bianchi');
   const [contraseña, setContraseña] = useState<string>('contra123');
@@ -33,9 +32,8 @@ const LoginFormComponent = () => {
       return;
     }
 
-    clearErrorLogin();
+    setErrorLogin('');
     login(userName, contraseña);
-    // saveToken('Elias el mejor');
   };
 
   const hideError = (type: number) => {

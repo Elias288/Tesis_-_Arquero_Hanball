@@ -1,3 +1,8 @@
+/*
+ * Esta es la primera pantalla que se carga en la app.
+ * Si el token de useCustomRemoteStorage está vació significa que el usuario no está logueado
+ * Si el token tiene texto significa que está logueado
+ */
 import { View, Text, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { PaperProvider, ActivityIndicator } from 'react-native-paper';
@@ -14,7 +19,7 @@ import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 type propsType = NativeStackScreenProps<RootTabs>;
 
 const LoginPage = ({ navigation }: propsType) => {
-  const { isWifiConnected, token, clearStoredToken } = useCustomRemoteStorage();
+  const { isWifiConnected, token, clearStoredToken, setErrorLogin } = useCustomRemoteStorage();
   const { clearJugadoresDB, clearRutinasRealizadas, clearRutinasDB } = useCustomLocalStorage();
 
   const [isConnectedLoading, setIsConnectedLoading] = useState(true);
@@ -28,16 +33,6 @@ const LoginPage = ({ navigation }: propsType) => {
     if (isWifiConnected) {
       // si el wifi está conectado a wifi inicia login
       setIsConnectedLoading(false);
-    } else {
-      // Espera 3 segundos esperando una conexión wifi y si no está encendido redirige a Home offline
-      const time = setTimeout(() => {
-        setIsConnectedLoading(false);
-        navigation.navigate('Home');
-      }, 3000);
-
-      return () => {
-        clearTimeout(time);
-      };
     }
 
     if (token !== '') {
@@ -55,20 +50,10 @@ const LoginPage = ({ navigation }: propsType) => {
         <View style={styles.body}>
           <View style={{ paddingHorizontal: 30 }}>
             {isConnectedLoading && (
-              <>
-                <ActivityIndicator
-                  animating={true}
-                  color={GlobalStyles.blueBackground}
-                  size={100}
-                />
-              </>
+              <ActivityIndicator animating={true} color={GlobalStyles.blueBackground} size={100} />
             )}
 
-            {!isConnectedLoading && (
-              <>
-                <LoginFormComponent />
-              </>
-            )}
+            {!isConnectedLoading && <LoginFormComponent />}
 
             <WifiStatusComponent neverHide={true} style={{ bottom: 0 }} />
           </View>

@@ -12,12 +12,14 @@ export interface remoteStorageProps {
   isLoginLoading: boolean;
   errorLogin: string;
   token: string;
+  remoteUserId: string | undefined;
 
   login: (user: string, password: string) => void;
-  clearErrorLogin: () => void;
+  setErrorLogin: (error: string) => void;
   clearStoredToken: () => void;
   getJugadores: () => Promise<JugadorType[]>;
   getRutinas: () => Promise<RutinaType[]>;
+  saveRutina: (newRutina: RutinaType) => Promise<any>;
 }
 
 function useRemoteStorage(): remoteStorageProps {
@@ -26,9 +28,10 @@ function useRemoteStorage(): remoteStorageProps {
   const [errorLogin, setErrorLogin] = useState<string>('');
 
   const [token, setToken] = useState<string>('');
+  const [remoteUserId, setRemoteUserId] = useState<string | undefined>();
 
   useEffect(() => {
-    clearErrorLogin();
+    setErrorLogin('');
 
     // si el token guardado es "local" debe borrarlo y solicitar loguearse de nuevo
     getStoredToken().then((token) => {
@@ -55,12 +58,12 @@ function useRemoteStorage(): remoteStorageProps {
     setErrorLogin('');
     setIsLoginLoading(true);
 
+    const controller = new AbortController();
+
     const time = setTimeout(() => {
-      // si el tiempo se agota y no se pudo conectar con la API el token guardado será "local"
-      setIsLoginLoading(false);
-      storeToken('local');
-      return;
-      // }, 2000);
+      // si el tiempo se agota y no se pudo conectar con la API se mostrará el mensaje de error
+      setErrorLogin('Es necesario estár conectado a wifi para iniciar sesión al menos una vez');
+      controller.abort();
     }, 10000);
 
     const options = {
@@ -69,11 +72,12 @@ function useRemoteStorage(): remoteStorageProps {
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: controller.signal,
     };
 
     fetch(`${API_URL}/api/usuario/login`, options)
       .then((res) => res.json())
-      .then((result: APIResType) => {
+      .then((result: any) => {
         clearTimeout(time);
 
         if (result.res !== '0') {
@@ -82,21 +86,18 @@ function useRemoteStorage(): remoteStorageProps {
           return;
         }
 
-        const loggedToken = `Bearer ${result.message}`;
+        const loggedToken = `Bearer ${result.message.token}`;
+
         setToken(loggedToken);
         storeToken(loggedToken);
+
+        setRemoteUserId(result.message.userId);
         setIsLoginLoading(false);
       })
       .catch((err) => {
-        clearTimeout(time);
         setIsLoginLoading(false);
-        setErrorLogin(err);
-        console.log('CatchLogin:' + err);
+        console.log(err);
       });
-  };
-
-  const clearErrorLogin = () => {
-    setErrorLogin('');
   };
 
   // ****************************************** Token ******************************************
@@ -110,7 +111,7 @@ function useRemoteStorage(): remoteStorageProps {
         return value;
       }
     } catch (error) {
-      console.log(error);
+      console.log(`getStoredTokenError: ${JSON.stringify(error)}`);
     }
   };
 
@@ -140,56 +141,86 @@ function useRemoteStorage(): remoteStorageProps {
     return fetch(`${API_URL}/api/usuario/JugadorList`, options)
       .then((res) => res.json())
       .then((result) => {
-        if (result.res !== '0') {
-          console.log(result.message);
-          return [];
-        }
-
+        if (result.res !== '0') return [];
         return result.message;
       })
       .catch((err) => {
-        console.log(err);
+        console.log(`getJugadoresErr: ${JSON.stringify(err)}`);
       });
   };
 
   // ****************************************** Rutinas ******************************************
 
   const getRutinas = (): Promise<RutinaType[]> => {
+    const controller = new AbortController();
+
+    const time = setTimeout(() => controller.abort(), 3000);
+
     const options = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
+      signal: controller.signal,
     };
 
     return fetch(`${API_URL}/api/usuario/RutinaList`, options)
       .then((res) => res.json())
       .then((result) => {
+        clearTimeout(time);
+
         if (result.res !== '0') {
-          console.log(result.message);
+          return [];
+        }
+
+        return result.message.map((rutina: any) => {
+          return { ...rutina, secuencias: JSON.parse(rutina.secuencias) };
+        });
+      })
+      .catch((err) => {
+        console.log(`getRutinas error: ${err}`);
+      });
+  };
+
+  const saveRutina = (newRutina: RutinaType): Promise<any> => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify({ ...newRutina, secuencias: JSON.stringify(newRutina.secuencias) }),
+    };
+
+    return fetch(`${API_URL}/api/rutina/add`, options)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.res !== '0') {
+          console.log(`saveRutina: ${result.message}`);
           return [];
         }
 
         return result.message;
       })
       .catch((err) => {
-        console.log(err);
+        console.log(`saveRutinaError: ${JSON.stringify(err)}`);
       });
   };
-
   // ************************************* Rutinas Realizadas *************************************
 
   return {
     isWifiConnected,
     isLoginLoading,
     errorLogin,
-    token: token,
+    token,
+    remoteUserId,
     login,
-    clearErrorLogin,
+    setErrorLogin,
     clearStoredToken,
     getJugadores,
     getRutinas,
+    saveRutina,
   };
 }
 
