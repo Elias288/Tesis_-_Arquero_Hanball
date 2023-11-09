@@ -6,6 +6,6 @@ export type ResultadoType = {
   createDate: Date;
   titulo_rutina: string;
   secuencias: Array<secuenciaType>;
-  id_jugador: string;
+  nombre_jugador: string;
   playedDate: Date;
 };

@@ -30,8 +30,10 @@ const ViewRutinaResultado = (props: propsType) => {
       const recibedRutina: ResultadoType = JSON.parse(rutina);
 
       setSelectedRutina(recibedRutina);
-      const jugadorById = jugadores.find((jugador) => jugador._id === recibedRutina.id_jugador);
-      setJugadorDeRutina(jugadorById);
+      const jugadorByNombre = jugadores.find(
+        (jugador) => jugador.nombre === recibedRutina.nombre_jugador
+      );
+      setJugadorDeRutina(jugadorByNombre);
     }
   }, []);
 

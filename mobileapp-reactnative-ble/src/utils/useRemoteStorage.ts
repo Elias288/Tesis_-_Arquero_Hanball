@@ -17,7 +17,10 @@ export interface remoteStorageProps {
   login: (user: string, password: string) => void;
   setErrorLogin: (error: string) => void;
   clearStoredToken: () => void;
+  // jugadores
   getJugadores: () => Promise<JugadorType[]>;
+  saveJugador: (newJugador: JugadorType) => Promise<any>;
+  // rutinas
   getRutinas: () => Promise<RutinaType[]>;
   saveRutina: (newRutina: RutinaType) => Promise<any>;
 }
@@ -34,15 +37,7 @@ function useRemoteStorage(): remoteStorageProps {
     setErrorLogin('');
 
     // si el token guardado es "local" debe borrarlo y solicitar loguearse de nuevo
-    getStoredToken().then((token) => {
-      if (token) {
-        if (token !== 'local') {
-          setToken(token);
-        } else {
-          storeToken('');
-        }
-      }
-    });
+    getUserData();
 
     const unsubscribe = NetInfo.addEventListener((state) => {
       setIsWifiConnected(state.isConnected ?? false);
@@ -85,13 +80,13 @@ function useRemoteStorage(): remoteStorageProps {
           if (typeof result.message === 'string') setErrorLogin(result.message);
           return;
         }
+        console.log(result.message);
 
         const loggedToken = `Bearer ${result.message.token}`;
 
         setToken(loggedToken);
-        storeToken(loggedToken);
+        storeUserData({ token: loggedToken, userId: result.message.userId });
 
-        setRemoteUserId(result.message.userId);
         setIsLoginLoading(false);
       })
       .catch((err) => {
@@ -102,22 +97,25 @@ function useRemoteStorage(): remoteStorageProps {
 
   // ****************************************** Token ******************************************
 
-  const getStoredToken = async () => {
+  const getUserData = async () => {
     try {
-      const value = await AsyncStorage.getItem('token');
-      if (value !== null) {
-        // console.log(value);
-        // setToken(value);
-        return value;
-      }
+      AsyncStorage.getItem('userData').then((res) => {
+        if (res !== null) {
+          const userData = JSON.parse(res);
+          setToken(userData.token);
+          setRemoteUserId(userData.userId);
+        }
+      });
     } catch (error) {
       console.log(`getStoredTokenError: ${JSON.stringify(error)}`);
     }
   };
 
-  const storeToken = async (token: string) => {
-    await AsyncStorage.setItem('token', token);
-    setToken(token);
+  const storeUserData = async (userData: { token: string; userId: string }) => {
+    await AsyncStorage.setItem('userData', JSON.stringify(userData));
+
+    setRemoteUserId(userData.userId);
+    setToken(userData.userId);
   };
 
   const clearStoredToken = async () => {
@@ -146,6 +144,31 @@ function useRemoteStorage(): remoteStorageProps {
       })
       .catch((err) => {
         console.log(`getJugadoresErr: ${JSON.stringify(err)}`);
+      });
+  };
+
+  const saveJugador = (newJugador: JugadorType): Promise<any> => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(newJugador),
+    };
+
+    return fetch(`${API_URL}/api/jugador/add`, options)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.res !== '0') {
+          console.log(`saveJugadorError: ${JSON.stringify(result.message)}`);
+          return [];
+        }
+
+        return result.message;
+      })
+      .catch((err) => {
+        console.log(`saveJugadorError: ${err}`);
       });
   };
 
@@ -197,7 +220,7 @@ function useRemoteStorage(): remoteStorageProps {
       .then((res) => res.json())
       .then((result) => {
         if (result.res !== '0') {
-          console.log(`saveRutina: ${result.message}`);
+          console.log(`saveRutinaError: ${result.message}`);
           return [];
         }
 
@@ -219,6 +242,7 @@ function useRemoteStorage(): remoteStorageProps {
     setErrorLogin,
     clearStoredToken,
     getJugadores,
+    saveJugador,
     getRutinas,
     saveRutina,
   };

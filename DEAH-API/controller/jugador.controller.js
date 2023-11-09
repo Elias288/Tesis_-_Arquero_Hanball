@@ -12,17 +12,20 @@ class JugadorController extends BaseController {
     const body = req.body;
     const { user_id } = req;
 
-    try {
-      const usuario = await UsuarioSchema.findById(user_id);
-      const jugador = new JugadorSchema({ ...body });
+    const usuario = await UsuarioSchema.findById(user_id);
+    console.log(body);
+    const jugador = new JugadorSchema(body);
 
+    try {
       const savedJugador = await jugador.save();
       usuario.jugadores.push(savedJugador._id);
       await usuario.save();
+      console.log("new jugador added");
 
       res.status(StatusCodes.CREATED).send({ res: "0", message: savedJugador });
     } catch (error) {
-      res.status(StatusCodes.NOT_FOUND).send();
+      console.log(error);
+      res.status(StatusCodes.NOT_FOUND).send({ res: "error", message: error });
     }
   };
   asignarResultado(req, res) {

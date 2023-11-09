@@ -1,5 +1,5 @@
 export type JugadorType = {
-  _id: string;
+  _id?: string;
   nombre: string;
   fechaCreación: Date;
   cedula?: string;

@@ -12,7 +12,7 @@ interface renderSimpleItemProps {
 
 export const RenderSimpleItem = ({ jugador, gotoViewJugadores }: renderSimpleItemProps) => {
   const goToViewJugador = () => {
-    gotoViewJugadores(jugador._id);
+    gotoViewJugadores(jugador.nombre);
   };
 
   return (

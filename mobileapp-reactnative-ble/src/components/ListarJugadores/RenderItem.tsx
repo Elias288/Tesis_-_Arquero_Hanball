@@ -23,7 +23,7 @@ export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: Render
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => gotoViewJugadores(jugador._id)}
+          onPress={() => gotoViewJugadores(jugador.nombre)}
           mode="contained"
         />
         <IconButton
@@ -31,7 +31,7 @@ export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: Render
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => deleteJugador(jugador._id)}
+          onPress={() => deleteJugador(jugador.nombre)}
           mode="contained"
         />
       </View>

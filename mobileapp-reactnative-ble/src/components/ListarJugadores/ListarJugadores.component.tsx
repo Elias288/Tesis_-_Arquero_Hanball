@@ -31,7 +31,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const [jugadoresList, setJugadoresList] = useState<Array<JugadorType>>([]);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedJugadorId, setSelectedJugadorId] = useState<string>('');
+  const [selectedJugadorNombre, setSelectedJugadorNombre] = useState<string>('');
 
   const sortArray = (a: JugadorType, b: JugadorType): number => {
     if (sort === undefined || sort === sortType.alphabetic) {
@@ -63,22 +63,25 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   }, [jugadores]);
 
   const deleteJugador = () => {
-    popJugador(selectedJugadorId);
+    popJugador(selectedJugadorNombre);
     setIsModalVisible(false);
   };
 
-  const showDeleteModal = (jugadorId: string) => {
+  const showDeleteModal = (jugadorNombre: string) => {
     setIsModalVisible(true);
-    setSelectedJugadorId(jugadorId);
+    setSelectedJugadorNombre(jugadorNombre);
   };
 
   const gotoViewJugadores = (jugadorId: string) => {
     if (navigation) {
-      navigation.navigate('Jugadores', { screen: 'ViewJugadores', params: { jugadorId } });
+      navigation.navigate('Jugadores', {
+        screen: 'ViewJugadores',
+        params: { jugadorNombre: jugadorId },
+      });
       return;
     }
 
-    navigator.navigate('ViewJugadores', { jugadorId });
+    navigator.navigate('ViewJugadores', { jugadorNombre: jugadorId });
   };
 
   if (jugadoresList.length == 0) {
@@ -94,7 +97,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       <>
         {jugadoresList.map((jugador) => (
           <RenderSimpleItem
-            key={jugador._id}
+            key={jugador.nombre}
             jugador={jugador}
             gotoViewJugadores={gotoViewJugadores}
           />
@@ -110,11 +113,11 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
         renderItem={({ item: jugador }) => (
           <RenderItem
             jugador={jugador}
-            deleteJugador={() => showDeleteModal(jugador._id)}
+            deleteJugador={() => showDeleteModal(jugador.nombre)}
             gotoViewJugadores={gotoViewJugadores}
           />
         )}
-        keyExtractor={(jugador) => jugador._id.toString()}
+        keyExtractor={(jugador) => jugador.nombre}
         contentContainerStyle={listarJugadoresStyles.scrollStyle}
       />
 

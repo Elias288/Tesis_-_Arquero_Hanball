@@ -72,7 +72,7 @@ const JugarPage = (props: propsType) => {
     jugadores.map((jugador) => {
       setSelectedListJugadores((selectedListJugadores) => [
         ...selectedListJugadores,
-        { key: jugador._id, value: jugador.nombre },
+        { key: jugador.nombre, value: jugador.nombre },
       ]);
     });
   };

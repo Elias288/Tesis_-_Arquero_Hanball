@@ -88,7 +88,7 @@ const HandleMSGs = () => {
         const newRutinaRealizada: ResultadoType = {
           _id: uuid.v4().toString().replace(/-/g, ''),
           createDate: selectedRutina.fechaDeCreación,
-          id_jugador: selectedJugador._id,
+          nombre_jugador: selectedJugador.nombre,
           titulo_rutina: selectedRutina.titulo,
           secuencias: secuenciasDeRutinaSeleccionada,
           titulo: title,

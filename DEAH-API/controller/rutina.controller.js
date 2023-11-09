@@ -19,12 +19,14 @@ class RutinaController extends BaseController {
 
     try {
       const savedRutina = await rutina.save();
-      await loggedUser.rutinas.push(savedRutina._id);
+      loggedUser.rutinas.push(savedRutina._id);
       await loggedUser.save();
       console.log("new rutina added");
       res.status(StatusCodes.CREATED).send({ res: "0", message: savedRutina });
     } catch (error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error);
+      return res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send({ res: "error", message: error });
     }
   };
   deleteById = async (req, res) => {

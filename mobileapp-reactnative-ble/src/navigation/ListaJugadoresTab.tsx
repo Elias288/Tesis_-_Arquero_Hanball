@@ -5,7 +5,7 @@ import JugadoresPage from '../pages/Jugadores/Jugadores.page';
 
 export type ListaJugadoresTabPages = {
   ListaJugadores: undefined;
-  ViewJugadores: { jugadorId: string };
+  ViewJugadores: { jugadorNombre: string };
 };
 
 const Stack = createNativeStackNavigator<ListaJugadoresTabPages>();

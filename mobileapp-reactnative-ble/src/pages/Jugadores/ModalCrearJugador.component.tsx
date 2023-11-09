@@ -41,13 +41,12 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
       return;
     }
 
-    if (findJugador(name.trim(), undefined)) {
+    if (findJugador(name.trim())) {
       showModal('Nombre de jugador ya registrado');
       return;
     }
 
     pushJugador({
-      _id: uuid.v4().toString().replace(/-/g, ''),
       nombre: name.trim(),
       fechaCreación: new Date(),
     });
@@ -71,7 +70,7 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
         return;
       }
 
-      if (findJugador(name.trim(), undefined)) {
+      if (findJugador(name.trim())) {
         showModal('Nombre de jugador ya registrado');
         return;
       }

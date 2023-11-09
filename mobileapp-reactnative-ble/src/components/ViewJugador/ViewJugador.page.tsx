@@ -20,7 +20,7 @@ const ViewJugadorPage = (props: propsType) => {
   const { navigation, route } = props;
   const { jugadores, rutinasRealizadas, getRutinasJugadasDeJugador, findJugador, popJugador } =
     useCustomLocalStorage();
-  const { jugadorId } = route.params;
+  const { jugadorNombre: jugadorNombre } = route.params;
 
   const [jugador, setJugador] = useState<JugadorType>();
   const [rutinasJugadas, setRutinasJugadas] = useState<Array<ResultadoType>>();
@@ -29,14 +29,14 @@ const ViewJugadorPage = (props: propsType) => {
   const [isDeleteModalVisible, setisDeleteModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const jugadorById = findJugador(undefined, jugadorId);
-    const rutinasJugadas = getRutinasJugadasDeJugador(jugadorId);
-    setJugador(jugadorById);
+    const jugadorByNombre = findJugador(jugadorNombre);
+    const rutinasJugadas = getRutinasJugadasDeJugador(jugadorNombre);
+    setJugador(jugadorByNombre);
     setRutinasJugadas(rutinasJugadas);
   }, [rutinasRealizadas, jugadores]);
 
   const deleteJugador = () => {
-    popJugador(jugadorId);
+    popJugador(jugadorNombre);
     navigation.goBack();
   };
 
