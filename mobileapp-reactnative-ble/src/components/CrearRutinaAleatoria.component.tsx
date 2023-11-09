@@ -39,7 +39,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
     const rutina: RutinaType = {
       _id: uuid.v4().toString().replace(/-/g, ''),
       titulo: 'rutina random ' + uuid.v4().toString().replace(/-/g, ''),
-      secuencias: secuencias,
+      secuencias: JSON.stringify(secuencias),
       fechaDeCreación: new Date(),
       // TODO: obtener id del usuario logueado
       id_usuario: '',

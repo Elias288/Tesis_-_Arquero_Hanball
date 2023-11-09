@@ -80,7 +80,7 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
     return (
       <>
         {rutinaList.map((item) => (
-          <RenderSimpleItem key={item._id} rutina={item} />
+          <RenderSimpleItem key={item.titulo} rutina={item} />
         ))}
       </>
     );
@@ -92,10 +92,10 @@ const ListarRutinasComponent: FC<ListarRutinasProps> = (props) => {
       <FlatList
         data={rutinaList}
         renderItem={({ item }) => (
-          <RenderItem rutina={item} deleteRutina={() => showDeleteModal(item._id)} />
+          <RenderItem rutina={item} deleteRutina={() => showDeleteModal(item.titulo)} />
         )}
         contentContainerStyle={styles.flatStyle}
-        keyExtractor={(item) => item._id}
+        keyExtractor={(item) => item.titulo}
       />
       <CustomModal
         hideModal={() => setIsModalVisible(false)}

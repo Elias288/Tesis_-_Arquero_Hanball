@@ -6,9 +6,9 @@ export type secuenciaType = {
 };
 
 export type RutinaType = {
-  _id: string;
+  _id?: string;
   titulo: string;
   fechaDeCreación: Date;
-  id_usuario: string;
-  secuencias: Array<secuenciaType>;
+  id_usuario?: string;
+  secuencias: string;
 };

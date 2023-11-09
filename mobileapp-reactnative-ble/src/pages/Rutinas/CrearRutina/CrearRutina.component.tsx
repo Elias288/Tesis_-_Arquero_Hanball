@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Portal, TextInput } from 'react-native-paper';
 import Constants from 'expo-constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import uuid from 'react-native-uuid';
 
 import CustomModal, { customModalStyles } from '../../../components/CustomModal.component';
@@ -10,10 +12,9 @@ import ListarSecuenciaComponent from '../../../components/ListarSecuencia.compon
 import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
 import { RutinaType, secuenciaType } from '../../../data/RutinasType';
 import { inicioTabPages } from '../../../navigation/InicioTab';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
 import { useCustomBLE } from '../../../contexts/BLEProvider';
 import { CrearSecuecia } from './CrearSecuecia';
+import { useCustomRemoteStorage } from '../../../contexts/RemoteStorageProvider';
 
 interface propsType {
   isVisible: boolean;
@@ -23,8 +24,10 @@ interface propsType {
 const CrearRutina = (props: propsType) => {
   const navigator = useNavigation<NativeStackNavigationProp<inicioTabPages>>();
   const { isVisible: visible, hideModal } = props;
+  const { pushRutina, findRutina } = useCustomLocalStorage();
+  const { remoteUserId } = useCustomRemoteStorage();
+
   const [title, setTitle] = useState('');
-  const { rutinas, pushRutina, findRutina } = useCustomLocalStorage();
   const [newRutina, setNewRutina] = useState<RutinaType>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
@@ -62,12 +65,10 @@ const CrearRutina = (props: propsType) => {
     }
 
     const rutina: RutinaType = {
-      _id: uuid.v4().toString().replace(/-/g, ''),
       titulo: title.trim(),
-      secuencias: newSecuencia,
+      secuencias: JSON.stringify(newSecuencia),
       fechaDeCreación: new Date(),
-      // TODO: obtener id del usuario logueado
-      id_usuario: '',
+      id_usuario: remoteUserId,
     };
 
     setNewRutina(rutina);

@@ -301,7 +301,7 @@ function useBLE(): BluetoothLowEnergyApi {
         newSecuencia.push({
           id: index.toString(),
           ledId: ledId,
-          tiempo: selectedRutina.secuencias[index].tiempo,
+          tiempo: JSON.parse(selectedRutina.secuencias)[index].tiempo,
           resTime: time != '-' ? +time / 1000 : '-',
         });
       }

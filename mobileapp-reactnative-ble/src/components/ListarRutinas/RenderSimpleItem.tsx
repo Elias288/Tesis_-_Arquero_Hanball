@@ -18,14 +18,14 @@ export const RenderSimpleItem = ({ rutina }: renderSimpleItemProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<RutinaTabPages>>();
 
   const goToViewRutina = () => {
-    navigator.navigate('ViewRutina', { rutinaId: rutina._id });
+    navigator.navigate('ViewRutina', { rutinaTitulo: rutina.titulo });
   };
 
   return (
     <TouchableOpacity style={styles.simpleItemContainer} onPress={goToViewRutina}>
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Icon name="circle" size={50} color={GlobalStyles.greenBackColor} />
-        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina._id}</Text>
+        <Text style={{ position: 'absolute', color: GlobalStyles.white }}>{rutina.titulo}</Text>
       </View>
 
       <View style={styles.simpleInfoContainer}>

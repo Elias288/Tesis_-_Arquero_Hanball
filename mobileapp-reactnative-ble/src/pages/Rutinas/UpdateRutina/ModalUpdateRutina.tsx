@@ -23,7 +23,9 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
   const [prevRutina, setPrevRutina] = useState<RutinaType>(editRutina);
   const [title, setTitle] = useState(editRutina.titulo); // Titulo de rutina
   const [selectedSecuencia, setSelectedSecuencia] = useState<secuenciaType>(); // Secuencia seleccionada para editar
-  const [newSecuencias, setNewSecuencias] = useState<secuenciaType[]>(editRutina.secuencias);
+  const [newSecuencias, setNewSecuencias] = useState<secuenciaType[]>(
+    typeof editRutina.secuencias !== 'string' ? editRutina.secuencias : []
+  );
 
   const [showEdit, setShowEdit] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -64,7 +66,7 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
       ...prevRutina,
       fechaDeCreación: new Date(),
       titulo: title.trim(),
-      secuencias: newSecuencias,
+      secuencias: JSON.stringify(newSecuencias),
     };
 
     if (JSON.stringify(prevRutina) !== JSON.stringify(rutina)) {
@@ -102,7 +104,7 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
 
   const cancelEdit = () => {
     setTitle(editRutina.titulo);
-    setNewSecuencias(editRutina.secuencias);
+    setNewSecuencias(typeof editRutina.secuencias !== 'string' ? editRutina.secuencias : []);
     setIsWarningModalVisible(false);
     setShowAdd(false);
     setShowEdit(false);

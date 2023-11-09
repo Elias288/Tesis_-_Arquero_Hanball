@@ -49,7 +49,9 @@ const JugarPage = (props: propsType) => {
   useEffect(() => {
     setSelectedListJugadores([]);
     chargeJugadores();
-    setFormatedRutina(secuenciaToString(paramRutina.secuencias));
+    setFormatedRutina(
+      secuenciaToString(typeof paramRutina.secuencias !== 'string' ? paramRutina.secuencias : [])
+    );
   }, []);
 
   useEffect(() => {
@@ -94,7 +96,7 @@ const JugarPage = (props: propsType) => {
     runGame(true);
     if (paramRutina) {
       selectRutina(paramRutina);
-      selectJugador(selectedJugador)
+      selectJugador(selectedJugador);
     }
     setLoading(true);
     sendData(connectedDevice, formatedRutina);
@@ -108,10 +110,12 @@ const JugarPage = (props: propsType) => {
           {/* Lista de secuencia */}
           <View style={{ marginRight: 10 }}>
             <Text style={styles.title}>Secuencia</Text>
-            <ListarSecuenciaComponent
-              secuencias={paramRutina.secuencias}
-              listStyle={styles.viewSecuenciasStyle}
-            />
+            {typeof paramRutina.secuencias !== 'string' && (
+              <ListarSecuenciaComponent
+                secuencias={paramRutina.secuencias}
+                listStyle={styles.viewSecuenciasStyle}
+              />
+            )}
           </View>
 
           {/* Seleccionar Jugador */}
@@ -136,12 +140,14 @@ const JugarPage = (props: propsType) => {
           Iniciar Rutina
         </Button>
 
-        <ModalJugar
-          isVisible={loading}
-          hideModal={() => setLoading(false)}
-          secuencia={paramRutina.secuencias}
-          selectedJugadorName={selectedJugador ? selectedJugador?.nombre : ''}
-        />
+        {typeof paramRutina.secuencias !== 'string' && (
+          <ModalJugar
+            isVisible={loading}
+            hideModal={() => setLoading(false)}
+            secuencia={paramRutina.secuencias}
+            selectedJugadorName={selectedJugador ? selectedJugador?.nombre : ''}
+          />
+        )}
       </View>
     </>
   );

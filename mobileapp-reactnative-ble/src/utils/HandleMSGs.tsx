@@ -67,7 +67,8 @@ const HandleMSGs = () => {
       const secuenciaRecibida = stringToSecuencia(secuenciaStringRecibida);
 
       if (selectedRutina && selectedJugador) {
-        const secuenciasDeRutinaSeleccionada: secuenciaType[] = selectedRutina.secuencias;
+        const secuenciasDeRutinaSeleccionada: secuenciaType[] =
+          typeof selectedRutina.secuencias !== 'string' ? selectedRutina.secuencias : [];
         selectRutina(undefined);
 
         // a las secuencias de la rutina seleccionada se le agregan los tiempos recibidos
@@ -88,7 +89,7 @@ const HandleMSGs = () => {
           _id: uuid.v4().toString().replace(/-/g, ''),
           createDate: selectedRutina.fechaDeCreación,
           id_jugador: selectedJugador._id,
-          id_rutina: selectedRutina._id,
+          titulo_rutina: selectedRutina.titulo,
           secuencias: secuenciasDeRutinaSeleccionada,
           titulo: title,
           playedDate: new Date(),

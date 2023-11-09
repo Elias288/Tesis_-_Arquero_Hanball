@@ -13,7 +13,7 @@ const ViewSecuenciaResultadoComponent = ({ rutina, style }: ViewSecuenciasResPro
   return (
     <View style={style}>
       <FlatList
-        data={rutina?.secuencias}
+        data={JSON.parse(rutina.secuencias)}
         renderItem={({ item }) => <RenderItemSecuencia secuenciaRes={item} />}
         keyExtractor={(item) => item.id}
       />

@@ -11,7 +11,7 @@ import { HomeTabs } from '../../navigation/HomeTab';
 
 interface RenderProps {
   rutina: RutinaType;
-  deleteRutina: (id: string) => void;
+  deleteRutina: (titulo: string) => void;
 }
 export const RenderItem = (props: RenderProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
@@ -28,7 +28,7 @@ export const RenderItem = (props: RenderProps) => {
   const goToViewRutina = () => {
     navigator.navigate('Rutinas', {
       screen: 'ViewRutina',
-      params: { rutinaId: rutina._id },
+      params: { rutinaTitulo: rutina.titulo },
     });
   };
 
@@ -60,7 +60,7 @@ export const RenderItem = (props: RenderProps) => {
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => deleteRutina(rutina._id)}
+          onPress={() => deleteRutina(rutina.titulo)}
         />
       </View>
     </View>
