@@ -13,20 +13,18 @@ class RutinaController extends BaseController {
     const body = req.body;
     const { user_id } = req;
 
+    const loggedUser = await UsuarioSchema.findById(user_id);
+    console.log(body);
+    const rutina = new RutinaSchema(body);
+
     try {
-      const loggedUser = await UsuarioSchema.findById(user_id);
-      const rutina = new RutinaSchema({ ...body });
-
-      rutina.id_usuario = loggedUser._id;
-
       const savedRutina = await rutina.save();
       await loggedUser.rutinas.push(savedRutina._id);
       await loggedUser.save();
-
+      console.log("new rutina added");
       res.status(StatusCodes.CREATED).send({ res: "0", message: savedRutina });
     } catch (error) {
-      console.log(error);
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error);
     }
   };
   deleteById = async (req, res) => {
@@ -50,8 +48,7 @@ class RutinaController extends BaseController {
 
       await usuario.save();
     } catch (error) {
-      console.log(error);
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error);
     }
   };
 }

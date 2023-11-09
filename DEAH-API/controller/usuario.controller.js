@@ -36,7 +36,10 @@ class UsuarioController extends BaseController {
           });
           res.status(StatusCodes.OK).json({
             res: "0",
-            message: token,
+            message: {
+              userId: usuario._id,
+              token
+            },
           });
         });
     });

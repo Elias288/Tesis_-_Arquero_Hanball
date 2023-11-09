@@ -12,29 +12,29 @@ var ResultadoSchema = new Schema(
     },
     titulo: {
       type: String,
-      require: true,
+      required: true,
     },
     createDate: {
       type: Date,
-      require: true,
+      required: true,
     },
     id_jugador: {
       type: ObjectID,
       ref: "Jugador",
-      require: true,
+      required: true,
     },
     id_rutina: {
       type: ObjectID,
       ref: "Rutina",
-      require: true,
+      required: true,
     },
     secuencias: {
       type: String,
-      require: true,
+      required: true,
     },
     playedDate: {
       type: Date,
-      require: true,
+      required: true,
     },
   },
   { versionKey: false }

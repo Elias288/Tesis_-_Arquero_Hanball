@@ -12,19 +12,19 @@ var RutinaSchema = new Schema(
     },
     titulo: {
       type: String,
-      require: true,
+      required: true,
     },
     fechaDeCreación: {
       type: Date,
-      require: true,
+      required: true,
     },
     secuencias: {
       type: String,
-      require: true,
+      required: true,
     },
     id_usuario: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   { versionKey: false }
