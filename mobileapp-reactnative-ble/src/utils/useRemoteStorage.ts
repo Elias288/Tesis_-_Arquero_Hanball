@@ -184,7 +184,7 @@ function useRemoteStorage(): remoteStorageProps {
   // ****************************************** Jugadores ******************************************
 
   const getJugadores = (): Promise<JugadorType[]> => {
-    if (DEVELOP) console.log('getting jugadores of api: ');
+    if (DEVELOP) console.log('getting jugadores of api');
 
     const controller = new AbortController();
     const time = setTimeout(() => {
@@ -213,7 +213,7 @@ function useRemoteStorage(): remoteStorageProps {
       })
       .catch((err) => {
         clearTimeout(time);
-        console.log(`getJugadoresErr: ${JSON.stringify(err)}`);
+        console.log(`getJugadoresErr: ${err}`);
       });
   };
 
@@ -261,9 +261,13 @@ function useRemoteStorage(): remoteStorageProps {
   // ****************************************** Rutinas ******************************************
 
   const getRutinas = (): Promise<RutinaType[]> => {
-    const controller = new AbortController();
+    if (DEVELOP) console.log('getting rutinas of api');
 
-    const time = setTimeout(() => controller.abort(), 3000);
+    const controller = new AbortController();
+    const time = setTimeout(() => {
+      controller.abort(); // si el tiempo se agota, la api se marca como desconectada
+      setIsApiUp(false);
+    }, 3000);
 
     const options = {
       method: 'GET',
@@ -279,9 +283,7 @@ function useRemoteStorage(): remoteStorageProps {
       .then((result) => {
         clearTimeout(time);
 
-        if (result.res !== '0') {
-          return [];
-        }
+        if (result.res !== '0') return [];
 
         return result.message.map((rutina: any) => {
           return { ...rutina, secuencias: JSON.parse(rutina.secuencias) };
@@ -293,18 +295,33 @@ function useRemoteStorage(): remoteStorageProps {
   };
 
   const saveRutina = (newRutina: RutinaType): Promise<any> => {
+    if (DEVELOP) {
+      console.log('stored Rutinas: ');
+      console.log(newRutina);
+    }
+
+    const controller = new AbortController();
+    const time = setTimeout(() => {
+      controller.abort();
+      // si el tiempo se agota, la api se marca como desconectada
+      setIsApiUp(false);
+    }, 3000);
+
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
+      signal: controller.signal,
       body: JSON.stringify({ ...newRutina, secuencias: JSON.stringify(newRutina.secuencias) }),
     };
 
     return fetch(`${API_URL}/api/rutina/add`, options)
       .then((res) => res.json())
       .then((result) => {
+        clearTimeout(time);
+
         if (result.res !== '0') {
           console.log(`saveRutinaError: ${result.message}`);
           return [];
@@ -313,6 +330,7 @@ function useRemoteStorage(): remoteStorageProps {
         return result.message;
       })
       .catch((err) => {
+        clearTimeout(time);
         console.log(`saveRutinaError: ${JSON.stringify(err)}`);
       });
   };

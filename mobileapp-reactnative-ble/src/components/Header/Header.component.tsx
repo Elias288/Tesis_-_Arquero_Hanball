@@ -25,7 +25,7 @@ export const HEADERSIZE = 50;
 
 const HeaderComponent = (props: headerProps) => {
   const navigator = useNavigation<navigationType>();
-  const { isWifiConnected, clearUserData } = useCustomRemoteStorage();
+  const { isWifiConnected, clearUserData, isApiUp, token } = useCustomRemoteStorage();
 
   const logout = () => {
     clearUserData();

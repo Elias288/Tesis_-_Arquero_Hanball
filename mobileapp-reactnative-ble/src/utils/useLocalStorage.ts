@@ -57,8 +57,8 @@ function useLocalStorage(): LocalStorageType {
   const pushAsyncRutinas = async (value: RutinaType) => {
     if (!localRutinas.some((r) => r.titulo === value.titulo)) {
       localRutinas.push(value);
-      // si el localRutinas supera los 10 objetos elimina el primero
 
+      // si el localRutinas supera los 10 objetos elimina el primero
       if (localRutinas.length > 10) {
         localRutinas.shift();
       }
@@ -73,10 +73,12 @@ function useLocalStorage(): LocalStorageType {
     if (!localJugadores.some((jug) => jug.nombre === value.nombre)) {
       localJugadores.push(value);
 
+      // si el localRutinas supera los 10 objetos elimina el primero
       if (localJugadores.length > 10) {
         localJugadores.shift();
       }
 
+      // almacena en local el localRutinas
       if (DEVELOP) console.log('store: ' + value.nombre);
       await AsyncStorage.setItem('jugadores', JSON.stringify(localJugadores));
     }
@@ -94,7 +96,7 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const chargeAllJugadores = async () => {
-    if (DEVELOP) console.log('geting jugadores');
+    if (DEVELOP) console.log('chargin jugadores');
 
     const storedJugadores: Array<JugadorType> = [];
     // si tiene wifi cargará en storedJugadores los jugadores en remoto
@@ -207,9 +209,12 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const chargeAllRutinas = async () => {
+    if (DEVELOP) console.log('chargin rutinas');
+
     const storedRutinas: Array<RutinaType> = [];
+    // si tiene wifi cargará en storedRutinas las rutinas en remoto
     if (isApiUp) {
-      // si tiene wifi cargará en storedRutinas las rutinas en remoto
+      if (DEVELOP) console.log('is api up');
       const remoteRutinas = await getRutinas();
       if (remoteRutinas !== undefined && remoteRutinas.length > 0) {
         storedRutinas.push(...remoteRutinas);
@@ -221,7 +226,25 @@ function useLocalStorage(): LocalStorageType {
       (rutLoc) => !storedRutinas.some((rutRem) => rutRem.titulo === rutLoc.titulo)
     );
 
+    if (DEVELOP) {
+      console.log('localRutinas:');
+      console.log(localRutinas.map((j) => j.titulo));
+      console.log('notStoredLocalRutinas:');
+      console.log(notStoredLocalRutinas.map((j) => j.titulo));
+    }
+
+    // enviar a la api los jugadores no guardados
+    if (isApiUp) {
+      notStoredLocalRutinas.forEach(saveRutina);
+    }
+
     const allRutinas = [...notStoredLocalRutinas, ...storedRutinas];
+
+    if (DEVELOP) {
+      console.log('allRutinas:');
+      console.log(allRutinas.map((j) => j.titulo));
+    }
+
     // cargará todas las rutinas, locales y remotas
     setAllRutinas(allRutinas);
 
