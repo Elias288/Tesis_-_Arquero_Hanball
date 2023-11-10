@@ -11,7 +11,7 @@ interface RenderProps {
   deleteJugador: (id: string) => void;
 }
 
-export const RenderItem = ({ jugador, deleteJugador, gotoViewJugadores }: RenderProps) => {
+export const RenderJugador = ({ jugador, deleteJugador, gotoViewJugadores }: RenderProps) => {
   return (
     <View style={renderItemStyles.completeItemContainer}>
       <Text style={{ flex: 1, fontSize: 18 }}>{jugador.nombre}</Text>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DEVELOP } from '@env';
 
 import { JugadorType } from '../data/JugadoresType';
 import { RutinaType } from '../data/RutinasType';
@@ -10,7 +11,6 @@ export interface LocalStorageType {
   // Jugadores
   jugadores: Array<JugadorType>;
   pushJugador: (newJugador: JugadorType) => void;
-  clearJugadoresDB: () => void;
   popJugador: (jugadorNombre: string) => void;
   updateJugador: (newJugador: JugadorType) => void;
   findJugador: (jugadorName: string) => JugadorType | undefined;
@@ -20,7 +20,6 @@ export interface LocalStorageType {
   pushRutina: (newRutina: RutinaType) => void;
   popRutina: (rutinaId: string) => void;
   updateRutina: (newRutina: RutinaType) => void;
-  clearRutinasDB: () => void;
   findRutina: (
     rutinaTitle: string | undefined,
     rutinaId: string | undefined
@@ -30,12 +29,11 @@ export interface LocalStorageType {
   rutinasRealizadas: Array<ResultadoType>;
   pushRutinaRealizada: (newRutina: ResultadoType) => void;
   popRutinaRealizada: (rutinaId: string) => void;
-  clearRutinasRealizadas: () => void;
   getRutinasJugadasDeJugador: (jugadorId: string) => Array<ResultadoType>;
 }
 
 function useLocalStorage(): LocalStorageType {
-  const { isWifiConnected, token, getJugadores, getRutinas, saveRutina, saveJugador } =
+  const { isApiUp, getJugadores, getRutinas, saveRutina, saveJugador, clearUserData } =
     useCustomRemoteStorage();
 
   const [localJugadores, setLocalJugadores] = useState<Array<JugadorType>>([]);
@@ -46,6 +44,11 @@ function useLocalStorage(): LocalStorageType {
   const [AllRutinas, setAllRutinas] = useState<Array<RutinaType>>([]);
 
   useEffect(() => {
+    // clearJugadoresDB();
+    // clearRutinasDB();
+    // clearUserData();
+    // clearRutinasRealizadas();
+
     getLocalJugadores();
     getLocalRutinas();
     getLocalRutinasRealizadas();
@@ -61,7 +64,7 @@ function useLocalStorage(): LocalStorageType {
       }
 
       // almacena en local el localRutinas
-      console.log('stored');
+      if (DEVELOP) console.log('store: ' + value.titulo);
       await AsyncStorage.setItem('rutinas', JSON.stringify(localRutinas));
     }
   };
@@ -74,7 +77,7 @@ function useLocalStorage(): LocalStorageType {
         localJugadores.shift();
       }
 
-      console.log('stored');
+      if (DEVELOP) console.log('store: ' + value.nombre);
       await AsyncStorage.setItem('jugadores', JSON.stringify(localJugadores));
     }
   };
@@ -91,9 +94,12 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const chargeAllJugadores = async () => {
+    if (DEVELOP) console.log('geting jugadores');
+
     const storedJugadores: Array<JugadorType> = [];
     // si tiene wifi cargará en storedJugadores los jugadores en remoto
-    if (isWifiConnected && token !== '') {
+    if (isApiUp) {
+      if (DEVELOP) console.log('is api up');
       const remoteJugadores = await getJugadores();
       if (remoteJugadores !== undefined && remoteJugadores.length > 0) {
         storedJugadores.push(...remoteJugadores);
@@ -105,7 +111,24 @@ function useLocalStorage(): LocalStorageType {
       (jugLoc) => !storedJugadores.some((jugRem) => jugRem.nombre === jugLoc.nombre)
     );
 
+    if (DEVELOP) {
+      console.log('localJugadores:');
+      console.log(localJugadores.map((j) => j.nombre));
+      console.log('notstoredJugadores:');
+      console.log(notStoredLocalJugadores.map((j) => j.nombre));
+    }
+
+    // enviar a la api los jugadores no guardados
+    if (isApiUp) {
+      notStoredLocalJugadores.forEach(saveJugador);
+    }
+
     const allJugadores = [...storedJugadores, ...notStoredLocalJugadores];
+
+    if (DEVELOP) {
+      console.log('allJugadores:');
+      console.log(allJugadores.map((j) => j.nombre));
+    }
     // cargará todos los jugadores, locales y remotos
     setAllJugadores(allJugadores);
 
@@ -114,16 +137,24 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const pushJugador = async (newJugador: JugadorType) => {
-    const newJugadoresList = [...AllJugadores, newJugador];
-    setAllJugadores(newJugadoresList);
-    console.log(newJugador);
-
-    if (isWifiConnected && token !== '') {
-      const res = await saveJugador(newJugador);
-      pushAsyncJugadores(res);
-    } else {
-      pushAsyncJugadores(newJugador);
+    if (DEVELOP) {
+      console.log('push jugador:');
+      console.log(newJugador);
     }
+
+    if (isApiUp) {
+      const res = await saveJugador(newJugador);
+      console.log(res);
+    }
+
+    pushAsyncJugadores(newJugador);
+
+    const newJugadoresList = [...AllJugadores, newJugador];
+    if (DEVELOP) {
+      console.log('newJugadoresList:');
+      console.log(newJugadoresList.map((j) => j.nombre));
+    }
+    setAllJugadores(newJugadoresList);
   };
 
   const popJugador = async (popJugadorNombre: string) => {
@@ -156,7 +187,8 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const findJugador = (jugadorName: string): JugadorType | undefined => {
-    return localJugadores.find((jugador) => jugador.nombre == jugadorName);
+    const jugadorByNombre = localJugadores.find((jugador) => jugador.nombre == jugadorName);
+    return jugadorByNombre;
   };
 
   const clearJugadoresDB = async () => {
@@ -176,7 +208,7 @@ function useLocalStorage(): LocalStorageType {
 
   const chargeAllRutinas = async () => {
     const storedRutinas: Array<RutinaType> = [];
-    if (isWifiConnected && token !== '') {
+    if (isApiUp) {
       // si tiene wifi cargará en storedRutinas las rutinas en remoto
       const remoteRutinas = await getRutinas();
       if (remoteRutinas !== undefined && remoteRutinas.length > 0) {
@@ -201,7 +233,7 @@ function useLocalStorage(): LocalStorageType {
     const newRutinaList = [...AllRutinas, newRutina];
     setAllRutinas(newRutinaList);
 
-    if (isWifiConnected && token !== '') {
+    if (isApiUp) {
       const res = await saveRutina(newRutina);
       pushAsyncRutinas(res);
     } else {
@@ -289,7 +321,6 @@ function useLocalStorage(): LocalStorageType {
   return {
     jugadores: AllJugadores,
     pushJugador,
-    clearJugadoresDB,
     popJugador,
     updateJugador,
     findJugador,
@@ -298,13 +329,11 @@ function useLocalStorage(): LocalStorageType {
     popRutina,
     pushRutina,
     updateRutina,
-    clearRutinasDB,
     findRutina,
     chargeAllRutinas,
     rutinasRealizadas: localRutinasRealizadas,
     popRutinaRealizada,
     pushRutinaRealizada,
-    clearRutinasRealizadas,
     getRutinasJugadasDeJugador,
   };
 }

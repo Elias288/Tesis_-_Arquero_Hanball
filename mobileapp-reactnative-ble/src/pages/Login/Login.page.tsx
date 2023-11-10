@@ -14,22 +14,15 @@ import WifiStatusComponent from '../../components/WifiStatus.component';
 import LoginFormComponent from './LoginForm.component';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 import { RootTabs } from '../../Main';
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 
 type propsType = NativeStackScreenProps<RootTabs>;
 
 const LoginPage = ({ navigation }: propsType) => {
-  const { isWifiConnected, token, clearStoredToken, setErrorLogin } = useCustomRemoteStorage();
-  const { clearJugadoresDB, clearRutinasRealizadas, clearRutinasDB } = useCustomLocalStorage();
+  const { isWifiConnected, token } = useCustomRemoteStorage();
 
   const [isConnectedLoading, setIsConnectedLoading] = useState(true);
 
   useEffect(() => {
-    // clearRutinasDB();
-    // clearJugadoresDB();
-    // clearRutinasRealizadas();
-    // clearStoredToken();
-
     if (isWifiConnected) {
       // si el wifi está conectado a wifi inicia login
       setIsConnectedLoading(false);

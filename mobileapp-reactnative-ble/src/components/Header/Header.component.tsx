@@ -9,7 +9,6 @@ import { inicioTabPages } from '../../navigation/InicioTab';
 import { BleStatus } from './BleStatus';
 import { RootTabs } from '../../Main';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type headerProps = {
@@ -26,10 +25,10 @@ export const HEADERSIZE = 50;
 
 const HeaderComponent = (props: headerProps) => {
   const navigator = useNavigation<navigationType>();
-  const { isWifiConnected, clearStoredToken } = useCustomRemoteStorage();
+  const { isWifiConnected, clearUserData } = useCustomRemoteStorage();
 
   const logout = () => {
-    clearStoredToken();
+    clearUserData();
     navigator.navigate('Login');
   };
 

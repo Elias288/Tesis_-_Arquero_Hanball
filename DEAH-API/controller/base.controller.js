@@ -61,6 +61,9 @@ class BaseController {
   };
   getById = (req, res) => {
     let id = req.params.id;
+
+    if (process.env.develop) console.log("getByID");
+
     if (id.trim() === "")
       return res
         .status(StatusCodes.BAD_REQUEST)
@@ -77,8 +80,9 @@ class BaseController {
           .send({ res: "error", message: "not found" });
       })
       .catch((err) => {
-        console.log(err);
-        return ress.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
+        return ress
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .send({ res: "error", message: err });
       });
   };
 }

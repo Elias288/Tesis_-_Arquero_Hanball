@@ -28,15 +28,12 @@ type propsType = NativeStackScreenProps<RootTabs>;
 
 const Home = ({ navigation }: propsType) => {
   const { initBle } = useCustomBLE();
-  const { isWifiConnected, token } = useCustomRemoteStorage();
+  const { token, isApiUp } = useCustomRemoteStorage();
   const { chargeAllJugadores, chargeAllRutinas } = useCustomLocalStorage();
 
   const [loadingData, setLoadingData] = useState<boolean>(true);
 
   useEffect(() => {
-    chargeAllRutinas();
-    chargeAllJugadores();
-
     setTimeout(() => {
       setLoadingData(false);
     }, 3000);
@@ -45,11 +42,13 @@ const Home = ({ navigation }: propsType) => {
   }, []);
 
   useEffect(() => {
-    // si el wifi se enciende cuando se entró offline, se redirige al login
     if (token === '') {
       navigation.navigate('Login');
     }
-  }, [token]);
+
+    chargeAllRutinas();
+    chargeAllJugadores();
+  }, [token, isApiUp]);
 
   const pageOptions = (routeName: string, focused: boolean) => {
     let iconName = '';

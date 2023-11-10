@@ -16,6 +16,8 @@ class UsuarioController extends BaseController {
   }
   login = (req, res, next) => {
     UsuarioSchema.findOne({ username: req.body.username }).then((usuario) => {
+      if (process.env.develop) console.log("login");
+
       if (!usuario) {
         return res.status(StatusCodes.NOT_FOUND).json({
           res: "error",
@@ -34,11 +36,12 @@ class UsuarioController extends BaseController {
           const token = jwt.sign({ userID: usuario._id }, JWebToken, {
             expiresIn: "24h",
           });
+          if (process.env.develop) console.log("succes login");
           res.status(StatusCodes.OK).json({
             res: "0",
             message: {
               userId: usuario._id,
-              token
+              token,
             },
           });
         });

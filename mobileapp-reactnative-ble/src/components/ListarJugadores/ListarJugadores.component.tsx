@@ -9,7 +9,7 @@ import CustomModal, { customModalStyles } from '../CustomModal.component';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
 import { JugadorType } from '../../data/JugadoresType';
 import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
-import { RenderItem } from './RenderItem';
+import { RenderJugador } from './RenderJugador';
 import { RenderSimpleItem } from './RenderSimpleItem';
 import { HomeTabs } from '../../navigation/HomeTab';
 
@@ -72,16 +72,16 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
     setSelectedJugadorNombre(jugadorNombre);
   };
 
-  const gotoViewJugadores = (jugadorId: string) => {
+  const gotoViewJugadores = (jugadorNombre: string) => {
     if (navigation) {
       navigation.navigate('Jugadores', {
         screen: 'ViewJugadores',
-        params: { jugadorNombre: jugadorId },
+        params: { jugadorNombre },
       });
       return;
     }
 
-    navigator.navigate('ViewJugadores', { jugadorNombre: jugadorId });
+    navigator.navigate('ViewJugadores', { jugadorNombre });
   };
 
   if (jugadoresList.length == 0) {
@@ -111,7 +111,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       <FlatList
         data={jugadoresList}
         renderItem={({ item: jugador }) => (
-          <RenderItem
+          <RenderJugador
             jugador={jugador}
             deleteJugador={() => showDeleteModal(jugador.nombre)}
             gotoViewJugadores={gotoViewJugadores}

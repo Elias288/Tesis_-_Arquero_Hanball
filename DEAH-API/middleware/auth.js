@@ -13,7 +13,11 @@ module.exports = (req, res, next) => {
       req.user_id = usuarioID;
       next();
     }
-  } catch {
-    res.status(401).json({ message: "No autorizado" });
+  } catch (err) {
+    if (process.env.develop) console.log("not authorized");
+    res.status(401).json({
+      res: "error",
+      message: JSON.stringify(err) !== "{}" ? err : "not authorized",
+    });
   }
 };

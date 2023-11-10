@@ -18,9 +18,9 @@ type propsType = NativeStackScreenProps<ListaJugadoresTabPages, 'ViewJugadores'>
 
 const ViewJugadorPage = (props: propsType) => {
   const { navigation, route } = props;
-  const { jugadores, rutinasRealizadas, getRutinasJugadasDeJugador, findJugador, popJugador } =
+  const { rutinasRealizadas, getRutinasJugadasDeJugador, findJugador, popJugador } =
     useCustomLocalStorage();
-  const { jugadorNombre: jugadorNombre } = route.params;
+  const { jugadorNombre } = route.params;
 
   const [jugador, setJugador] = useState<JugadorType>();
   const [rutinasJugadas, setRutinasJugadas] = useState<Array<ResultadoType>>();
@@ -31,9 +31,12 @@ const ViewJugadorPage = (props: propsType) => {
   useEffect(() => {
     const jugadorByNombre = findJugador(jugadorNombre);
     const rutinasJugadas = getRutinasJugadasDeJugador(jugadorNombre);
+    if (jugadorByNombre === undefined) {
+      navigation.navigate('ListaJugadores');
+    }
     setJugador(jugadorByNombre);
     setRutinasJugadas(rutinasJugadas);
-  }, [rutinasRealizadas, jugadores]);
+  }, [rutinasRealizadas, jugadorNombre]);
 
   const deleteJugador = () => {
     popJugador(jugadorNombre);
