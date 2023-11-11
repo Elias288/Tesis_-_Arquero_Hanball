@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Portal, TextInput } from 'react-native-paper';
 import Constants from 'expo-constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import uuid from 'react-native-uuid';
 
 import CustomModal, { customModalStyles } from '../../../components/CustomModal.component';
@@ -10,10 +12,9 @@ import ListarSecuenciaComponent from '../../../components/ListarSecuencia.compon
 import { useCustomLocalStorage } from '../../../contexts/LocalStorageProvider';
 import { RutinaType, secuenciaType } from '../../../data/RutinasType';
 import { inicioTabPages } from '../../../navigation/InicioTab';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
 import { useCustomBLE } from '../../../contexts/BLEProvider';
 import { CrearSecuecia } from './CrearSecuecia';
+import { useCustomRemoteStorage } from '../../../contexts/RemoteStorageProvider';
 
 interface propsType {
   isVisible: boolean;
@@ -23,8 +24,10 @@ interface propsType {
 const CrearRutina = (props: propsType) => {
   const navigator = useNavigation<NativeStackNavigationProp<inicioTabPages>>();
   const { isVisible: visible, hideModal } = props;
+  const { pushRutina, findRutina } = useCustomLocalStorage();
+  const { remoteUserId } = useCustomRemoteStorage();
+
   const [title, setTitle] = useState('');
-  const { rutinas, pushRutina, findRutina } = useCustomLocalStorage();
   const [newRutina, setNewRutina] = useState<RutinaType>();
   const { espConnectedStatus, BLEPowerStatus } = useCustomBLE();
 
@@ -61,11 +64,11 @@ const CrearRutina = (props: propsType) => {
       return;
     }
 
-    const rutina = {
-      id: uuid.v4().toString().replace(/-/g, ''),
-      title: title.trim(),
-      secuencia: newSecuencia,
-      createDate: new Date(),
+    const rutina: RutinaType = {
+      titulo: title.trim(),
+      secuencias: JSON.stringify(newSecuencia),
+      fechaDeCreación: new Date(),
+      id_usuario: remoteUserId,
     };
 
     setNewRutina(rutina);
@@ -96,8 +99,8 @@ const CrearRutina = (props: propsType) => {
     setModalMessage(message);
   };
 
-  const pushSecuencia = (ledId: string, time: number) => {
-    setNewSecuencia([...newSecuencia, { id: uuid.v4().toString().replace(/-/g, ''), ledId, time }]);
+  const pushSecuencia = (ledId: string, tiempo: number) => {
+    setNewSecuencia([...newSecuencia, { id: `${newSecuencia.length}`, ledId, tiempo }]);
   };
 
   return (

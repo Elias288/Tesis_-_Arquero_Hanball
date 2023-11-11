@@ -7,28 +7,41 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
 import { RutinaTabPages } from '../navigation/RutinasTab';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
-import { RootTabs } from '../Main';
+import LocalStorageProvider, { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { HomeTabs } from '../navigation/HomeTab';
+import { secuenciaType } from '../data/RutinasType';
+import { ResultadoType } from '../data/ResultadoType';
+import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
 
 export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
 }
 
-const HandleMSGs = () => {
-  const navigator =
-    useNavigation<
-      CompositeNavigationProp<
-        NativeStackNavigationProp<RutinaTabPages>,
-        NativeStackNavigationProp<HomeTabs>
-      >
-    >();
+type navigationType = CompositeNavigationProp<
+  NativeStackNavigationProp<RutinaTabPages>,
+  NativeStackNavigationProp<HomeTabs>
+>;
 
-  const { receivedMSG, BLECode, BLEmsg, runGame, stringToSecuencia, selectRutina, selectedRutina } =
-    useCustomBLE();
-  const { pushRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
+const HandleMSGs = () => {
+  const navigator = useNavigation<navigationType>();
+  const { storageAlertMsg } = useCustomRemoteStorage();
+
+  const {
+    receivedMSG,
+    BLECode,
+    BLEmsg,
+    runGame,
+    stringToSecuencia,
+    selectRutina,
+    selectedJugador,
+    selectedRutina,
+  } = useCustomBLE();
+  const { pushRutinaRealizada } = useCustomLocalStorage();
+
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
-  const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
+  const [snackbarMsg, SetsnackbarMsg] = useState<string>('');
+
+  const [colaDeSnacks, setColaDeSnacks] = useState<string[]>([]);
 
   useEffect(() => {
     // si recibe un mensaje desde el servidor BLE
@@ -47,58 +60,99 @@ const HandleMSGs = () => {
 
     // si hay un codigo de error
     if (BLECode !== BLUETOOTHCONNECTED && BLECode !== BLUETOOTHNOTSTATUS) {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(`${BLECode}: ${BLEmsg}`);
+      recevieAlerts(`${BLECode}: ${BLEmsg}`);
       // cleanBLECode();
     }
   }, [BLECode, receivedMSG]);
+
+  useEffect(() => {
+    if (storageAlertMsg.length > 0) {
+      recevieAlerts(storageAlertMsg);
+    }
+  }, [storageAlertMsg]);
+
+  useEffect(() => {
+    if (snackbarMsg.length > 0) setVisibleSnackbar(true);
+  }, [snackbarMsg]);
 
   const handleFunctions: Funciones = {
     // resultado del juego
     res: (secuenciaStringRecibida) => {
       const secuenciaRecibida = stringToSecuencia(secuenciaStringRecibida);
 
-      if (selectedRutina) {
-        const rut = selectedRutina;
+      if (selectedRutina && selectedJugador) {
+        const secuenciasDeRutinaSeleccionada: secuenciaType[] =
+          typeof selectedRutina.secuencias !== 'string' ? selectedRutina.secuencias : [];
         selectRutina(undefined);
 
-        rut.secuencia.map((sec) => {
-          sec.resTime = secuenciaRecibida.find((result) => result.id === sec.id)?.resTime;
+        // a las secuencias de la rutina seleccionada se le agregan los tiempos recibidos
+        secuenciasDeRutinaSeleccionada.map((secuencia) => {
+          secuencia.resTime = secuenciaRecibida.find((result) => result.id === secuencia.id)
+            ?.resTime;
         });
 
-        pushRutinaRealizada({
-          ...rut,
-          id: uuid.v4().toString().replace(/-/g, ''),
-          title: 'Rutina ' + (rutinasRealizadas.length + 1),
-        });
+        const title =
+          'Rutina - ' +
+          new Date().getDate().toString().padStart(2, '0') +
+          (new Date().getMonth() + 1).toString().padStart(2, '0') +
+          new Date().getFullYear().toString().slice(-2) +
+          new Date().getHours().toString().padStart(2, '0') +
+          new Date().getMinutes().toString().padStart(2, '0');
 
-        console.log(rut);
+        const newRutinaRealizada: ResultadoType = {
+          _id: uuid.v4().toString().replace(/-/g, ''),
+          createDate: selectedRutina.fechaDeCreación,
+          nombre_jugador: selectedJugador.nombre,
+          titulo_rutina: selectedRutina.titulo,
+          secuencias: secuenciasDeRutinaSeleccionada,
+          titulo: title,
+          playedDate: new Date(),
+        };
+
+        pushRutinaRealizada(newRutinaRealizada);
 
         navigator?.navigate('Rutinas', {
           screen: 'ViewRutinaResultado',
-          params: { rutina: JSON.stringify(rut) },
+          params: { rutina: JSON.stringify(newRutinaRealizada) },
         });
       }
     },
 
     // mensajes desde desde el servidor BLE
     bleMSG: (dato) => {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(dato);
+      recevieAlerts(dato);
     },
+  };
+
+  const recevieAlerts = (snackMsg: string) => {
+    if (snackMsg.length > 0) {
+      setVisibleSnackbar(true);
+      const newCola = [...colaDeSnacks, snackMsg];
+      setColaDeSnacks(newCola);
+      SetsnackbarMsg(newCola[0]);
+    }
+  };
+
+  const dimissBLEAlert = () => {
+    if (colaDeSnacks.length > 0) {
+      const newCola = colaDeSnacks.slice(1);
+      setColaDeSnacks(newCola);
+
+      if (newCola[0]) SetsnackbarMsg(newCola[0]);
+      setVisibleSnackbar(false);
+    }
   };
 
   return (
     <Portal>
       <Snackbar
         visible={visibleSnackbar}
-        onDismiss={() => setVisibleSnackbar(false)}
+        onDismiss={dimissBLEAlert}
         action={{
           label: 'Undo',
-          onPress: () => {
-            setVisibleSnackbar(false);
-          },
+          onPress: () => dimissBLEAlert,
         }}
+        style={{ position: 'absolute', bottom: 100 }}
       >
         {snackbarMsg}
       </Snackbar>

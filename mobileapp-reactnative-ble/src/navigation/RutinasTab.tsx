@@ -8,7 +8,7 @@ import ViewRutinaResultado from '../pages/Rutinas/ViewRutinaResultado.page';
 export type RutinaTabPages = {
   RutinasPage: undefined;
   RutinasRealizadas: undefined;
-  ViewRutina: { rutinaId: string };
+  ViewRutina: { rutinaTitulo: string };
   ViewRutinaResultado: { rutina: string };
 };
 

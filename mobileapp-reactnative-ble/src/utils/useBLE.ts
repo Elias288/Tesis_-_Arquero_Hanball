@@ -14,6 +14,7 @@ import {
   BLUETOOTHDISCONNECTED,
 } from './BleCodes';
 import { RutinaType, secuenciaType } from '../data/RutinasType';
+import { JugadorType } from '../data/JugadoresType';
 
 const ESP32_NAME = 'ESP32-server';
 const ESP32_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
@@ -29,6 +30,7 @@ export interface BluetoothLowEnergyApi {
   initBle(): void;
   secuenciaToString(secuencia: Array<secuenciaType>): string;
   selectRutina(rutina: RutinaType | undefined): void;
+  selectJugador(jugador: JugadorType): void;
   runGame: (run: boolean) => void;
   stringToSecuencia: (secuencia: string) => Array<secuenciaType>;
   connectedDevice: Device | undefined;
@@ -40,6 +42,7 @@ export interface BluetoothLowEnergyApi {
   receivedMSG: string;
   BLEPowerStatus: Boolean;
   selectedRutina: RutinaType | undefined;
+  selectedJugador: JugadorType | undefined;
   isGameRunning: boolean;
 }
 
@@ -54,6 +57,7 @@ function useBLE(): BluetoothLowEnergyApi {
   const [receivedMSG, setReceivedMSG] = useState<string>(''); // mensaje recibido desde el servidor BLE
   let receivedArrayMessage: Array<string> = []; // paquetes recibidos
   const [selectedRutina, setSelectedRutina] = useState<RutinaType>();
+  const [selectedJugador, setSelectedJugador] = useState<JugadorType>();
   const [isScanningLoading, setScanningLoading] = useState<Boolean>(false); // estado del escaner
   const [BLEmsg, setBLEMsg] = useState<string>(''); // mensajes de estado
   const [BLECode, setBLECode] = useState<number>(BLUETOOTHNOTSTATUS); // codigo de estado y resultados
@@ -163,7 +167,7 @@ function useBLE(): BluetoothLowEnergyApi {
         });
 
         // ************************* Detiene el escaneo despues de 10 segundos *************************
-        setTimeout(() => {
+        const time = setTimeout(() => {
           if (espdevice === undefined) {
             bleManager.stopDeviceScan();
             setScanningLoading(false);
@@ -175,6 +179,8 @@ function useBLE(): BluetoothLowEnergyApi {
             return;
           }
         }, 10000);
+
+        return () => clearTimeout(time);
       } else if (state === 'PoweredOff') {
         // ******************************* si el bluetooth está a pagado *******************************
         if (BLECode !== BLUETOOTHOFF) {
@@ -186,7 +192,7 @@ function useBLE(): BluetoothLowEnergyApi {
           setBLECode(BLUETOOTHOFF);
           console.log(`PoweredOff - BLECode: ${BLUETOOTHOFF}`);
           // bleManager.stopDeviceScan();
-          // suscription.remove();
+          suscription.remove();
         }
       }
     }, true);
@@ -280,7 +286,7 @@ function useBLE(): BluetoothLowEnergyApi {
      */
     return (
       'secuence:' +
-      secuencia.map((item) => `${+item.ledId - 1},${item.time * 1000}`).join(';') +
+      secuencia.map((item) => `${+item.ledId - 1},${item.tiempo * 1000}`).join(';') +
       ';'
     );
   };
@@ -295,7 +301,7 @@ function useBLE(): BluetoothLowEnergyApi {
         newSecuencia.push({
           id: index.toString(),
           ledId: ledId,
-          time: selectedRutina.secuencia[index].time,
+          tiempo: JSON.parse(selectedRutina.secuencias)[index].tiempo,
           resTime: time != '-' ? +time / 1000 : '-',
         });
       }
@@ -393,6 +399,7 @@ function useBLE(): BluetoothLowEnergyApi {
     initBle,
     secuenciaToString,
     selectRutina: setSelectedRutina,
+    selectJugador: setSelectedJugador,
     runGame: setIsGameRunning,
     stringToSecuencia,
     connectedDevice,
@@ -404,6 +411,7 @@ function useBLE(): BluetoothLowEnergyApi {
     receivedMSG,
     BLEPowerStatus,
     selectedRutina,
+    selectedJugador,
     isGameRunning,
   };
 }

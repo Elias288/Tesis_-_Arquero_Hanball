@@ -3,13 +3,13 @@ import { View, FlatList, StyleSheet, Text, StyleProp, ViewStyle } from 'react-na
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { JugadorType } from '../../data/JugadoresType';
-import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
 import sortType from '../../utils/sortType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import CustomModal, { customModalStyles } from '../CustomModal.component';
-import { RenderItem } from './RenderItem';
+import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
+import { JugadorType } from '../../data/JugadoresType';
+import { ListaJugadoresTabPages } from '../../navigation/ListaJugadoresTab';
+import { RenderJugador } from './RenderJugador';
 import { RenderSimpleItem } from './RenderSimpleItem';
 import { HomeTabs } from '../../navigation/HomeTab';
 
@@ -25,23 +25,24 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
   const { isSimpleList, cantRenderItems, containerStyle, sort, navigation } = props;
   const navigator = useNavigation<NativeStackNavigationProp<ListaJugadoresTabPages>>();
 
+  const { jugadores, popJugador } = useCustomLocalStorage();
+
   const [listMode, setListMode] = useState<boolean>(false);
-  const { jugadores: storedJugadores, popJugador } = useCustomLocalStorage();
   const [jugadoresList, setJugadoresList] = useState<Array<JugadorType>>([]);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedJugadorId, setSelectedJugadorId] = useState<string>('');
+  const [selectedJugadorNombre, setSelectedJugadorNombre] = useState<string>('');
 
   const sortArray = (a: JugadorType, b: JugadorType): number => {
     if (sort === undefined || sort === sortType.alphabetic) {
       // Ordenar por nombre
-      return a.name.localeCompare(b.name);
+      return a.nombre.localeCompare(b.nombre);
     } else if (sort === sortType.newestFirst) {
       // Ordenar por fecha el más nuevo
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      return new Date(b.fechaCreación).getTime() - new Date(a.fechaCreación).getTime();
     } else if (sort === sortType.oldestFirst) {
       // Ordenar por fecha el más viejo
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
+      return new Date(a.fechaCreación).getTime() - new Date(b.fechaCreación).getTime();
     } else {
       return 0;
     }
@@ -53,32 +54,34 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       setListMode(isSimpleList || false);
     }
 
-    // carga todos los jugadores
-    setJugadoresList(storedJugadores.sort((a, b) => sortArray(a, b)));
+    setJugadoresList(jugadores.sort((a, b) => sortArray(a, b)));
 
     // si cantRenderItems está definido
     if (cantRenderItems) {
-      setJugadoresList(storedJugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b)));
+      setJugadoresList(jugadores.slice(0, cantRenderItems).sort((a, b) => sortArray(a, b)));
     }
-  }, [storedJugadores]);
+  }, [jugadores]);
 
   const deleteJugador = () => {
-    popJugador(selectedJugadorId);
+    popJugador(selectedJugadorNombre);
     setIsModalVisible(false);
   };
 
-  const showDeleteModal = (jugadorId: string) => {
+  const showDeleteModal = (jugadorNombre: string) => {
     setIsModalVisible(true);
-    setSelectedJugadorId(jugadorId);
+    setSelectedJugadorNombre(jugadorNombre);
   };
 
-  const gotoViewJugadores = (jugadorId: string) => {
+  const gotoViewJugadores = (jugadorNombre: string) => {
     if (navigation) {
-      navigation.navigate('Jugadores', { screen: 'ViewJugadores', params: { jugadorId } });
+      navigation.navigate('Jugadores', {
+        screen: 'ViewJugadores',
+        params: { jugadorNombre },
+      });
       return;
     }
 
-    navigator.navigate('ViewJugadores', { jugadorId });
+    navigator.navigate('ViewJugadores', { jugadorNombre });
   };
 
   if (jugadoresList.length == 0) {
@@ -94,7 +97,7 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       <>
         {jugadoresList.map((jugador) => (
           <RenderSimpleItem
-            key={jugador.id}
+            key={jugador.nombre}
             jugador={jugador}
             gotoViewJugadores={gotoViewJugadores}
           />
@@ -108,13 +111,13 @@ const ListarJugadoresComponent: FC<ListarJugadoresProps> = (props) => {
       <FlatList
         data={jugadoresList}
         renderItem={({ item: jugador }) => (
-          <RenderItem
+          <RenderJugador
             jugador={jugador}
-            deleteJugador={() => showDeleteModal(jugador.id)}
+            deleteJugador={() => showDeleteModal(jugador.nombre)}
             gotoViewJugadores={gotoViewJugadores}
           />
         )}
-        keyExtractor={(jugador) => jugador.id.toString()}
+        keyExtractor={(jugador) => jugador.nombre}
         contentContainerStyle={listarJugadoresStyles.scrollStyle}
       />
 

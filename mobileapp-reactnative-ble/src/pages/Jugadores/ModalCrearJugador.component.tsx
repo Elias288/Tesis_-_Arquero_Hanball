@@ -22,7 +22,7 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
   const [modalMessage, setModalMessage] = useState<string>('');
 
   useEffect(() => {
-    if (editJugador) setName(editJugador.name);
+    if (editJugador) setName(editJugador.nombre);
   }, [editJugador]);
 
   const handleSubmit = () => {
@@ -41,21 +41,20 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
       return;
     }
 
-    if (findJugador(name.trim(), undefined)) {
+    if (findJugador(name.trim())) {
       showModal('Nombre de jugador ya registrado');
       return;
     }
 
     pushJugador({
-      id: uuid.v4().toString().replace(/-/g, ''),
-      name: name.trim(),
-      date: new Date(),
+      nombre: name.trim(),
+      fechaCreación: new Date(),
     });
     closeModal();
   };
 
   const handleEdit = () => {
-    if (prevJugador && prevJugador.name != name) {
+    if (prevJugador && prevJugador.nombre != name) {
       if (name.trim() == '') {
         showModal('Nombre no puede estár vacio');
         return;
@@ -71,12 +70,12 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
         return;
       }
 
-      if (findJugador(name.trim(), undefined)) {
+      if (findJugador(name.trim())) {
         showModal('Nombre de jugador ya registrado');
         return;
       }
 
-      updateJugador({ ...prevJugador, name: name });
+      updateJugador({ ...prevJugador, nombre: name });
       closeModal();
     }
   };
@@ -98,7 +97,11 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
         <View style={styles.container}>
           <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: GlobalStyles.white, borderRadius: 20, padding: 5 }}>
-              <Text style={styles.title}>Agregar Jugador</Text>
+              {editJugador ? (
+                <Text style={styles.title}>Editar Jugador</Text>
+              ) : (
+                <Text style={styles.title}>Agregar Jugador</Text>
+              )}
               <TextInput
                 label={'Nombre*'}
                 style={{ marginVertical: 10 }}
@@ -112,7 +115,7 @@ const ModalCrearJugador = ({ isVisible, hideModal, editJugador }: propsType) => 
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginVertical: 10 }}>
             {editJugador ? (
               <Button mode="contained" onPress={handleEdit}>
-                Editar
+                Actualizar
               </Button>
             ) : (
               <Button mode="contained" onPress={handleSubmit}>

@@ -27,7 +27,6 @@ var UsuarioSchema = new Schema(
     },
     nombre: {
       type: String,
-      required: true,
     },
     rutinas: [{ type: ObjectID, ref: "Rutina" }],
     jugadores: [{ type: ObjectID, ref: "Jugador" }],

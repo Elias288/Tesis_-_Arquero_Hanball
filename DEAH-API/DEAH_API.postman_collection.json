@@ -1,0 +1,582 @@
+{
+  "info": {
+    "_postman_id": "0890d295-94bb-4e39-86c2-3cffabb13eaa",
+    "name": "DEAH_API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "21078904"
+  },
+  "item": [
+    {
+      "name": "Rutina",
+      "item": [
+        {
+          "name": "Rutina_Details(Editar)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/rutina/details/6531a8cdddfed6448df1f4c2"
+          },
+          "response": []
+        },
+        {
+          "name": "Rutina_Add(Editar)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_usuario\":\"6515fab2a5ac2049662397b3\",\r\n    \"fecha\":\"2022-09-12\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/rutina/add"
+          },
+          "response": []
+        },
+        {
+          "name": "Rutina_List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/rutina/list"
+          },
+          "response": []
+        },
+        {
+          "name": "Rutina_Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "localhost:5000/api/rutina/delete/6531bda27724bc7d588a71f1"
+          },
+          "response": []
+        },
+        {
+          "name": "Rutina_Update(Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_usuario\":\"0\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/rutina/update/6531a8cdddfed6448df1f4c2"
+          },
+          "response": []
+        },
+        {
+          "name": "AddSecuencia (Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"secuenciaId\":\"6531c3e53ada73bda55090ff\",\r\n    \"id_rutina\": \"6531a8cdddfed6448df1f4c2\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/rutina/addSecuencia"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Jugador",
+      "item": [
+        {
+          "name": "Jugador_Details(Editar)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/jugador/details/6531c0c5ce3b79e0a5578dd6"
+          },
+          "response": []
+        },
+        {
+          "name": "Jugador_Add(Editar)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": ""
+              }
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nombre\": \"Carlitos Moronga\",\r\n    \"localidad\": \"Bolivia\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/jugador/add"
+          },
+          "response": []
+        },
+        {
+          "name": "Jugador_List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/jugador/list"
+          },
+          "response": []
+        },
+        {
+          "name": "Jugador_Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "localhost:5000/api/jugador/delete/6531c0c5ce3b79e0a5578dd6"
+          },
+          "response": []
+        },
+        {
+          "name": "Jugador_Update(Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nombre\":\"Juancito\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/jugador/update/6531c0c5ce3b79e0a5578dd6"
+          },
+          "response": []
+        },
+        {
+          "name": "AddResultado (Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"resultadoId\":\"6531c58ce4adf6603f3f6741\",\r\n    \"id_jugador\": \"6531c0c5ce3b79e0a5578dd6\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/jugador/addResultado"
+          },
+          "response": []
+        },
+        {
+          "name": "AddRutina (Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"id_jugador\":\"654027aa6b22a7294707fe88\",\r\n    \"rutinaId\": \"6540323c5bb2b546c6c63c41\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/jugador/addRutina"
+          },
+          "response": []
+        },
+        {
+          "name": "GetRutinas",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_jugador\": \"654027aa6b22a7294707fe88\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/jugador/getrutinas"
+          },
+          "response": []
+        },
+        {
+          "name": "GetResultados",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_jugador\": \"6531c0c5ce3b79e0a5578dd6\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/jugador/getresultados"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuario",
+      "item": [
+        {
+          "name": "Usuario_Details(Editar)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NTQwNDI4ZTYxOGUxZTQzMmE1OTNmN2YiLCJpYXQiOjE2OTg3MTAxODksImV4cCI6MTY5ODc5NjU4OX0._H8_WsuunEbGcYR2bzSFryQpM3KaVr5ihrTvsBudMSI"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/usuario/details/6540428e618e1e432a593f7f"
+          },
+          "response": []
+        },
+        {
+          "name": "Usuario_Add(Editar)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nombre\": \"Jorge\",\r\n    \"username\": \"Jorgito\",\r\n    \"contrasenia\": \"contra123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/usuario/add"
+          },
+          "response": []
+        },
+        {
+          "name": "Usuario_List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/usuario/list"
+          },
+          "response": []
+        },
+        {
+          "name": "Usuario_Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "localhost:5000/api/usuario/delete/65304ccb93e7ec37d8025df1"
+          },
+          "response": []
+        },
+        {
+          "name": "Usuario_Update(Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nombre\":\"Juancito\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/usuario/update/65304ccb93e7ec37d8025df1"
+          },
+          "response": []
+        },
+        {
+          "name": "AsignarRutina (Editar)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NTQwNDI4ZTYxOGUxZTQzMmE1OTNmN2YiLCJpYXQiOjE2OTg3MTAxODksImV4cCI6MTY5ODc5NjU4OX0._H8_WsuunEbGcYR2bzSFryQpM3KaVr5ihrTvsBudMSI"
+              }
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_rutina\": \"6531bda27724bc7d588a71f1\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/usuario/addRutina"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"contrasenia\": \"contra123\",\r\n    \"username\": \"Jorgito\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/usuario/login"
+          },
+          "response": []
+        },
+        {
+          "name": "JugadorList",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2NTQwNDI4ZTYxOGUxZTQzMmE1OTNmN2YiLCJpYXQiOjE2OTg3MTAxODksImV4cCI6MTY5ODc5NjU4OX0._H8_WsuunEbGcYR2bzSFryQpM3KaVr5ihrTvsBudMSI"
+              }
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/usuario/JugadorList"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Secuencias",
+      "item": [
+        {
+          "name": "Secuencia_Details(Editar)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/secuencia/details/6531c3e53ada73bda55090ff"
+          },
+          "response": []
+        },
+        {
+          "name": "Secuencia_Add(Editar)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"tiempo\": \"10\",\r\n    \"led\": \"3\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/secuencia/add"
+          },
+          "response": []
+        },
+        {
+          "name": "Secuencia_List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/secuencia/list"
+          },
+          "response": []
+        },
+        {
+          "name": "Secuencia_Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "localhost:5000/api/secuencia/delete/6531c3e53ada73bda55090ff"
+          },
+          "response": []
+        },
+        {
+          "name": "Secuencia_Update(Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"tiempo\":\"20\",\r\n    \"led\": \"4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/secuencia/update/6531c3e53ada73bda55090ff"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Resultado",
+      "item": [
+        {
+          "name": "Resultado_Details(Editar)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/resultado/details/6531c58ce4adf6603f3f6741"
+          },
+          "response": []
+        },
+        {
+          "name": "Resultado_Add(Editar)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_rutina\":\"0\",\r\n    \"id_jugador\":\"0\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/resultado/add"
+          },
+          "response": []
+        },
+        {
+          "name": "Resultado_List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "localhost:5000/api/resultado/list"
+          },
+          "response": []
+        },
+        {
+          "name": "Resultado_Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "localhost:5000/api/resultado/delete/6531c58ce4adf6603f3f6741"
+          },
+          "response": []
+        },
+        {
+          "name": "Resultado_Update(Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_jugador\":\"0\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/resultado/update/6531c58ce4adf6603f3f6741"
+          },
+          "response": []
+        },
+        {
+          "name": "AddSecuencia (Editar)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{   \r\n    \"secuenciaId\":\"6531c3e53ada73bda55090ff\",\r\n    \"id_resultado\": \"6531c58ce4adf6603f3f6741\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/resultado/addSecuencia"
+          },
+          "response": []
+        },
+        {
+          "name": "GetJugador",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id_resultado\": \"6531c58ce4adf6603f3f6741\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "localhost:5000/api/resultado/getjugador"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ]
+}
