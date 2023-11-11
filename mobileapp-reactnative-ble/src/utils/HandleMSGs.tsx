@@ -152,6 +152,7 @@ const HandleMSGs = () => {
           label: 'Undo',
           onPress: () => dimissBLEAlert,
         }}
+        style={{ position: 'absolute', bottom: 100 }}
       >
         {snackbarMsg}
       </Snackbar>

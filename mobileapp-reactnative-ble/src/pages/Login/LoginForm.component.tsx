@@ -8,8 +8,8 @@ import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 const LoginFormComponent = () => {
   const { isLoginLoading, errorLogin, login, setErrorLogin } = useCustomRemoteStorage();
 
-  const [userName, setUserName] = useState<string>('elias.bianchi');
-  const [contraseña, setContraseña] = useState<string>('contra123');
+  const [userName, setUserName] = useState<string>('');
+  const [contraseña, setContraseña] = useState<string>('');
 
   const [nameError, setNameError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');

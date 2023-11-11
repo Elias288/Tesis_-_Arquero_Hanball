@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { IconButton, Text } from 'react-native-paper';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
@@ -25,12 +25,7 @@ export const HEADERSIZE = 50;
 
 const HeaderComponent = (props: headerProps) => {
   const navigator = useNavigation<navigationType>();
-  const { isWifiConnected, clearUserData, isApiUp, token } = useCustomRemoteStorage();
-
-  const logout = () => {
-    clearUserData();
-    navigator.navigate('Login');
-  };
+  const { isWifiConnected } = useCustomRemoteStorage();
 
   return (
     <View style={styles.container}>
@@ -54,11 +49,6 @@ const HeaderComponent = (props: headerProps) => {
 
       {!isWifiConnected && (
         <Icon name="wifi-strength-off-outline" size={20} color={GlobalStyles.white} />
-      )}
-      {isWifiConnected && (
-        <TouchableOpacity onPress={logout}>
-          <Icon name="logout" size={20} color={GlobalStyles.white} />
-        </TouchableOpacity>
       )}
     </View>
   );

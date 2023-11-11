@@ -161,7 +161,7 @@ function useRemoteStorage(): remoteStorageProps {
           if (err.name === 'AbortError') {
             setIsVisibleStorageAlert(true);
             setStorageAlertMsg(
-              `No se pudo conectar a la API\nTodo lo almacenado se guardará al volver a conectarse`
+              `No se pudo conectar a la API\nTodo lo almacenado en local se guardará en remoto al volver a conectarse`
             );
           }
 
