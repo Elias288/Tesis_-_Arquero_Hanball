@@ -36,10 +36,12 @@ const Home = ({ navigation }: propsType) => {
   useEffect(() => {
     setTimeout(() => {
       setLoadingData(false);
-    }, 3000);
-
-    if (!loadingData) initBle();
+    }, 1000);
   }, []);
+
+  useEffect(() => {
+    if (!loadingData) initBle();
+  }, [loadingData]);
 
   useEffect(() => {
     if (token === '') {

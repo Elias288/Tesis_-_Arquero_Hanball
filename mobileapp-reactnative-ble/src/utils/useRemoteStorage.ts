@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { API_URL, DEVELOP } from '@env';
 import { JugadorType } from '../data/JugadoresType';
-import { APIResType } from '../data/APIResType';
 import { RutinaType } from '../data/RutinasType';
+import fetchData from './fetchData';
 
 export interface remoteStorageProps {
   isWifiConnected: boolean;
@@ -15,15 +15,22 @@ export interface remoteStorageProps {
   token: string;
   remoteUserId: string | undefined;
 
+  isVisibleStorageAlert: boolean;
+  storageAlertMsg: string;
+  setIsVisibleStorageAlert: (value: boolean) => void;
+  setStorageAlertMsg: (value: string) => void;
+
   login: (user: string, password: string) => void;
   setErrorLogin: (error: string) => void;
   clearUserData: () => void;
   // jugadores
   getJugadores: () => Promise<JugadorType[]>;
   saveJugador: (newJugador: JugadorType) => Promise<any>;
+  deleteJugador: (jugadorMambuId: string) => Promise<any>;
   // rutinas
   getRutinas: () => Promise<RutinaType[]>;
   saveRutina: (newRutina: RutinaType) => Promise<any>;
+  deleteRutina: (rutinaMambuId: string) => Promise<any>;
 }
 
 function useRemoteStorage(): remoteStorageProps {
@@ -34,6 +41,9 @@ function useRemoteStorage(): remoteStorageProps {
 
   const [token, setToken] = useState<string>('');
   const [remoteUserId, setRemoteUserId] = useState<string | undefined>();
+
+  const [isVisibleStorageAlert, setIsVisibleStorageAlert] = useState<boolean>(false);
+  const [storageAlertMsg, setStorageAlertMsg] = useState<string>('');
 
   useEffect(() => {
     setErrorLogin('');
@@ -49,20 +59,21 @@ function useRemoteStorage(): remoteStorageProps {
   }, []);
 
   useEffect(() => {
-    getUserData();
+    if (isWifiConnected) {
+      setTimeout(() => {
+        console.log('wifi connected');
+        getUserData();
+      }, 1000);
+    } else {
+      console.log('wifi disconnected');
+
+      setIsApiUp(false);
+    }
   }, [isWifiConnected]);
 
   const login = (usuario: string, contraseña: string) => {
     setErrorLogin('');
     setIsLoginLoading(true);
-
-    const controller = new AbortController();
-
-    const time = setTimeout(() => {
-      // si el tiempo se agota y no se pudo conectar con la API se mostrará el mensaje de error
-      setErrorLogin('Es necesario estár conectado a wifi para iniciar sesión al menos una vez');
-      controller.abort();
-    }, 10000);
 
     const options = {
       method: 'POST',
@@ -70,35 +81,40 @@ function useRemoteStorage(): remoteStorageProps {
       headers: {
         'Content-Type': 'application/json',
       },
-      signal: controller.signal,
+    };
+    const callBackFunction = (result: any) => {
+      if (result.res !== '0') {
+        setIsLoginLoading(false);
+        if (typeof result.message === 'string') setErrorLogin(result.message);
+        return;
+      }
+      if (DEVELOP) {
+        console.log('login result:');
+        console.log(result.message);
+      }
+      setIsApiUp(true);
+      const loggedToken = `Bearer ${result.message.token}`;
+
+      setToken(loggedToken);
+      storeUserData({ token: loggedToken, userId: result.message.userId });
+
+      setIsLoginLoading(false);
+    };
+    const callBackErrorFunction = (err: any) => {
+      if (err.name === 'AbortError') {
+        setErrorLogin(
+          `Es necesario estár conectado a wifi para iniciar sesión al menos una vez
+          Si ya está conectado entonces no se ha podido conectar con la API, intente nuevamente más tarde`
+        );
+        setIsApiUp(false);
+      }
+
+      setIsLoginLoading(false);
+      console.log('login catch:');
+      console.log(err);
     };
 
-    fetch(`${API_URL}/api/usuario/login`, options)
-      .then((res) => res.json())
-      .then((result: any) => {
-        clearTimeout(time);
-        setIsApiUp(true);
-        if (result.res !== '0') {
-          setIsLoginLoading(false);
-          if (typeof result.message === 'string') setErrorLogin(result.message);
-          return;
-        }
-        if (DEVELOP) {
-          console.log('login result:');
-          console.log(result.message);
-        }
-
-        const loggedToken = `Bearer ${result.message.token}`;
-
-        setToken(loggedToken);
-        storeUserData({ token: loggedToken, userId: result.message.userId });
-
-        setIsLoginLoading(false);
-      })
-      .catch((err) => {
-        setIsLoginLoading(false);
-        console.log(err);
-      });
+    fetchData('usuario/login', options, callBackFunction, callBackErrorFunction, 10000);
   };
 
   // ****************************************** API ******************************************
@@ -122,44 +138,49 @@ function useRemoteStorage(): remoteStorageProps {
         setRemoteUserId(userData.userId);
 
         // si tiene wifi intentará verificar que la api responda
-        if (isWifiConnected) {
-          if (DEVELOP) console.log('verificando api');
+        if (DEVELOP) console.log('verificando api');
 
-          const controller = new AbortController();
-          const time = setTimeout(() => controller.abort(), 3000);
-          const options = {
-            method: 'GET',
-            headers: {
-              Authorization: userData.token,
-            },
-            signal: controller.signal,
-          };
+        const options = {
+          method: 'GET',
+          headers: {
+            Authorization: userData.token,
+          },
+        };
+        const callBackFunction = (result: any) => {
+          if (result.res !== '0') {
+            console.log('details error');
+            clearUserData();
+          }
 
-          fetch(`${API_URL}/api/usuario/details/${userData.userId}`, options)
-            .then((res) => res.json())
-            .then((result: any) => {
-              clearTimeout(time);
-              if (result.res !== '0') {
-                console.log('details error');
-                clearUserData();
-              }
+          if (DEVELOP) {
+            console.log('details');
+          }
+          setIsApiUp(true);
+        };
+        const callBackErrorFunction = (err: any) => {
+          if (err.name === 'AbortError') {
+            setIsVisibleStorageAlert(true);
+            setStorageAlertMsg(
+              `No se pudo conectar a la API\nTodo lo almacenado se guardará al volver a conectarse`
+            );
+          }
 
-              if (DEVELOP) {
-                console.log('details');
-              }
-              setIsApiUp(true);
-            })
-            .catch((err) => {
-              setIsApiUp(false);
-              console.log(`usuarioDetailsError: ${err}`);
-              return;
-            });
-        }
+          setIsApiUp(false);
+          console.log(`getUserDataError: ${err}`);
+          return;
+        };
+        fetchData(
+          `usuario/details/${userData.userId}`,
+          options,
+          callBackFunction,
+          callBackErrorFunction,
+          10000
+        );
       } else {
         if (DEVELOP) console.log('not logged');
       }
     } catch (error) {
-      console.log(`getUserDataError: ${error}`);
+      console.log(`getUserDataCatchError: ${error}`);
     }
   };
 
@@ -185,36 +206,26 @@ function useRemoteStorage(): remoteStorageProps {
 
   const getJugadores = (): Promise<JugadorType[]> => {
     if (DEVELOP) console.log('getting jugadores of api');
-
-    const controller = new AbortController();
-    const time = setTimeout(() => {
-      controller.abort();
-      // si el tiempo se agota, la api se marca como desconectada
-      setIsApiUp(false);
-    }, 3000);
-
     const options = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      signal: controller.signal,
+    };
+    const callBackFunction = (result: any) => {
+      setIsApiUp(true);
+      if (result.res !== '0') return [];
+      console.log(result.message);
+      return result.message;
+    };
+    const callBackErrorFunction = (err: any) => {
+      setIsApiUp(false);
+      console.log(`getJugadoresError: ${err}`);
+      return;
     };
 
-    return fetch(`${API_URL}/api/usuario/JugadorList`, options)
-      .then((res) => res.json())
-      .then((result) => {
-        clearTimeout(time);
-
-        if (result.res !== '0') return [];
-
-        return result.message;
-      })
-      .catch((err) => {
-        clearTimeout(time);
-        console.log(`getJugadoresErr: ${err}`);
-      });
+    return fetchData(`usuario/JugadorList`, options, callBackFunction, callBackErrorFunction, 3000);
   };
 
   const saveJugador = (newJugador: JugadorType): Promise<any> => {
@@ -223,39 +234,61 @@ function useRemoteStorage(): remoteStorageProps {
       console.log(newJugador);
     }
 
-    const controller = new AbortController();
-    const time = setTimeout(() => {
-      controller.abort();
-      // si el tiempo se agota, la api se marca como desconectada
-      setIsApiUp(false);
-    }, 3000);
-
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      signal: controller.signal,
       body: JSON.stringify(newJugador),
     };
+    const callBackFunction = (result: any) => {
+      setIsApiUp(true);
+      if (result.res !== '0') return [];
+      console.log(result.message);
+      return result.message;
+    };
+    const callBackErrorFunction = (err: any) => {
+      setIsApiUp(false);
+      console.log(`saveJugadorError: ${err}`);
+      return;
+    };
 
-    return fetch(`${API_URL}/api/jugador/add`, options)
-      .then((res) => res.json())
-      .then((result) => {
-        clearTimeout(time);
+    return fetchData('jugador/add', options, callBackFunction, callBackErrorFunction, 3000);
+  };
 
-        if (result.res !== '0') {
-          console.log(`saveJugadorError: ${JSON.stringify(result.message)}`);
-          return [];
-        }
+  const deleteJugador = (jugadorMambuId: string): Promise<any> => {
+    if (DEVELOP) {
+      console.log('delete Jugador: ');
+      console.log(jugadorMambuId);
+    }
 
-        return result.message;
-      })
-      .catch((err) => {
-        clearTimeout(time);
-        console.log(`saveJugadorError: ${err}`);
-      });
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+    };
+    const callBackFunction = (result: any) => {
+      setIsApiUp(true);
+      if (result.res !== '0') return [];
+      console.log(result.message);
+      return result.message;
+    };
+    const callBackErrorFunction = (err: any) => {
+      setIsApiUp(false);
+      console.log(`deleteJugadorError: ${err}`);
+      return;
+    };
+
+    return fetchData(
+      `jugador/delete/${jugadorMambuId}`,
+      options,
+      callBackFunction,
+      callBackErrorFunction,
+      3000
+    );
   };
 
   // ****************************************** Rutinas ******************************************
@@ -263,35 +296,29 @@ function useRemoteStorage(): remoteStorageProps {
   const getRutinas = (): Promise<RutinaType[]> => {
     if (DEVELOP) console.log('getting rutinas of api');
 
-    const controller = new AbortController();
-    const time = setTimeout(() => {
-      controller.abort(); // si el tiempo se agota, la api se marca como desconectada
-      setIsApiUp(false);
-    }, 3000);
-
     const options = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      signal: controller.signal,
+    };
+    const callBackFunction = (result: any) => {
+      setIsApiUp(true);
+
+      if (result.res !== '0') return [];
+
+      return result.message.map((rutina: any) => {
+        return { ...rutina, secuencias: JSON.parse(rutina.secuencias) };
+      });
+    };
+    const callBackErrorFunction = (err: any) => {
+      setIsApiUp(false);
+      console.log(`getRutinasError: ${err}`);
+      return;
     };
 
-    return fetch(`${API_URL}/api/usuario/RutinaList`, options)
-      .then((res) => res.json())
-      .then((result) => {
-        clearTimeout(time);
-
-        if (result.res !== '0') return [];
-
-        return result.message.map((rutina: any) => {
-          return { ...rutina, secuencias: JSON.parse(rutina.secuencias) };
-        });
-      })
-      .catch((err) => {
-        console.log(`getRutinas error: ${err}`);
-      });
+    return fetchData('usuario/RutinaList', options, callBackFunction, callBackErrorFunction, 3000);
   };
 
   const saveRutina = (newRutina: RutinaType): Promise<any> => {
@@ -299,40 +326,65 @@ function useRemoteStorage(): remoteStorageProps {
       console.log('stored Rutinas: ');
       console.log(newRutina);
     }
-
-    const controller = new AbortController();
-    const time = setTimeout(() => {
-      controller.abort();
-      // si el tiempo se agota, la api se marca como desconectada
-      setIsApiUp(false);
-    }, 3000);
-
     const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: token,
       },
-      signal: controller.signal,
       body: JSON.stringify({ ...newRutina, secuencias: JSON.stringify(newRutina.secuencias) }),
     };
+    const callBackFunction = (result: any) => {
+      setIsApiUp(true);
 
-    return fetch(`${API_URL}/api/rutina/add`, options)
-      .then((res) => res.json())
-      .then((result) => {
-        clearTimeout(time);
+      if (result.res !== '0') {
+        console.log(`saveRutinaError: ${result.message}`);
+        return [];
+      }
 
-        if (result.res !== '0') {
-          console.log(`saveRutinaError: ${result.message}`);
-          return [];
-        }
+      return result.message;
+    };
+    const callBackErrorFunction = (err: any) => {
+      setIsApiUp(false);
+      console.log(`saveRutinaError: ${err}`);
+      return;
+    };
 
-        return result.message;
-      })
-      .catch((err) => {
-        clearTimeout(time);
-        console.log(`saveRutinaError: ${JSON.stringify(err)}`);
-      });
+    return fetchData('rutina/add', options, callBackFunction, callBackErrorFunction, 3000);
+  };
+
+  const deleteRutina = (rutinaMambuId: string): Promise<any> => {
+    if (DEVELOP) {
+      console.log('delete Jugador: ');
+      console.log(rutinaMambuId);
+    }
+
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+    };
+    const callBackFunction = (result: any) => {
+      setIsApiUp(true);
+      if (result.res !== '0') return [];
+      console.log(result.message);
+      return result.message;
+    };
+    const callBackErrorFunction = (err: any) => {
+      setIsApiUp(false);
+      console.log(`deleteRutinaError: ${err}`);
+      return;
+    };
+
+    return fetchData(
+      `rutina/delete/${rutinaMambuId}`,
+      options,
+      callBackFunction,
+      callBackErrorFunction,
+      3000
+    );
   };
   // ************************************* Rutinas Realizadas *************************************
 
@@ -343,13 +395,19 @@ function useRemoteStorage(): remoteStorageProps {
     errorLogin,
     token,
     remoteUserId,
+    isVisibleStorageAlert,
+    storageAlertMsg,
     login,
     setErrorLogin,
     clearUserData,
     getJugadores,
     saveJugador,
+    deleteJugador,
     getRutinas,
     saveRutina,
+    deleteRutina,
+    setIsVisibleStorageAlert,
+    setStorageAlertMsg,
   };
 }
 

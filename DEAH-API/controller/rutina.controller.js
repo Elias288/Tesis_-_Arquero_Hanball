@@ -38,6 +38,7 @@ class RutinaController extends BaseController {
         .status(StatusCodes.BAD_REQUEST)
         .send({ res: "error", message: "invalid param" });
 
+    if (process.env.develop) console.log("deleted rutinaID: " + rutinaId);
     try {
       const usuario = await UsuarioSchema.findById(user_id);
       usuario.rutinas = usuario.rutinas.filter(

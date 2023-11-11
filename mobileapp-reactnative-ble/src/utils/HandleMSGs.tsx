@@ -7,10 +7,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { BLUETOOTHCONNECTED, BLUETOOTHNOTSTATUS } from './BleCodes';
 import { RutinaTabPages } from '../navigation/RutinasTab';
-import { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
+import LocalStorageProvider, { useCustomLocalStorage } from '../contexts/LocalStorageProvider';
 import { HomeTabs } from '../navigation/HomeTab';
 import { secuenciaType } from '../data/RutinasType';
 import { ResultadoType } from '../data/ResultadoType';
+import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
 
 export interface Funciones {
   [nombreFuncion: string]: (dato: string) => void;
@@ -23,6 +24,7 @@ type navigationType = CompositeNavigationProp<
 
 const HandleMSGs = () => {
   const navigator = useNavigation<navigationType>();
+  const { storageAlertMsg } = useCustomRemoteStorage();
 
   const {
     receivedMSG,
@@ -34,9 +36,12 @@ const HandleMSGs = () => {
     selectedJugador,
     selectedRutina,
   } = useCustomBLE();
-  const { pushRutinaRealizada, rutinasRealizadas } = useCustomLocalStorage();
+  const { pushRutinaRealizada } = useCustomLocalStorage();
+
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
-  const [snackbarMsg, SetsnackbarMsg] = useState<string>('Hola');
+  const [snackbarMsg, SetsnackbarMsg] = useState<string>('');
+
+  const [colaDeSnacks, setColaDeSnacks] = useState<string[]>([]);
 
   useEffect(() => {
     // si recibe un mensaje desde el servidor BLE
@@ -55,11 +60,20 @@ const HandleMSGs = () => {
 
     // si hay un codigo de error
     if (BLECode !== BLUETOOTHCONNECTED && BLECode !== BLUETOOTHNOTSTATUS) {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(`${BLECode}: ${BLEmsg}`);
+      recevieAlerts(`${BLECode}: ${BLEmsg}`);
       // cleanBLECode();
     }
   }, [BLECode, receivedMSG]);
+
+  useEffect(() => {
+    if (storageAlertMsg.length > 0) {
+      recevieAlerts(storageAlertMsg);
+    }
+  }, [storageAlertMsg]);
+
+  useEffect(() => {
+    if (snackbarMsg.length > 0) setVisibleSnackbar(true);
+  }, [snackbarMsg]);
 
   const handleFunctions: Funciones = {
     // resultado del juego
@@ -106,21 +120,37 @@ const HandleMSGs = () => {
 
     // mensajes desde desde el servidor BLE
     bleMSG: (dato) => {
-      setVisibleSnackbar(true);
-      SetsnackbarMsg(dato);
+      recevieAlerts(dato);
     },
+  };
+
+  const recevieAlerts = (snackMsg: string) => {
+    if (snackMsg.length > 0) {
+      setVisibleSnackbar(true);
+      const newCola = [...colaDeSnacks, snackMsg];
+      setColaDeSnacks(newCola);
+      SetsnackbarMsg(newCola[0]);
+    }
+  };
+
+  const dimissBLEAlert = () => {
+    if (colaDeSnacks.length > 0) {
+      const newCola = colaDeSnacks.slice(1);
+      setColaDeSnacks(newCola);
+
+      if (newCola[0]) SetsnackbarMsg(newCola[0]);
+      setVisibleSnackbar(false);
+    }
   };
 
   return (
     <Portal>
       <Snackbar
         visible={visibleSnackbar}
-        onDismiss={() => setVisibleSnackbar(false)}
+        onDismiss={dimissBLEAlert}
         action={{
           label: 'Undo',
-          onPress: () => {
-            setVisibleSnackbar(false);
-          },
+          onPress: () => dimissBLEAlert,
         }}
       >
         {snackbarMsg}

@@ -13,14 +13,14 @@ class JugadorController extends BaseController {
     const { user_id } = req;
 
     const usuario = await UsuarioSchema.findById(user_id);
-    console.log(body);
+    if (process.env.develop) console.log(body);
     const jugador = new JugadorSchema(body);
 
     try {
       const savedJugador = await jugador.save();
       usuario.jugadores.push(savedJugador._id);
       await usuario.save();
-      console.log("new jugador added");
+      if (process.env.develop) console.log("new jugador added");
 
       res.status(StatusCodes.CREATED).send({ res: "0", message: savedJugador });
     } catch (error) {
@@ -58,17 +58,18 @@ class JugadorController extends BaseController {
         .status(StatusCodes.BAD_REQUEST)
         .send({ res: "error", message: "invalid param" });
 
+    if (process.env.develop) console.log("jugadorId: " + jugadorId);
+
     try {
       const usuario = await UsuarioSchema.findById(user_id);
       usuario.jugadores = usuario.jugadores.filter(
         (jugador_id) => jugador_id.toString() !== jugadorId
       );
+      await usuario.save();
 
       JugadorSchema.findByIdAndDelete(jugadorId).then((doc) => {
         return res.status(StatusCodes.OK).send({ res: "0", message: doc });
       });
-
-      await usuario.save();
     } catch (error) {
       console.log(error);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send();
