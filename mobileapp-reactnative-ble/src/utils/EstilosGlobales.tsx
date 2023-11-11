@@ -1,6 +1,6 @@
 const GlobalStyles = {
   black: '#000',
-  blueBackgroudn: '#536ac7',
+  blueBackground: '#536ac7',
   buttonStyle: {
     borderColor: '#746c26',
     borderWidth: 1,

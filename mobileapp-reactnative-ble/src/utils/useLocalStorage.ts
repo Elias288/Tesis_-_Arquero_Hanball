@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DEVELOP } from '@env';
+
 import { JugadorType } from '../data/JugadoresType';
 import { RutinaType } from '../data/RutinasType';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ResultadoType } from '../data/ResultadoType';
+import { useCustomRemoteStorage } from '../contexts/RemoteStorageProvider';
 
 export interface LocalStorageType {
-  localToken: string;
-  saveToken: (token: string) => void;
-  clearToken: () => void;
+  // Jugadores
   jugadores: Array<JugadorType>;
   pushJugador: (newJugador: JugadorType) => void;
-  clearJugadoresDB: () => void;
-  popJugador: (jugadorId: string) => void;
+  popJugador: (jugadorNombre: string) => void;
   updateJugador: (newJugador: JugadorType) => void;
-  findJugador: (
-    jugadorName: string | undefined,
-    jugadorId: string | undefined
-  ) => JugadorType | undefined;
+  findJugador: (jugadorName: string) => JugadorType | undefined;
+  chargeAllJugadores: () => void;
+  // Rutinas
   rutinas: Array<RutinaType>;
   pushRutina: (newRutina: RutinaType) => void;
   popRutina: (rutinaId: string) => void;
@@ -24,194 +24,496 @@ export interface LocalStorageType {
     rutinaTitle: string | undefined,
     rutinaId: string | undefined
   ) => RutinaType | undefined;
-  rutinasRealizadas: Array<RutinaType>;
-  pushRutinaRealizada: (newRutina: RutinaType) => void;
+  chargeAllRutinas: () => void;
+  // Rutinas realizadas
+  rutinasRealizadas: Array<ResultadoType>;
+  pushRutinaRealizada: (newRutina: ResultadoType) => void;
   popRutinaRealizada: (rutinaId: string) => void;
-  clearRutinasRealizadas: () => void;
-  getRutinasJugadasDeJugador: (jugadorId: string) => Array<RutinaType>;
+  getRutinasJugadasDeJugador: (jugadorId: string) => Array<ResultadoType>;
 }
 
+const AsynStorageItems = {
+  rutinas: 'rutinas',
+  rutinasRealizadas: 'rutinasRealizadas',
+  jugadores: 'jugadores',
+  deletedJugadores: 'deletedJugadores',
+  deletedRutinas: 'deletedRutinas',
+};
+
 function useLocalStorage(): LocalStorageType {
-  const [jugadores, setJugadores] = useState<Array<JugadorType>>([]);
-  const [rutinas, setRutinas] = useState<Array<RutinaType>>([]);
-  const [rutinasRealizadas, setRutinasRealizadas] = useState<Array<RutinaType>>([]);
-  const [localToken, setLocalToken] = useState<string>('');
+  const {
+    isApiUp,
+    getJugadores,
+    getRutinas,
+    saveRutina,
+    saveJugador,
+    clearUserData,
+    setIsVisibleStorageAlert,
+    setStorageAlertMsg,
+    deleteJugador,
+    deleteRutina,
+  } = useCustomRemoteStorage();
+
+  const [localJugadores, setLocalJugadores] = useState<Array<JugadorType>>([]);
+  const [localRutinas, setLocalRutinas] = useState<Array<RutinaType>>([]);
+  const [localRutinasRealizadas, setLocalRutinasRealizadas] = useState<Array<ResultadoType>>([]);
+
+  const [AllJugadores, setAllJugadores] = useState<Array<JugadorType>>([]);
+  const [AllRutinas, setAllRutinas] = useState<Array<RutinaType>>([]);
+
+  const [deletedJugadoresMambuIds, setDeletedJugadoresMambuIds] = useState<Array<string>>([]);
+  const [deletedRutinasMambuIds, setDeletedRutinasMambuIds] = useState<Array<string>>([]);
 
   useEffect(() => {
-    listAllJugadores();
-    ListAllRutinas();
-    listAllRutinasRealizadas();
-    getToken();
+    // clearJugadoresDB();
+    // clearRutinasDB();
+    // clearUserData();
+    // clearRutinasRealizadas();
+
+    getLocalJugadores();
+    getDeletedJugadores();
+    getLocalRutinas();
+    getDeletedRutinas();
+    getLocalRutinasRealizadas();
   }, []);
 
-  // ****************************************** Token ******************************************
+  const pushAsyncRutinas = async (value: RutinaType) => {
+    if (!localRutinas.some((r) => r.titulo === value.titulo)) {
+      localRutinas.push(value);
 
-  const getToken = async () => {
+      // si el localRutinas supera los 10 objetos elimina el primero
+      if (localRutinas.length > 10) {
+        localRutinas.shift();
+      }
+
+      // almacena en local el localRutinas
+      if (DEVELOP) console.log('store: ' + value.titulo);
+      await AsyncStorage.setItem(AsynStorageItems.rutinas, JSON.stringify(localRutinas));
+    }
+  };
+
+  const pushAsyncJugadores = async (value: JugadorType) => {
+    if (!localJugadores.some((jug) => jug.nombre === value.nombre)) {
+      localJugadores.push(value);
+
+      // si el localRutinas supera los 10 objetos elimina el primero
+      if (localJugadores.length > 10) {
+        localJugadores.shift();
+      }
+
+      // almacena en local el localRutinas
+      if (DEVELOP) console.log('store: ' + value.nombre);
+      await AsyncStorage.setItem(AsynStorageItems.jugadores, JSON.stringify(localJugadores));
+    }
+  };
+
+  // ****************************************** Jugadores ******************************************
+  const getLocalJugadores = () => {
     try {
-      const value = await AsyncStorage.getItem('token');
-      if (value !== null) setLocalToken(value);
+      AsyncStorage.getItem(AsynStorageItems.jugadores).then((value) => {
+        if (value !== null) setLocalJugadores(JSON.parse(value));
+      });
+    } catch (e) {
+      console.log(`listAllJugadores: ${e}`);
+    }
+  };
+
+  const getDeletedJugadores = () => {
+    try {
+      AsyncStorage.getItem(AsynStorageItems.deletedJugadores).then((val) => {
+        if (val !== null) {
+          setDeletedJugadoresMambuIds(JSON.parse(val));
+          console.log('gettingDeletedJugadores');
+          console.log(JSON.parse(val));
+        }
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const saveToken = async (token: string) => {
-    await AsyncStorage.setItem('token', token);
-    setLocalToken(token);
-  };
-
-  const clearToken = async () => {
-    await AsyncStorage.setItem('token', '');
-    setLocalToken('');
-  };
-
-  // ****************************************** Jugadores ******************************************
-  const listAllJugadores = async () => {
+  const getDeletedRutinas = () => {
     try {
-      const value = await AsyncStorage.getItem('jugadores');
-      if (value !== null) setJugadores(JSON.parse(value));
-    } catch (e) {
-      console.log(e);
+      AsyncStorage.getItem(AsynStorageItems.deletedRutinas).then((val) => {
+        if (val !== null) {
+          setDeletedRutinasMambuIds(JSON.parse(val));
+          console.log('gettingDeletedRutinas');
+          console.log(JSON.parse(val));
+        }
+      });
+    } catch (error) {}
+  };
+
+  const chargeAllJugadores = async () => {
+    if (DEVELOP) console.log('chargin jugadores');
+
+    const storedJugadores: Array<JugadorType> = [];
+    // si tiene wifi cargará en storedJugadores los jugadores en remoto
+    if (isApiUp) {
+      if (DEVELOP) console.log('is api up');
+      const remoteJugadores = await getJugadores();
+      if (remoteJugadores !== undefined && remoteJugadores.length > 0) {
+        if (DEVELOP) {
+          console.log('deleted jugadores:');
+          console.log(deletedJugadoresMambuIds);
+        }
+
+        // filtra los jugadores remotos, sacando los que se hayan eliminado
+        const remJug = remoteJugadores.filter(
+          (j) => !deletedJugadoresMambuIds.some((djID) => djID === j._id)
+        );
+        if (DEVELOP) {
+          console.log('remotedJugadores:');
+          console.log(remJug);
+        }
+
+        storedJugadores.push(...remJug);
+      }
     }
+
+    // toma los jugadores en local, comprueba si están en storedJugadores y si no lo están las guarda en notStoredLocalJugadores
+    const notStoredLocalJugadores: Array<JugadorType> = localJugadores.filter(
+      (jugLoc) => !storedJugadores.some((jugRem) => jugRem.nombre === jugLoc.nombre)
+    );
+
+    if (DEVELOP) {
+      console.log('localJugadores:');
+      console.log(localJugadores.map((j) => j.nombre));
+      console.log('notstoredJugadores:');
+      console.log(notStoredLocalJugadores.map((j) => j.nombre));
+    }
+    if (isApiUp) {
+      // enviar a la api los jugadores no guardados
+      notStoredLocalJugadores.forEach(saveJugador);
+
+      // eliminar los jugadores que estén en eliminados
+      deletedJugadoresMambuIds.forEach(deleteJugador);
+      setDeletedJugadoresMambuIds([]);
+      AsyncStorage.setItem(AsynStorageItems.deletedJugadores, '[]');
+
+      setIsVisibleStorageAlert(true);
+      setStorageAlertMsg('Jugador sincrinizados');
+    }
+
+    const allJugadores = [...storedJugadores, ...notStoredLocalJugadores];
+
+    if (DEVELOP) {
+      console.log('allJugadores:');
+      console.log(allJugadores.map((j) => j.nombre));
+    }
+    // cargará todos los jugadores, locales y remotos
+    setAllJugadores(allJugadores);
+
+    // almacenar las 10 ultimos jugadores remotos en local
+    allJugadores.forEach((jugador) => pushAsyncJugadores(jugador));
   };
 
   const pushJugador = async (newJugador: JugadorType) => {
-    setJugadores([...jugadores, newJugador]);
-    await AsyncStorage.setItem('jugadores', JSON.stringify([...jugadores, newJugador]));
+    const newJugadoresList = [...AllJugadores, newJugador];
+    if (DEVELOP) {
+      console.log('push jugador:');
+      console.log(newJugador);
+    }
+
+    setAllJugadores(newJugadoresList);
+
+    if (isApiUp) {
+      const res = await saveJugador(newJugador);
+      console.log(res);
+      pushAsyncJugadores(res);
+      setIsVisibleStorageAlert(true);
+      setStorageAlertMsg('El jugador se a agregado en local y remoto');
+    } else {
+      pushAsyncJugadores(newJugador);
+      setIsVisibleStorageAlert(true);
+      setStorageAlertMsg(
+        'El jugador se a agregado al almacenamiento local, conecte a internet para sincrionizar'
+      );
+    }
   };
 
-  const popJugador = async (popJugadorId: string) => {
+  const popJugador = async (popJugadorNombre: string) => {
     // borra rutinas realizadas por jugador
-    const rutinasDeJugador = getRutinasJugadasDeJugador(popJugadorId);
-    rutinasDeJugador.forEach((rr) => popRutinaRealizada(rr.id));
+    const rutinasDeJugador = getRutinasJugadasDeJugador(popJugadorNombre);
+    rutinasDeJugador.forEach((rr) => popRutinaRealizada(rr._id));
 
-    // borra jugador
-    const newJugadoresList = jugadores.filter((j) => j.id !== popJugadorId);
-    setJugadores(newJugadoresList);
-    await AsyncStorage.setItem('jugadores', JSON.stringify(newJugadoresList));
+    // borra jugador local
+    const newJugadoresList = AllJugadores.filter((j) => j.nombre !== popJugadorNombre);
+    const jugadorToDelete = findJugador(popJugadorNombre);
+    if (DEVELOP) {
+      console.log('newJugadoresList:');
+      console.log(newJugadoresList);
+    }
+
+    setAllJugadores(newJugadoresList);
+    setLocalJugadores((jugadores) => jugadores.filter((j) => j.nombre !== popJugadorNombre));
+    await AsyncStorage.setItem(AsynStorageItems.jugadores, JSON.stringify(newJugadoresList));
+
+    // si la api está conectada y el jugador estaba guardado remotamente
+    if (jugadorToDelete?._id) {
+      if (isApiUp) {
+        const res = await deleteJugador(jugadorToDelete._id);
+        setIsVisibleStorageAlert(true);
+        setStorageAlertMsg('Jugador eliminado de local y remoto');
+        if (DEVELOP) console.log(res);
+      } else {
+        // si la api no está conectada
+        const deletedJugadores = [...deletedJugadoresMambuIds, jugadorToDelete._id];
+        setDeletedJugadoresMambuIds(deletedJugadores);
+        await AsyncStorage.setItem(
+          AsynStorageItems.deletedJugadores,
+          JSON.stringify(deletedJugadores)
+        );
+        setIsVisibleStorageAlert(true);
+        setStorageAlertMsg(
+          'Jugador eliminado de almacenamiento local, conecte a internet para sincrionizar'
+        );
+        if (DEVELOP) console.log('deletedJugadorLocal: ' + jugadorToDelete._id);
+      }
+    }
   };
 
   const updateJugador = async (newJugador: JugadorType) => {
-    const jugadorIndex = jugadores.findIndex((jugador) => jugador.id === newJugador.id);
+    // busca en la lista de localJugadores el objeto modificado y lo actualiza
+    const jugadorLocalIndex = localJugadores.findIndex((jugador) => jugador._id === newJugador._id);
+    if (jugadorLocalIndex !== -1) {
+      const newJugadoresLocal = [...localJugadores];
+      newJugadoresLocal[jugadorLocalIndex] = newJugador;
+      await AsyncStorage.setItem(AsynStorageItems.jugadores, JSON.stringify(newJugadoresLocal));
+    }
 
-    if (jugadorIndex !== -1) {
-      const newJugadores = [...jugadores];
-      newJugadores[jugadorIndex] = newJugador;
-      setJugadores(newJugadores);
-      await AsyncStorage.setItem('jugadores', JSON.stringify(newJugadores));
+    // busca en la lista de AllJugadores el objeto modificado y lo actualiza
+    const allJugadoresIndex = AllJugadores.findIndex((jug) => jug.nombre === newJugador.nombre);
+    if (allJugadoresIndex !== -1) {
+      const newAllJugadores = [...AllJugadores];
+      newAllJugadores[allJugadoresIndex] = newJugador;
+      setAllJugadores(newAllJugadores);
     }
   };
 
-  const findJugador = (
-    jugadorName: string | undefined,
-    jugadorId: string | undefined
-  ): JugadorType | undefined => {
-    if (jugadorName != undefined) return jugadores.find((jugador) => jugador.name == jugadorName);
-    if (jugadorId != undefined) return jugadores.find((jugador) => jugador.id == jugadorId);
-    return undefined;
+  const findJugador = (jugadorName: string): JugadorType | undefined => {
+    const jugadorByNombre = localJugadores.find((jugador) => jugador.nombre == jugadorName);
+    return jugadorByNombre;
   };
 
   const clearJugadoresDB = async () => {
-    console.log('db clear');
-    setJugadores([]);
-    await AsyncStorage.setItem('jugadores', JSON.stringify([]));
+    console.log('jugadores clear');
+    setLocalJugadores([]);
+    await AsyncStorage.setItem(AsynStorageItems.jugadores, JSON.stringify([]));
   };
 
   // ****************************************** Rutinas ******************************************
-  const ListAllRutinas = async () => {
-    try {
-      const value = await AsyncStorage.getItem('rutinas');
-      if (value !== null) setRutinas(JSON.parse(value));
-    } catch (e) {
-      console.log(e);
+  const getLocalRutinas = () => {
+    AsyncStorage.getItem(AsynStorageItems.rutinas).then((value) => {
+      if (value !== null) {
+        setLocalRutinas(JSON.parse(value));
+      }
+    });
+  };
+
+  const chargeAllRutinas = async () => {
+    if (DEVELOP) console.log('chargin rutinas');
+
+    const storedRutinas: Array<RutinaType> = [];
+    // si tiene wifi cargará en storedRutinas las rutinas en remoto
+    if (isApiUp) {
+      if (DEVELOP) console.log('is api up');
+      const remoteRutinas = await getRutinas();
+      if (remoteRutinas !== undefined && remoteRutinas.length > 0) {
+        if (DEVELOP) {
+          console.log('deleted rutinas:');
+          console.log(deletedRutinasMambuIds);
+        }
+
+        // filtra las rutinas remotas, sacando los que se hayan eliminado
+        const remRut = remoteRutinas.filter(
+          (rr) => !deletedRutinasMambuIds.some((drID) => drID === rr._id)
+        );
+        if (DEVELOP) {
+          console.log('remotedRutians:');
+          console.log(remRut);
+        }
+
+        storedRutinas.push(...remRut);
+      }
     }
+
+    // toma las rutinas en local, comprueba si están en storedRutinas y si no lo están las guarda en notStoredLocalRutinas
+    const notStoredLocalRutinas: Array<RutinaType> = localRutinas.filter(
+      (rutLoc) => !storedRutinas.some((rutRem) => rutRem.titulo === rutLoc.titulo)
+    );
+
+    if (DEVELOP) {
+      console.log('localRutinas:');
+      console.log(localRutinas.map((j) => j.titulo));
+      console.log('notStoredLocalRutinas:');
+      console.log(notStoredLocalRutinas.map((j) => j.titulo));
+    }
+
+    // enviar a la api los jugadores no guardados
+    if (isApiUp) {
+      notStoredLocalRutinas.forEach(saveRutina);
+
+      // eliminar las rutinas que estén en eliminados
+      deletedRutinasMambuIds.forEach(deleteRutina);
+      setDeletedRutinasMambuIds([]);
+      AsyncStorage.setItem(AsynStorageItems.deletedRutinas, '[]');
+
+      setIsVisibleStorageAlert(true);
+      setStorageAlertMsg('Rutinas sincronizadas');
+    }
+
+    const allRutinas = [...notStoredLocalRutinas, ...storedRutinas];
+
+    if (DEVELOP) {
+      console.log('allRutinas:');
+      console.log(allRutinas.map((j) => j.titulo));
+    }
+
+    // cargará todas las rutinas, locales y remotas
+    setAllRutinas(allRutinas);
+
+    // almacenar las 10 ultimas rutinas remotas en local
+    allRutinas.forEach((rutina) => pushAsyncRutinas(rutina));
   };
 
   const pushRutina = async (newRutina: RutinaType) => {
-    setRutinas([...rutinas, newRutina]);
-    await AsyncStorage.setItem('rutinas', JSON.stringify([...rutinas, newRutina]));
+    const newRutinaList = [...AllRutinas, newRutina];
+    setAllRutinas(newRutinaList);
+
+    if (isApiUp) {
+      const res = await saveRutina(newRutina);
+      pushAsyncRutinas(res);
+      setStorageAlertMsg('La rutina se a agregado en local y remoto');
+      setIsVisibleStorageAlert(true);
+    } else {
+      // funcion que almacene unicamente 10 rutinas en local
+      pushAsyncRutinas(newRutina);
+      setStorageAlertMsg(
+        'La rutina se a agregado al almacenamiento local, conecte a internet para sincrionizar'
+      );
+      setIsVisibleStorageAlert(true);
+    }
   };
 
-  const popRutina = async (popRutinaId: string) => {
-    const newRutinaList = rutinas.filter((j) => j.id !== popRutinaId);
-    setRutinas(newRutinaList);
-    await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinaList));
+  const popRutina = async (popRutinaTitulo: string) => {
+    const newRutinaList = AllRutinas.filter((j) => j.titulo != popRutinaTitulo);
+    const rutinaToDelete = findRutina(popRutinaTitulo, undefined);
+    if (DEVELOP) {
+      console.log('newRutinaList:');
+      console.log(newRutinaList);
+    }
+
+    setAllRutinas(newRutinaList);
+    setLocalRutinas((rutinas) => rutinas.filter((r) => r.titulo !== popRutinaTitulo));
+    await AsyncStorage.setItem(AsynStorageItems.rutinas, JSON.stringify(newRutinaList));
+
+    if (rutinaToDelete?._id) {
+      if (isApiUp) {
+        const res = await deleteRutina(rutinaToDelete._id);
+        if (DEVELOP) console.log(res);
+        setIsVisibleStorageAlert(true);
+        setStorageAlertMsg('Rutina eliminada de local y remoto');
+      } else {
+        const deletedRutinas = [...deletedRutinasMambuIds, rutinaToDelete._id];
+        setDeletedRutinasMambuIds(deletedRutinas);
+        await AsyncStorage.setItem(AsynStorageItems.deletedRutinas, JSON.stringify(deletedRutinas));
+        if (DEVELOP) console.log('deletedRutinaLocal: ' + rutinaToDelete._id);
+
+        setIsVisibleStorageAlert(true);
+        setStorageAlertMsg(
+          'Rutina eliminada de almacenamiento local, conecte a internet para sincrionizar'
+        );
+      }
+    }
   };
 
   const updateRutina = async (newRutina: RutinaType) => {
-    const rutinaIndex = rutinas.findIndex((rutina) => rutina.id === newRutina.id);
-
-    if (rutinaIndex !== -1) {
-      const newRutinas = [...rutinas];
-      newRutinas[rutinaIndex] = newRutina;
-      setRutinas(newRutinas);
-      await AsyncStorage.setItem('rutinas', JSON.stringify(newRutinas));
+    // busca en la lista de localRutinas el objeto modificado y lo actualiza
+    const rutinaLocalIndex = localRutinas.findIndex((rutina) => rutina.titulo === newRutina.titulo);
+    if (rutinaLocalIndex !== -1) {
+      const newRutinasLocal = [...localRutinas];
+      newRutinasLocal[rutinaLocalIndex] = newRutina;
+      await AsyncStorage.setItem(AsynStorageItems.rutinas, JSON.stringify(newRutinasLocal));
     }
+
+    // busca en la lista de allRutinas el objeto modificado y lo actualiza
+    const allRutinasIndex = AllRutinas.findIndex((rut) => rut.titulo === newRutina.titulo);
+    if (allRutinasIndex !== -1) {
+      const newAllRutinas = [...AllRutinas];
+      newAllRutinas[allRutinasIndex] = newRutina;
+      setAllRutinas(newAllRutinas);
+    }
+  };
+
+  const clearRutinasDB = async () => {
+    console.log('rutinas clear');
+    setLocalJugadores([]);
+    await AsyncStorage.setItem(AsynStorageItems.rutinas, JSON.stringify([]));
   };
 
   const findRutina = (
     rutinaTitle: string | undefined,
     rutinaId: string | undefined
   ): RutinaType | undefined => {
-    if (rutinaTitle !== undefined) return rutinas.find((rutina) => rutina.title == rutinaTitle);
-    if (rutinaId !== undefined) return rutinas.find((rutina) => rutina.id == rutinaId);
+    if (rutinaTitle !== undefined)
+      return localRutinas.find((rutina) => rutina.titulo == rutinaTitle);
+    if (rutinaId !== undefined) return localRutinas.find((rutina) => rutina._id == rutinaId);
     return undefined;
   };
 
   // ************************************ Rutinas Realizadas ************************************
-  const listAllRutinasRealizadas = async () => {
-    try {
-      const value = await AsyncStorage.getItem('rutinasRealizadas');
-      if (value !== null) setRutinasRealizadas(JSON.parse(value));
-    } catch (error) {
-      console.log(error);
-    }
+  const getLocalRutinasRealizadas = async () => {
+    AsyncStorage.getItem(AsynStorageItems.rutinasRealizadas)
+      .then((value) => {
+        if (value !== null) setLocalRutinasRealizadas(JSON.parse(value));
+      })
+      .catch((error) => {
+        console.log(`listAllRutinasRealizadas: ${error}`);
+      });
   };
 
-  const pushRutinaRealizada = async (newRutina: RutinaType) => {
-    setRutinasRealizadas([...rutinasRealizadas, newRutina]);
+  const pushRutinaRealizada = async (newRutina: ResultadoType) => {
+    setLocalRutinasRealizadas([...localRutinasRealizadas, newRutina]);
     await AsyncStorage.setItem(
-      'rutinasRealizadas',
-      JSON.stringify([...rutinasRealizadas, newRutina])
+      AsynStorageItems.rutinasRealizadas,
+      JSON.stringify([...localRutinasRealizadas, newRutina])
     );
   };
 
   const popRutinaRealizada = async (popRutinaId: string) => {
-    const newRutinaList = rutinasRealizadas.filter((j) => j.id !== popRutinaId);
-    setRutinasRealizadas(newRutinaList);
-    await AsyncStorage.setItem('rutinasRealizadas', JSON.stringify(newRutinaList));
+    const newRutinaList = localRutinasRealizadas.filter((j) => j._id !== popRutinaId);
+    setLocalRutinasRealizadas(newRutinaList);
+    await AsyncStorage.setItem(AsynStorageItems.rutinasRealizadas, JSON.stringify(newRutinaList));
   };
 
   const clearRutinasRealizadas = async () => {
-    setRutinasRealizadas([]);
-    await AsyncStorage.setItem('rutinasRealizadas', '[]');
+    setLocalRutinasRealizadas([]);
+    await AsyncStorage.setItem(AsynStorageItems.rutinasRealizadas, JSON.stringify([]));
   };
 
-  const getRutinasJugadasDeJugador = (jugadorId: string) => {
-    return rutinasRealizadas.filter((rutina) => {
-      return rutina.jugadorID == jugadorId;
+  const getRutinasJugadasDeJugador = (jugadorNombre: string) => {
+    return localRutinasRealizadas.filter((rutinaRealizada) => {
+      return rutinaRealizada.nombre_jugador == jugadorNombre;
     });
   };
 
   return {
-    localToken,
-    saveToken,
-    clearToken,
-    jugadores,
+    jugadores: AllJugadores,
     pushJugador,
-    clearJugadoresDB,
     popJugador,
     updateJugador,
     findJugador,
-    rutinas,
+    chargeAllJugadores,
+    rutinas: AllRutinas,
     popRutina,
     pushRutina,
     updateRutina,
     findRutina,
-    rutinasRealizadas,
+    chargeAllRutinas,
+    rutinasRealizadas: localRutinasRealizadas,
     popRutinaRealizada,
     pushRutinaRealizada,
-    clearRutinasRealizadas,
     getRutinasJugadasDeJugador,
   };
 }

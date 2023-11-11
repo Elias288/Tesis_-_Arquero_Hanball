@@ -22,7 +22,7 @@ const ListarSecuenciaComponent: FC<ViewSecuenciasProps> = (props: ViewSecuencias
         renderItem={({ item }) => (
           <RenderItem secuencia={item} itemStyle={itemStyle} viewResult={viewResult} />
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -51,7 +51,7 @@ const RenderItem: FC<renderItempProps> = ({ secuencia, itemStyle, viewResult }) 
 
           <View style={[styles.itemCircle, { marginRight: 5, backgroundColor: '#536ac7' }]}>
             <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
-            <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
+            <Text style={styles.itemTimeText}>{secuencia.tiempo.toString()}s</Text>
           </View>
 
           <View style={[styles.itemCircle, { backgroundColor: '#536ac7' }]}>
@@ -82,12 +82,12 @@ const RenderItem: FC<renderItempProps> = ({ secuencia, itemStyle, viewResult }) 
         <View
           style={[
             styles.itemCircle,
-            { marginRight: 5, backgroundColor: GlobalStyles.blueBackgroudn },
+            { marginRight: 5, backgroundColor: GlobalStyles.blueBackground },
             itemStyle,
           ]}
         >
           <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
-          <Text style={styles.itemTimeText}>{secuencia.time.toString()}s</Text>
+          <Text style={styles.itemTimeText}>{secuencia.tiempo.toString()}s</Text>
         </View>
       </>
     );

@@ -1,41 +1,37 @@
+/*
+ * Esta es la primera pantalla que se carga en la app.
+ * Si el token de useCustomRemoteStorage está vació significa que el usuario no está logueado
+ * Si el token tiene texto significa que está logueado
+ */
 import { View, Text, StyleSheet } from 'react-native';
-import GlobalStyles from '../../utils/EstilosGlobales';
 import Constants from 'expo-constants';
-import { Button, PaperProvider, ActivityIndicator, TextInput } from 'react-native-paper';
+import { PaperProvider, ActivityIndicator } from 'react-native-paper';
 import { useEffect, useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
+import GlobalStyles from '../../utils/EstilosGlobales';
+import WifiStatusComponent from '../../components/WifiStatus.component';
+import LoginFormComponent from './LoginForm.component';
 import { useCustomRemoteStorage } from '../../contexts/RemoteStorageProvider';
 import { RootTabs } from '../../Main';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useLocalStorage from '../../utils/useLocalStorage';
-import WifiStatusComponent from '../../components/WifiStatus.component';
 
 type propsType = NativeStackScreenProps<RootTabs>;
 
-const LoginPage = (props: propsType) => {
-  const { navigation } = props;
-  const [userName, setUserName] = useState<string>('');
-  const [contraseña, setContraseña] = useState<string>('');
-  const { login, isLoginLoading } = useCustomRemoteStorage();
-  const { localToken, saveToken } = useLocalStorage();
+const LoginPage = ({ navigation }: propsType) => {
+  const { isWifiConnected, token } = useCustomRemoteStorage();
+
+  const [isConnectedLoading, setIsConnectedLoading] = useState(true);
 
   useEffect(() => {
-    if (localToken !== '') {
+    if (isWifiConnected) {
+      // si el wifi está conectado a wifi inicia login
+      setIsConnectedLoading(false);
+    }
+
+    if (token !== '') {
       navigation.navigate('Home');
     }
-  }, [localToken]);
-
-  const handleSubmit = () => {
-    if (userName.trim() === '') {
-      console.log('username');
-      return;
-    }
-    if (contraseña.trim() === '') {
-      console.log('password');
-      return;
-    }
-
-    saveToken('Elias el mejor');
-  };
+  }, [isWifiConnected, token]);
 
   return (
     <PaperProvider>
@@ -46,30 +42,12 @@ const LoginPage = (props: propsType) => {
 
         <View style={styles.body}>
           <View style={{ paddingHorizontal: 30 }}>
-            <TextInput
-              label={'Nombre de usuario'}
-              style={{ marginVertical: 10 }}
-              value={userName}
-              onChangeText={setUserName}
-            />
-            <TextInput
-              label={'Contraseña'}
-              style={{ marginVertical: 10 }}
-              value={contraseña}
-              onChangeText={setContraseña}
-              secureTextEntry={true}
-            />
+            {isConnectedLoading && (
+              <ActivityIndicator animating={true} color={GlobalStyles.blueBackground} size={100} />
+            )}
 
-            <View style={{ marginTop: 30 }}>
-              <Button mode="contained" onPress={handleSubmit}>
-                Entrar
-              </Button>
-            </View>
-            <View style={{ marginTop: 20 }}>
-              {isLoginLoading && (
-                <ActivityIndicator animating={true} color={GlobalStyles.blueBackgroudn} size={50} />
-              )}
-            </View>
+            {!isConnectedLoading && <LoginFormComponent />}
+
             <WifiStatusComponent neverHide={true} style={{ bottom: 0 }} />
           </View>
         </View>
@@ -98,8 +76,6 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     justifyContent: 'center',
-    // alignItems: 'center',
-    // backgroundColor: 'red',
   },
 });
 

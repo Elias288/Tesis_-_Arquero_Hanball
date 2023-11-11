@@ -1,12 +1,12 @@
 import HeaderComponent from '../../components/Header/Header.component';
 import { View, StyleSheet } from 'react-native';
-import ListarRutinasComponent from '../../components/ListarRutinas/ListarRutinas.component';
 import { Button } from 'react-native-paper';
 
 import sortType from '../../utils/sortType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import ListarRutinasRealizadasComponent from '../../components/ListarResultados/listarRutinasRelizadas.component';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'RutinasRealizadas'>;
 
@@ -43,11 +43,7 @@ const RutinasRealizadasPage = (props: propsType) => {
         </View>
 
         <View style={{ flex: 1 }}>
-          <ListarRutinasComponent
-            listRutinasRealizadas={true}
-            simpleList={true}
-            sort={sortType.lastplayed}
-          />
+          <ListarRutinasRealizadasComponent simpleList={true} sort={sortType.lastplayedFirst} />
         </View>
       </View>
     </>

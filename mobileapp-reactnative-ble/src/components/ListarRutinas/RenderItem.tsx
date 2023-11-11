@@ -11,7 +11,7 @@ import { HomeTabs } from '../../navigation/HomeTab';
 
 interface RenderProps {
   rutina: RutinaType;
-  deleteRutina: (id: string) => void;
+  deleteRutina: (titulo: string) => void;
 }
 export const RenderItem = (props: RenderProps) => {
   const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
@@ -19,24 +19,22 @@ export const RenderItem = (props: RenderProps) => {
   const { rutina, deleteRutina } = props;
 
   const gotoJugar = () => {
-    const newRutina: RutinaType = { ...rutina, playedDate: new Date() };
-
     navigator?.navigate('Inicio', {
       screen: 'Jugar',
-      params: { rutina: JSON.stringify(newRutina) },
+      params: { rutina: JSON.stringify(rutina) },
     });
   };
 
   const goToViewRutina = () => {
     navigator.navigate('Rutinas', {
       screen: 'ViewRutina',
-      params: { rutinaId: rutina.id },
+      params: { rutinaTitulo: rutina.titulo },
     });
   };
 
   return (
     <View style={styles.completeItemContainer}>
-      <Text style={styles.itemTitle}>{rutina.title}</Text>
+      <Text style={styles.itemTitle}>{rutina.titulo}</Text>
 
       {/******************************************* Options *******************************************/}
       <View style={{ flexDirection: 'row' }}>
@@ -62,7 +60,7 @@ export const RenderItem = (props: RenderProps) => {
           containerColor={GlobalStyles.greenBackColor}
           iconColor={GlobalStyles.white}
           size={30}
-          onPress={() => deleteRutina(rutina.id)}
+          onPress={() => deleteRutina(rutina.titulo)}
         />
       </View>
     </View>

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { FC } from 'react';
+import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { secuenciaType } from '../../data/RutinasType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 
@@ -25,7 +26,7 @@ export const RenderItemSecuencia = ({ secuenciaRes }: { secuenciaRes: secuenciaT
       >
         <Icon name="timer-sand-complete" size={40} color={GlobalStyles.white} />
         <Text style={ViewSecuenciaResultadoStyles.itemTimeText}>
-          {secuenciaRes.time.toString()}s
+          {secuenciaRes.tiempo.toString()}s
         </Text>
       </View>
 

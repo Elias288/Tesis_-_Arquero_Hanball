@@ -2,43 +2,44 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, StyleSheet } from 'react-native';
 import { RutinaTabPages } from '../../navigation/RutinasTab';
 import { useEffect, useState } from 'react';
+import { Button } from 'react-native-paper';
 
 import GlobalStyles from '../../utils/EstilosGlobales';
 import ListarSecuenciaComponent from '../../components/ListarSecuencia.component';
 import CustomModal, { customModalStyles } from '../../components/CustomModal.component';
-import { RutinaType } from '../../data/RutinasType';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { Button, IconButton } from 'react-native-paper';
 import { JugadorType } from '../../data/JugadoresType';
 import formateDate from '../../utils/formateDate';
-import ModalUpdateRutina from './UpdateRutina/ModalUpdateRutina';
 import HeaderComponent from '../../components/Header/Header.component';
+import { ResultadoType } from '../../data/ResultadoType';
 
 type propsType = NativeStackScreenProps<RutinaTabPages, 'ViewRutinaResultado'>;
 
 const ViewRutinaResultado = (props: propsType) => {
   const { navigation, route } = props;
   const { rutina } = route.params;
-  const { popRutinaRealizada, jugadores, rutinas } = useCustomLocalStorage();
+  const { popRutinaRealizada, jugadores } = useCustomLocalStorage();
 
-  const [selectedRutina, setSelectedRutina] = useState<RutinaType>();
+  const [selectedRutina, setSelectedRutina] = useState<ResultadoType>();
   const [jugadorDeRutina, setJugadorDeRutina] = useState<JugadorType>();
 
   const [visibleModal, setVisibleModal] = useState(false);
-  const [isModalUpateVisible, setIsModalUpateVisible] = useState<boolean>(false);
 
   useEffect(() => {
     if (rutina) {
-      const recibedRutina = JSON.parse(rutina);
+      const recibedRutina: ResultadoType = JSON.parse(rutina);
+
       setSelectedRutina(recibedRutina);
-      const jugadorById = jugadores.find((jugador) => jugador.id === recibedRutina.jugadorID);
-      setJugadorDeRutina(jugadorById);
+      const jugadorByNombre = jugadores.find(
+        (jugador) => jugador.nombre === recibedRutina.nombre_jugador
+      );
+      setJugadorDeRutina(jugadorByNombre);
     }
-  }, [rutinas]);
+  }, []);
 
   const deleteRutina = () => {
     if (rutina && selectedRutina) {
-      popRutinaRealizada(selectedRutina.id);
+      popRutinaRealizada(selectedRutina._id);
     }
 
     navigation.goBack();
@@ -50,41 +51,41 @@ const ViewRutinaResultado = (props: propsType) => {
 
   return (
     <>
-      <HeaderComponent title="Ver Rutina" showBackButton={false} />
+      <HeaderComponent title="Ver Resultado" showBackButton={true} />
       <View style={styles.container}>
         <View style={styles.infoContainer}>
           <View style={{ flex: 1 }}>
             <Text>Rutina:</Text>
-            <Text style={styles.title}>{selectedRutina?.title}</Text>
+            <Text style={styles.title}>{selectedRutina?.titulo}</Text>
           </View>
 
           <>
             <View style={{ flex: 1 }}>
               <Text>Jugador:</Text>
-              <Text style={GlobalStyles.jugadorName}>{jugadorDeRutina?.name}</Text>
+              <Text style={GlobalStyles.jugadorName}>{jugadorDeRutina?.nombre}</Text>
             </View>
           </>
         </View>
 
         <View style={styles.infoContainer}>
-          {selectedRutina?.createDate && (
+          {selectedRutina && (
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold' }}>Fecha de creación:</Text>
-              <Text>{formateDate(new Date(selectedRutina?.createDate), true)}</Text>
+              <Text>{formateDate(new Date(selectedRutina.createDate), true)}</Text>
             </View>
           )}
 
-          {selectedRutina?.playedDate && (
+          {selectedRutina && (
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold' }}>Fecha realizada:</Text>
-              <Text>{formateDate(new Date(selectedRutina?.playedDate), true)}</Text>
+              <Text>{formateDate(new Date(selectedRutina.playedDate), true)}</Text>
             </View>
           )}
         </View>
 
         {selectedRutina && (
           <ListarSecuenciaComponent
-            secuencias={selectedRutina.secuencia}
+            secuencias={selectedRutina.secuencias}
             listStyle={{ flex: 1, marginBottom: 10 }}
             viewResult={true}
           />
@@ -109,14 +110,6 @@ const ViewRutinaResultado = (props: propsType) => {
           </Button>
         </View>
       </View>
-
-      {selectedRutina && (
-        <ModalUpdateRutina
-          isVisible={isModalUpateVisible}
-          hideModal={() => setIsModalUpateVisible(false)}
-          editRutina={selectedRutina}
-        />
-      )}
 
       <CustomModal
         hideModal={() => setVisibleModal(false)}

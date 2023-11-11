@@ -12,24 +12,32 @@ var ResultadoSchema = new Schema(
     },
     titulo: {
       type: String,
+      required: true,
     },
     createDate: {
       type: Date,
+      required: true,
     },
     id_jugador: {
       type: ObjectID,
       ref: "Jugador",
+      required: true,
     },
     id_rutina: {
       type: ObjectID,
       ref: "Rutina",
+      required: true,
     },
     secuencias: {
       type: String,
+      required: true,
+    },
+    playedDate: {
+      type: Date,
+      required: true,
     },
   },
   { versionKey: false }
 );
-
 
 module.exports = mongoose.model("Resultado", ResultadoSchema);

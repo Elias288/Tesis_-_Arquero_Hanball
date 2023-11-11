@@ -1,5 +1,5 @@
 import { FlatList, StyleProp, View, ViewStyle } from 'react-native';
-import React, { FC } from 'react';
+import React from 'react';
 
 import { RutinaType } from '../../data/RutinasType';
 import { RenderItemSecuencia } from './RenderItemSecuencia';
@@ -13,9 +13,9 @@ const ViewSecuenciaResultadoComponent = ({ rutina, style }: ViewSecuenciasResPro
   return (
     <View style={style}>
       <FlatList
-        data={rutina?.secuencia}
+        data={JSON.parse(rutina.secuencias)}
         renderItem={({ item }) => <RenderItemSecuencia secuenciaRes={item} />}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );

@@ -49,7 +49,7 @@ const ModalJugar = (props: ModalJugarProps) => {
 
           {/* Indicador Spinner */}
           <View style={ModalJugarStyles.loadingContainer}>
-            <ActivityIndicator animating={true} color={GlobalStyles.blueBackgroudn} size={150} />
+            <ActivityIndicator animating={true} color={GlobalStyles.blueBackground} size={150} />
           </View>
         </View>
       </Modal>

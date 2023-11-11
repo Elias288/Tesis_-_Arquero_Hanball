@@ -6,16 +6,16 @@ import { useNavigation } from '@react-navigation/native';
 
 import CustomCard, { cardStyles } from './CustomCard';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { RutinaType } from '../../data/RutinasType';
 import GlobalStyles from '../../utils/EstilosGlobales';
 import { HomeTabs } from '../../navigation/HomeTab';
+import { ResultadoType } from '../../data/ResultadoType';
 
 const CustomCardHistorialRutinas: FC = () => {
   const navigator = useNavigation<NativeStackNavigationProp<HomeTabs>>();
   const { rutinasRealizadas } = useCustomLocalStorage();
-  const [rutinasRealizadasEnLaSemana, setRutinasRealizadasEnLaSemana] = useState<Array<RutinaType>>(
-    []
-  );
+  const [rutinasRealizadasEnLaSemana, setRutinasRealizadasEnLaSemana] = useState<
+    Array<ResultadoType>
+  >([]);
   const [minutosEnEntrenamientosSemana, setMinutosEnEntrenamientosSemana] =
     useState<string>('00:00');
 
@@ -24,7 +24,7 @@ const CustomCardHistorialRutinas: FC = () => {
     obtenerDuracionRutinasRealizadasEnSemana(rutinasEnSemana);
   }, [rutinasRealizadas]);
 
-  const obtenerRutinasRealizadasEnSemana = (): Array<RutinaType> => {
+  const obtenerRutinasRealizadasEnSemana = (): Array<ResultadoType> => {
     // Calcula el periodo de la semana y obtiene la lista de rutinas realizadas en ese periodo
     const fechaActual = new Date();
 
@@ -33,10 +33,11 @@ const CustomCardHistorialRutinas: FC = () => {
     sieteDíasAtras.setDate(fechaActual.getDate() - 7);
 
     // filtra las rutinas realizadas en el periodo calculado
-    const rutinasEnSemana = rutinasRealizadas.filter((item) => {
-      if (item?.createDate) {
+    const rutinasEnSemana = rutinasRealizadas.filter((rutinaRealizada) => {
+      if (rutinaRealizada?.createDate) {
         return (
-          new Date(item.createDate) >= sieteDíasAtras && new Date(item.createDate) <= fechaActual
+          new Date(rutinaRealizada.createDate) >= sieteDíasAtras &&
+          new Date(rutinaRealizada.createDate) <= fechaActual
         );
       }
       return;
@@ -46,12 +47,12 @@ const CustomCardHistorialRutinas: FC = () => {
     return rutinasEnSemana;
   };
 
-  const obtenerDuracionRutinasRealizadasEnSemana = (rutinasEnSemana: Array<RutinaType>) => {
+  const obtenerDuracionRutinasRealizadasEnSemana = (rutinasEnSemana: Array<ResultadoType>) => {
     if (rutinasEnSemana.length > 0) {
       // obtiene la suma de los tiempos
       const segundosEnRutinas = rutinasEnSemana.reduce((acumulador, rutina) => {
-        const segundosEnRutina = rutina.secuencia.reduce(
-          (acumuladorSecuencias, secuencia) => acumuladorSecuencias + secuencia.time,
+        const segundosEnRutina = rutina.secuencias.reduce(
+          (acumuladorSecuencias, secuencia) => acumuladorSecuencias + secuencia.tiempo,
           0
         );
 

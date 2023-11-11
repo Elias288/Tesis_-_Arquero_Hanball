@@ -35,12 +35,14 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
     return <Text style={styles.CustomThumb}>{value}</Text>;
   };
 
-  const gotoJugar = (secuencia: Array<secuenciaType>) => {
+  const gotoJugar = (secuencias: Array<secuenciaType>) => {
     const rutina: RutinaType = {
-      id: uuid.v4().toString().replace(/-/g, ''),
-      title: 'rutina random ' + uuid.v4().toString().replace(/-/g, ''),
-      secuencia,
-      createDate: new Date(),
+      _id: uuid.v4().toString().replace(/-/g, ''),
+      titulo: 'rutina random ' + uuid.v4().toString().replace(/-/g, ''),
+      secuencias: JSON.stringify(secuencias),
+      fechaDeCreación: new Date(),
+      // TODO: obtener id del usuario logueado
+      id_usuario: '',
     };
     navigator?.navigate('Jugar', { rutina: JSON.stringify(rutina) });
   };
@@ -65,10 +67,10 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
       const randomTime = Math.floor(Math.random() * MAXSECONDS) + 1; // Número aleatorio entre 1 y 5
 
       // construye el objeto Rutina
-      const newSecuencia = {
+      const newSecuencia: secuenciaType = {
         id: i.toString(),
         ledId: randomLedId.toString(),
-        time: randomTime,
+        tiempo: randomTime,
       };
 
       // carga la lista de Rutinas
@@ -88,7 +90,7 @@ const CrearRutinaAleatoriaComponent = (props: propsType) => {
             <Text style={styles.title}>Crear rutina aleatoria</Text>
 
             <View style={{ marginTop: 10 }}>
-              <Text>Tamaño de Rutina</Text>
+              <Text>Cantidad de secuencias</Text>
               <Slider
                 minimumValue={4}
                 maximumValue={10}
