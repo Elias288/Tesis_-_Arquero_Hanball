@@ -13,7 +13,7 @@ import { useCustomBLE } from '../../contexts/BLEProvider';
 import { JugadorType } from '../../data/JugadoresType';
 import { BLUETOOTHDISCONNECTED, BLUETOOTHNOTCONNECTED, BLUETOOTHOFF } from '../../utils/BleCodes';
 import { useCustomLocalStorage } from '../../contexts/LocalStorageProvider';
-import { RutinaType } from '../../data/RutinasType';
+import { RutinaType, secuenciaType } from '../../data/RutinasType';
 
 type propsType = NativeStackScreenProps<inicioTabPages, 'Jugar'>;
 
@@ -49,9 +49,10 @@ const JugarPage = (props: propsType) => {
   useEffect(() => {
     setSelectedListJugadores([]);
     chargeJugadores();
-    setFormatedRutina(
-      secuenciaToString(typeof paramRutina.secuencias !== 'string' ? paramRutina.secuencias : [])
-    );
+
+    const secuencias: Array<secuenciaType> = JSON.parse(paramRutina.secuencias);
+    const formatedSecuencias = secuenciaToString(secuencias);
+    setFormatedRutina(formatedSecuencias);
   }, []);
 
   useEffect(() => {
@@ -110,9 +111,9 @@ const JugarPage = (props: propsType) => {
           {/* Lista de secuencia */}
           <View style={{ marginRight: 10 }}>
             <Text style={styles.title}>Secuencia</Text>
-            {typeof paramRutina.secuencias !== 'string' && (
+            {paramRutina.secuencias !== '' && (
               <ListarSecuenciaComponent
-                secuencias={paramRutina.secuencias}
+                secuencias={JSON.parse(paramRutina.secuencias)}
                 listStyle={styles.viewSecuenciasStyle}
               />
             )}
@@ -123,8 +124,8 @@ const JugarPage = (props: propsType) => {
             <Text style={styles.title}>Seleccionar Jugador</Text>
             <SelectList
               data={selectedListJugadores}
-              setSelected={(jugadorId: string) => {
-                setSelectedJugador(jugadores.find((jugador) => jugador._id == jugadorId));
+              setSelected={(jugadorNombre: string) => {
+                setSelectedJugador(jugadores.find((jugador) => jugador.nombre == jugadorNombre));
               }}
             />
           </View>
@@ -140,14 +141,12 @@ const JugarPage = (props: propsType) => {
           Iniciar Rutina
         </Button>
 
-        {typeof paramRutina.secuencias !== 'string' && (
-          <ModalJugar
-            isVisible={loading}
-            hideModal={() => setLoading(false)}
-            secuencia={paramRutina.secuencias}
-            selectedJugadorName={selectedJugador ? selectedJugador?.nombre : ''}
-          />
-        )}
+        <ModalJugar
+          isVisible={loading}
+          hideModal={() => setLoading(false)}
+          secuencia={JSON.parse(paramRutina.secuencias)}
+          selectedJugadorName={selectedJugador ? selectedJugador?.nombre : ''}
+        />
       </View>
     </>
   );
