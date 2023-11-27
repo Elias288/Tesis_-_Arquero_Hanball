@@ -127,17 +127,31 @@ function useBLE(): BluetoothLowEnergyApi {
         // ****************************** Si el bluetooth está a encendido ******************************
         bleManager.stopDeviceScan();
 
-        setBLEMsg('Scanning...');
         setEspDevice(undefined);
+
+        // ************************* Detiene el escaneo despues de 10 segundos *************************
+        const time = setTimeout(() => {
+          if (espdevice === undefined) {
+            bleManager.stopDeviceScan();
+            setScanningLoading(false);
+
+            setBLEMsg('Tiempo agotado. Esp32 no encontrado');
+            setBLECode(BLUETOOTHTIMEOUT);
+            console.log(`Time out - BLECode: ${BLUETOOTHTIMEOUT}`);
+            bleManager.stopDeviceScan();
+            return;
+          }
+        }, 10000);
 
         let espdevice: Device | undefined;
         bleManager.startDeviceScan(null, null, (error, device) => {
           if (error) {
-            setBLEMsg(`${error}`);
+            setBLEMsg(`Error de escaneo`);
             setBLECode(BLUETOOTHERROR);
             console.log(`DeviceScanError - BLECode: ${BLUETOOTHERROR}`);
 
             bleManager.stopDeviceScan();
+            clearTimeout(time);
             return () => suscription.remove();
           }
 
@@ -148,6 +162,7 @@ function useBLE(): BluetoothLowEnergyApi {
               setEspDevice(device);
               setBLEMsg('Esp32 found');
               espdevice = device;
+              clearTimeout(time);
 
               // conecta el dispositivo
               device.isConnected().then((state) => {
@@ -165,20 +180,6 @@ function useBLE(): BluetoothLowEnergyApi {
             }
           }
         });
-
-        // ************************* Detiene el escaneo despues de 10 segundos *************************
-        const time = setTimeout(() => {
-          if (espdevice === undefined) {
-            bleManager.stopDeviceScan();
-            setScanningLoading(false);
-
-            setBLEMsg('Tiempo agotado. Esp32 no encontrado');
-            setBLECode(BLUETOOTHTIMEOUT);
-            console.log(`Time out - BLECode: ${BLUETOOTHTIMEOUT}`);
-            bleManager.stopDeviceScan();
-            return;
-          }
-        }, 10000);
 
         return () => clearTimeout(time);
       } else if (state === 'PoweredOff') {
@@ -206,7 +207,6 @@ function useBLE(): BluetoothLowEnergyApi {
   };
 
   const connectToDevice = async (device: Device) => {
-    // TODO: bug cuando ya esta conectado
     device
       .connect()
       .then((device) => {
@@ -227,7 +227,7 @@ function useBLE(): BluetoothLowEnergyApi {
       })
       .catch((e) => {
         console.log('FAILED TO CONNECT', e);
-        setBLEMsg(`FAILED TO CONNECT ${e}`);
+        setBLEMsg(`Error de conexión`);
         setEspDevice(undefined);
       });
   };
@@ -343,8 +343,6 @@ function useBLE(): BluetoothLowEnergyApi {
             receivedArrayMessage = [];
           }
         });
-    } else {
-      setBLEMsg('not connected device');
     }
   };
 

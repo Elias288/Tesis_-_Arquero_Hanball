@@ -112,6 +112,7 @@ function useRemoteStorage(): remoteStorageProps {
       setIsLoginLoading(false);
       console.log('login catch:');
       console.log(err);
+      setErrorLogin('error de logueo')
     };
 
     fetchData('usuario/login', options, callBackFunction, callBackErrorFunction, 10000);

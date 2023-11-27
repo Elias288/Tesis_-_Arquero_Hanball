@@ -19,12 +19,10 @@ interface propsType {
 const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
   const { updateRutina, rutinas } = useCustomLocalStorage();
 
-  // const prevRutina: RutinaType | undefined = editRutina; // Rutina a editar
-  const [prevRutina, setPrevRutina] = useState<RutinaType>(editRutina);
   const [title, setTitle] = useState(editRutina.titulo); // Titulo de rutina
   const [selectedSecuencia, setSelectedSecuencia] = useState<secuenciaType>(); // Secuencia seleccionada para editar
   const [newSecuencias, setNewSecuencias] = useState<secuenciaType[]>(
-    typeof editRutina.secuencias !== 'string' ? editRutina.secuencias : []
+    JSON.parse(editRutina.secuencias)
   );
 
   const [showEdit, setShowEdit] = useState(false);
@@ -55,7 +53,7 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
     }
 
     if (
-      prevRutina.titulo.trim() !== title.trim() &&
+      editRutina.titulo.trim() !== title.trim() &&
       rutinas.find((rutina) => rutina.titulo === title)
     ) {
       showModal('Titulo ya registrado');
@@ -63,13 +61,13 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
     }
 
     const rutina: RutinaType = {
-      ...prevRutina,
+      ...editRutina,
       fechaDeCreación: new Date(),
       titulo: title.trim(),
       secuencias: JSON.stringify(newSecuencias),
     };
 
-    if (JSON.stringify(prevRutina) !== JSON.stringify(rutina)) {
+    if (JSON.stringify(editRutina) !== JSON.stringify(rutina)) {
       updateRutina(rutina);
     }
 
@@ -104,7 +102,7 @@ const ModalUpdateRutina = ({ hideModal, isVisible, editRutina }: propsType) => {
 
   const cancelEdit = () => {
     setTitle(editRutina.titulo);
-    setNewSecuencias(typeof editRutina.secuencias !== 'string' ? editRutina.secuencias : []);
+    setNewSecuencias(JSON.parse(editRutina.secuencias));
     setIsWarningModalVisible(false);
     setShowAdd(false);
     setShowEdit(false);
