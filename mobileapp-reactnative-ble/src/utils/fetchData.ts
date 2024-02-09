@@ -1,4 +1,3 @@
-import { API_URL } from '@env';
 
 type optionsType = {
   method: string;
@@ -23,7 +22,7 @@ const fetchData = (
     signal: controller.signal,
   };
 
-  return fetch(`${API_URL}/api/${url}`, options)
+  return fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/${url}`, options)
     .then((res) => res.json())
     .then((result: any) => {
       clearTimeout(timerOut);

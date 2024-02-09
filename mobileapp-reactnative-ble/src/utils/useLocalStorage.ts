@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DEVELOP } from '@env';
 
 import { JugadorType } from '../data/JugadoresType';
 import { RutinaType } from '../data/RutinasType';
@@ -87,7 +86,7 @@ function useLocalStorage(): LocalStorageType {
       }
 
       // almacena en local el localRutinas
-      if (DEVELOP) console.log('store: ' + value.titulo);
+      if (process.env.DEVELOP) console.log('store: ' + value.titulo);
       await AsyncStorage.setItem(AsynStorageItems.rutinas, JSON.stringify(localRutinas));
     }
   };
@@ -102,7 +101,7 @@ function useLocalStorage(): LocalStorageType {
       }
 
       // almacena en local el localRutinas
-      if (DEVELOP) console.log('store: ' + value.nombre);
+      if (process.env.DEVELOP) console.log('store: ' + value.nombre);
       await AsyncStorage.setItem(AsynStorageItems.jugadores, JSON.stringify(localJugadores));
     }
   };
@@ -145,15 +144,15 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const chargeAllJugadores = async () => {
-    if (DEVELOP) console.log('chargin jugadores');
+    if (process.env.DEVELOP) console.log('chargin jugadores');
 
     const storedJugadores: Array<JugadorType> = [];
     // si tiene wifi cargará en storedJugadores los jugadores en remoto
     if (isApiUp) {
-      if (DEVELOP) console.log('is api up');
+      if (process.env.DEVELOP) console.log('is api up');
       const remoteJugadores = await getJugadores();
       if (remoteJugadores !== undefined && remoteJugadores.length > 0) {
-        if (DEVELOP) {
+        if (process.env.DEVELOP) {
           console.log('deleted jugadores:');
           console.log(deletedJugadoresMambuIds);
         }
@@ -162,7 +161,7 @@ function useLocalStorage(): LocalStorageType {
         const remJug = remoteJugadores.filter(
           (j) => !deletedJugadoresMambuIds.some((djID) => djID === j._id)
         );
-        if (DEVELOP) {
+        if (process.env.DEVELOP) {
           console.log('remotedJugadores:');
           console.log(remJug);
         }
@@ -176,7 +175,7 @@ function useLocalStorage(): LocalStorageType {
       (jugLoc) => !storedJugadores.some((jugRem) => jugRem.nombre === jugLoc.nombre)
     );
 
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('localJugadores:');
       console.log(localJugadores.map((j) => j.nombre));
       console.log('notstoredJugadores:');
@@ -197,7 +196,7 @@ function useLocalStorage(): LocalStorageType {
 
     const allJugadores = [...storedJugadores, ...notStoredLocalJugadores];
 
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('allJugadores:');
       console.log(allJugadores.map((j) => j.nombre));
     }
@@ -210,7 +209,7 @@ function useLocalStorage(): LocalStorageType {
 
   const pushJugador = async (newJugador: JugadorType) => {
     const newJugadoresList = [...AllJugadores, newJugador];
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('push jugador:');
       console.log(newJugador);
     }
@@ -240,7 +239,7 @@ function useLocalStorage(): LocalStorageType {
     // borra jugador local
     const newJugadoresList = AllJugadores.filter((j) => j.nombre !== popJugadorNombre);
     const jugadorToDelete = findJugador(popJugadorNombre);
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('newJugadoresList:');
       console.log(newJugadoresList);
     }
@@ -255,7 +254,7 @@ function useLocalStorage(): LocalStorageType {
         const res = await deleteJugador(jugadorToDelete._id);
         setIsVisibleStorageAlert(true);
         setStorageAlertMsg('Jugador eliminado de local y remoto');
-        if (DEVELOP) console.log(res);
+        if (process.env.DEVELOP) console.log(res);
       } else {
         // si la api no está conectada
         const deletedJugadores = [...deletedJugadoresMambuIds, jugadorToDelete._id];
@@ -268,7 +267,7 @@ function useLocalStorage(): LocalStorageType {
         setStorageAlertMsg(
           'Jugador eliminado de almacenamiento local, conecte a internet para sincrionizar'
         );
-        if (DEVELOP) console.log('deletedJugadorLocal: ' + jugadorToDelete._id);
+        if (process.env.DEVELOP) console.log('deletedJugadorLocal: ' + jugadorToDelete._id);
       }
     }
   };
@@ -312,15 +311,15 @@ function useLocalStorage(): LocalStorageType {
   };
 
   const chargeAllRutinas = async () => {
-    if (DEVELOP) console.log('chargin rutinas');
+    if (process.env.DEVELOP) console.log('chargin rutinas');
 
     const storedRutinas: Array<RutinaType> = [];
     // si tiene wifi cargará en storedRutinas las rutinas en remoto
     if (isApiUp) {
-      if (DEVELOP) console.log('is api up');
+      if (process.env.DEVELOP) console.log('is api up');
       const remoteRutinas = await getRutinas();
       if (remoteRutinas !== undefined && remoteRutinas.length > 0) {
-        if (DEVELOP) {
+        if (process.env.DEVELOP) {
           console.log('deleted rutinas:');
           console.log(deletedRutinasMambuIds);
         }
@@ -329,7 +328,7 @@ function useLocalStorage(): LocalStorageType {
         const remRut = remoteRutinas.filter(
           (rr) => !deletedRutinasMambuIds.some((drID) => drID === rr._id)
         );
-        if (DEVELOP) {
+        if (process.env.DEVELOP) {
           console.log('remotedRutians:');
           console.log(remRut);
         }
@@ -343,7 +342,7 @@ function useLocalStorage(): LocalStorageType {
       (rutLoc) => !storedRutinas.some((rutRem) => rutRem.titulo === rutLoc.titulo)
     );
 
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('localRutinas:');
       console.log(localRutinas.map((j) => j.titulo));
       console.log('notStoredLocalRutinas:');
@@ -365,7 +364,7 @@ function useLocalStorage(): LocalStorageType {
 
     const allRutinas = [...notStoredLocalRutinas, ...storedRutinas];
 
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('allRutinas:');
       console.log(allRutinas.map((j) => j.titulo));
     }
@@ -399,7 +398,7 @@ function useLocalStorage(): LocalStorageType {
   const popRutina = async (popRutinaTitulo: string) => {
     const newRutinaList = AllRutinas.filter((j) => j.titulo != popRutinaTitulo);
     const rutinaToDelete = findRutina(popRutinaTitulo, undefined);
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('newRutinaList:');
       console.log(newRutinaList);
     }
@@ -411,14 +410,14 @@ function useLocalStorage(): LocalStorageType {
     if (rutinaToDelete?._id) {
       if (isApiUp) {
         const res = await deleteRutina(rutinaToDelete._id);
-        if (DEVELOP) console.log(res);
+        if (process.env.DEVELOP) console.log(res);
         setIsVisibleStorageAlert(true);
         setStorageAlertMsg('Rutina eliminada de local y remoto');
       } else {
         const deletedRutinas = [...deletedRutinasMambuIds, rutinaToDelete._id];
         setDeletedRutinasMambuIds(deletedRutinas);
         await AsyncStorage.setItem(AsynStorageItems.deletedRutinas, JSON.stringify(deletedRutinas));
-        if (DEVELOP) console.log('deletedRutinaLocal: ' + rutinaToDelete._id);
+        if (process.env.DEVELOP) console.log('deletedRutinaLocal: ' + rutinaToDelete._id);
 
         setIsVisibleStorageAlert(true);
         setStorageAlertMsg(

@@ -19,7 +19,7 @@
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.16",
     "@shopify/react-native-skia": "0.1.196",
-    "eas-cli": "^5.2.0",
+    "eas-cli": "^5.9.1",
     "expo": "~49.0.8",
     "expo-constants": "~14.4.2",
     "expo-dev-client": "~2.4.8",
@@ -56,7 +56,6 @@
     "eslint-plugin-react-native": "^4.1.0",
     "metro-react-native-babel-preset": "^0.77.0",
     "prettier": "3.0.3",
-    "react-native-dotenv": "^3.4.9",
     "sharp-cli": "^4.1.1",
     "typescript": "^5.2.2"
   },

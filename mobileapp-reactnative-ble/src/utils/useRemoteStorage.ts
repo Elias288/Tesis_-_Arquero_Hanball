@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { API_URL, DEVELOP } from '@env';
 import { JugadorType } from '../data/JugadoresType';
 import { RutinaType } from '../data/RutinasType';
 import fetchData from './fetchData';
@@ -88,7 +87,7 @@ function useRemoteStorage(): remoteStorageProps {
         if (typeof result.message === 'string') setErrorLogin(result.message);
         return;
       }
-      if (DEVELOP) {
+      if (process.env.DEVELOP) {
         console.log('login result:');
         console.log(result.message);
       }
@@ -112,10 +111,10 @@ function useRemoteStorage(): remoteStorageProps {
       setIsLoginLoading(false);
       console.log('login catch:');
       console.log(err);
-      setErrorLogin('error de logueo')
+      setErrorLogin('error de logueo');
     };
 
-    fetchData('usuario/login', options, callBackFunction, callBackErrorFunction, 10000);
+    fetchData('usuario/login', options, callBackFunction, callBackErrorFunction, 20000);
   };
 
   // ****************************************** API ******************************************
@@ -123,14 +122,14 @@ function useRemoteStorage(): remoteStorageProps {
   const getUserData = async () => {
     // hace un llamado a la api, si está responde con los datos del usuario quiere decir que la api está funcionando
     // si la api no reponde funciona con datos locales
-    if (DEVELOP) console.log('geting user data');
+    if (process.env.DEVELOP) console.log('geting user data');
 
     try {
       // carga el token si está guardado localmente
       const res = await AsyncStorage.getItem('userData');
       if (res !== null) {
         const userData = JSON.parse(res);
-        if (DEVELOP) {
+        if (process.env.DEVELOP) {
           console.log('userData:');
           console.log(userData);
         }
@@ -139,7 +138,7 @@ function useRemoteStorage(): remoteStorageProps {
         setRemoteUserId(userData.userId);
 
         // si tiene wifi intentará verificar que la api responda
-        if (DEVELOP) console.log('verificando api');
+        if (process.env.DEVELOP) console.log('verificando api');
 
         const options = {
           method: 'GET',
@@ -153,7 +152,7 @@ function useRemoteStorage(): remoteStorageProps {
             clearUserData();
           }
 
-          if (DEVELOP) {
+          if (process.env.DEVELOP) {
             console.log('details');
           }
           setIsApiUp(true);
@@ -178,7 +177,7 @@ function useRemoteStorage(): remoteStorageProps {
           10000
         );
       } else {
-        if (DEVELOP) console.log('not logged');
+        if (process.env.DEVELOP) console.log('not logged');
       }
     } catch (error) {
       console.log(`getUserDataCatchError: ${error}`);
@@ -186,7 +185,7 @@ function useRemoteStorage(): remoteStorageProps {
   };
 
   const storeUserData = async (userData: { token: string; userId: string }) => {
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('datauser stored:');
       console.log(userData);
     }
@@ -206,7 +205,7 @@ function useRemoteStorage(): remoteStorageProps {
   // ****************************************** Jugadores ******************************************
 
   const getJugadores = (): Promise<JugadorType[]> => {
-    if (DEVELOP) console.log('getting jugadores of api');
+    if (process.env.DEVELOP) console.log('getting jugadores of api');
     const options = {
       method: 'GET',
       headers: {
@@ -230,7 +229,7 @@ function useRemoteStorage(): remoteStorageProps {
   };
 
   const saveJugador = (newJugador: JugadorType): Promise<any> => {
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('stored Jugador: ');
       console.log(newJugador);
     }
@@ -259,7 +258,7 @@ function useRemoteStorage(): remoteStorageProps {
   };
 
   const deleteJugador = (jugadorMambuId: string): Promise<any> => {
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('delete Jugador: ');
       console.log(jugadorMambuId);
     }
@@ -295,7 +294,7 @@ function useRemoteStorage(): remoteStorageProps {
   // ****************************************** Rutinas ******************************************
 
   const getRutinas = (): Promise<RutinaType[]> => {
-    if (DEVELOP) console.log('getting rutinas of api');
+    if (process.env.DEVELOP) console.log('getting rutinas of api');
 
     const options = {
       method: 'GET',
@@ -323,7 +322,7 @@ function useRemoteStorage(): remoteStorageProps {
   };
 
   const saveRutina = (newRutina: RutinaType): Promise<any> => {
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('stored Rutinas: ');
       console.log(newRutina);
     }
@@ -355,7 +354,7 @@ function useRemoteStorage(): remoteStorageProps {
   };
 
   const deleteRutina = (rutinaMambuId: string): Promise<any> => {
-    if (DEVELOP) {
+    if (process.env.DEVELOP) {
       console.log('delete Jugador: ');
       console.log(rutinaMambuId);
     }
